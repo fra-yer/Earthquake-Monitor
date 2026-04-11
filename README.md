@@ -74,10 +74,10 @@ Earthquake Monitor
 
 ## Configuration
 
-All relevant parameters fo Earthquake Monitor can be set on the configuration page that appears automatically when the integration is started for the first time, or when the cog icon on the main page of the integration is clicked. See below for a detailed description of the individual parameters.
+All relevant parameters for the Earthquake Monitor can be set on the configuration page that appears automatically when the integration is started for the first time, or when the cog icon on the main page of the integration is clicked. See below for a detailed description of the individual parameters.
 
 <p align="center">
-  <img src="docs/configuration.png" width="400">
+  <img src="docs/configuration.jpg" width="400">
 </p>
 
 ### Entity name
