@@ -61,7 +61,7 @@ HACS support is planned / intended for public release. Until then, installation 
 
 ### Manual installation
 
-1. Copy the `earthquake_monitor` folder into:
+1. Copy the `earthquake_monitor` folder (with all its contents) into:
 ```
 	/config/custom_components/
 ```
