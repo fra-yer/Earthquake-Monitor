@@ -208,11 +208,16 @@ class EarthquakeMonitorSensor(RestoreSensor):
         return bearing_deg
 
     def bearing_deg_to_text(self, bearing_deg: float) -> str:
-        """Convert bearing in degrees to compass direction."""
-        directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
-        index = int((bearing_deg + 22.5) // 45) % 8  # Correct rounding - gives cleaner compass-sector boundaries
+        """Convert bearing in degrees to 16-point compass direction."""
+        directions = [
+            "N", "NNE", "NE", "ENE",
+            "E", "ESE", "SE", "SSE",
+            "S", "SSW", "SW", "WSW",
+            "W", "WNW", "NW", "NNW",
+        ]
+        index = int((bearing_deg + 11.25) // 22.5) % 16  # Correct rounding - gives cleaner compass-sector boundaries
         return directions[index]
-    
+
     def parse_emsc_datetime(self, value: Any) -> datetime | None:
         """Parse EMSC datetime strings into timezone-aware UTC datetimes."""
         if not value or not isinstance(value, str):
