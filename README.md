@@ -56,7 +56,11 @@ This integration was inspired by the [**EMSC Earthquake** custom integration](ht
 
 ### Installation through the Home Assistant Community Store (HACS)
 
-HACS support is currently in preparation for public release. Until then, installation must be done manually or through a custom repository.
+The integration can be installed through HACS following these three steps:
+
+1. Add repository ```https://github.com/fra-yer/Earthquake-Monitor``` to HACS Custom repositories
+2. Restart Home Assistant
+3. Setup via Settings → Devices & Services
 
 ### Manual installation
 
@@ -193,7 +197,6 @@ If you are a native speaker of any other language that you want to see implement
 ## Planned improvements
 
 This project may be extended in the future with:
-- HACS publication for easier installation
 - additional translations based on user requests and suggestions
 - more formats for "friendly" timestamps
 - additional diagnostics and system health information
