@@ -1,0 +1,40 @@
+{
+  "title": "Deprem İzleyici",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Deprem İzleyici",
+        "description": "Referans noktasını ve deprem takibi için büyüklük eşiklerini ayarlayın.",
+        "data": {
+          "name": "Varlık adı",
+          "center_latitude": "Referans noktasının enlemi",
+          "center_longitude": "Referans noktasının boylamı",
+          "radius_km": "Yerel yarıçap (km)",
+          "min_mag": "En düşük yerel büyüklük",
+          "total_max_mag": "Yerel yarıçap dışındaki depremler için en düşük büyüklük"
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "Yerel yarıçap dışındaki depremler için en düşük büyüklük, en düşük yerel büyüklüğe eşit veya ondan büyük olmalıdır."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Deprem İzleyici seçenekleri",
+        "description": "Referans noktasını ve deprem takibi için büyüklük eşiklerini değiştirin.",
+        "data": {
+          "center_latitude": "Referans noktasının enlemi",
+          "center_longitude": "Referans noktasının boylamı",
+          "radius_km": "Yerel yarıçap (km)",
+          "min_mag": "En düşük yerel büyüklük",
+          "total_max_mag": "Yerel yarıçap dışındaki depremler için en düşük büyüklük"
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "Yerel yarıçap dışındaki depremler için en düşük büyüklük, en düşük yerel büyüklüğe eşit veya ondan büyük olmalıdır."
+    }
+  }
+}

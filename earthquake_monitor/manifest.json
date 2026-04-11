@@ -1,0 +1,13 @@
+{
+  "domain": "earthquake_monitor",
+  "name": "Earthquake Monitor",
+  "version": "1.1.0",
+  "documentation": "https://seismicportal.eu/realtime.html",
+  "codeowners": ["@fra-yer"],
+  "config_flow": true,
+  "integration_type": "service",
+  "iot_class": "cloud_push",
+  "single_config_entry": true,
+  "requirements": ["websockets>=10.0"],
+  "dependencies": []
+}

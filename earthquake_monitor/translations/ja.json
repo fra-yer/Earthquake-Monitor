@@ -1,0 +1,40 @@
+{
+  "title": "地震モニター",
+  "config": {
+    "step": {
+      "user": {
+        "title": "地震モニター",
+        "description": "基準点と地震監視のためのマグニチュードしきい値を設定します。",
+        "data": {
+          "name": "エンティティ名",
+          "center_latitude": "基準点の緯度",
+          "center_longitude": "基準点の経度",
+          "radius_km": "ローカル半径 (km)",
+          "min_mag": "ローカル地震の最小マグニチュード",
+          "total_max_mag": "ローカル半径外の地震に対する最小マグニチュード"
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "ローカル半径外の地震に対する最小マグニチュードは、ローカル地震の最小マグニチュード以上である必要があります。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "地震モニターのオプション",
+        "description": "基準点と地震監視のためのマグニチュードしきい値を変更します。",
+        "data": {
+          "center_latitude": "基準点の緯度",
+          "center_longitude": "基準点の経度",
+          "radius_km": "ローカル半径 (km)",
+          "min_mag": "ローカル地震の最小マグニチュード",
+          "total_max_mag": "ローカル半径外の地震に対する最小マグニチュード"
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "ローカル半径外の地震に対する最小マグニチュードは、ローカル地震の最小マグニチュード以上である必要があります。"
+    }
+  }
+}
