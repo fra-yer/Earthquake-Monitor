@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/logo.svg" width="200">
+</p>
+
 # Earthquake Monitor
 ## **A Custom Integration for Home Assistant**
 
