@@ -56,7 +56,7 @@ This integration was inspired by the [**EMSC Earthquake** custom integration](ht
 
 ### Installation through the Home Assistant Community Store (HACS)
 
-HACS support is planned / intended for public release. Until then, installation is manual or through a custom repository.
+HACS support is currently in preparation for public release. Until then, installation must be done manually or through a custom repository.
 
 ### Manual installation
 
@@ -175,7 +175,7 @@ If you chose a different name for the entity during the initial configuration, u
 
 ## Translations
 
-At the time of initial publishing, the Earthquake Monitor is available in a variety of languages. These were selected to provide a broad coverage of potential users - both in terms of earthquake relevance and Home Assistant user base. In particular, Earthquake Monitor is currently available in **English, German, Greek, Spanish, French, Italian, Dutch, Japanese, Polish, Portuguese, Brazilian Portuguese, and Turkish**. Except for the first four, I do not speak these languages and the translations were created with the help of AI (ChatGPT GPT 5.4 Thinking). If you are a native speaker of any of these languages and find a mistake, please notify me so I can correct it. 
+At the time of initial publishing, the Earthquake Monitor is available in 12 languages. These were selected to provide a broad coverage of potential users - both in terms of earthquake relevance and Home Assistant user base. In particular, Earthquake Monitor is currently available in **English, German, Greek, Spanish, French, Italian, Dutch, Japanese, Polish, Portuguese, Brazilian Portuguese, and Turkish**. Except for the first four, I do not speak these languages and the translations were created with the help of AI (ChatGPT GPT 5.4 Thinking). If you are a native speaker of any of these languages and find a mistake, please notify me so I can correct it. 
 If you are a native speaker of any other language that you want to see implemented, please contact me, too.
 
 ## Known limitations
@@ -195,9 +195,9 @@ If you are a native speaker of any other language that you want to see implement
 This project may be extended in the future with:
 - HACS publication for easier installation
 - additional translations based on user requests and suggestions
-- user-defined format for timestamps
+- more formats for "friendly" timestamps
 - additional diagnostics and system health information
-- optional support for further earthquake data sources
+- optional support for other earthquake data sources
 
 
 ## Earthquake Magnitude
