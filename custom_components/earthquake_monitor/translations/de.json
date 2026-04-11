@@ -1,0 +1,40 @@
+{
+  "title": "Erdbeben-Monitor",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Erdbeben-Monitor",
+        "description": "Einstellungen für Referenzpunkt (Voreinstellung: Home-Zone) und Erdbeben-Schwellenwerte",
+        "data": {
+          "name": "Name der Entität",
+          "center_latitude": "Breitengrad des Referenzpunkts",
+          "center_longitude": "Längengrad des Referenzpunkts",
+          "radius_km": "Radius um den Referenzpunkt (km)",
+          "min_mag": "Minimale lokale Magnitude",
+          "total_max_mag": "Minimale Magnitude für globale Erdbeben"
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "Die minimale Magnitude für globale Erdbeben muss grösser oder gleich der minimalen lokalen Magnitude sein."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Optionen für Erdbeben-Monitor",
+        "description": "Einstellungen für Referenzpunkt (Voreinstellung: Home-Zone) und Erdbeben-Schwellenwerte",
+        "data": {
+          "center_latitude": "Breitengrad des Referenzpunkts",
+          "center_longitude": "Längengrad des Referenzpunkts",
+          "radius_km": "Radius um den Referenzpunkt (km)",
+          "min_mag": "Minimale lokale Magnitude",
+          "total_max_mag": "Minimale Magnitude für globale Erdbeben"
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "Die minimale Magnitude für globale Erdbeben muss grösser oder gleich der minimalen lokalen Magnitude sein."
+    }
+  }
+}

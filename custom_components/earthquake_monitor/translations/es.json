@@ -1,0 +1,40 @@
+{
+  "title": "Monitor de Terremotos",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Monitor de Terremotos",
+        "description": "Define el punto de referencia y los umbrales de magnitud para el seguimiento de terremotos.",
+        "data": {
+          "name": "Nombre de la entidad",
+          "center_latitude": "Latitud del punto de referencia",
+          "center_longitude": "Longitud del punto de referencia",
+          "radius_km": "Radio local (km)",
+          "min_mag": "Magnitud mínima local",
+          "total_max_mag": "Magnitud mínima para terremotos fuera del radio local"
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "La magnitud mínima para terremotos fuera del radio local debe ser mayor o igual que la magnitud mínima local."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opciones del Monitor de Terremotos",
+        "description": "Ajusta el punto de referencia y los umbrales de magnitud para el seguimiento de terremotos.",
+        "data": {
+          "center_latitude": "Latitud del punto de referencia",
+          "center_longitude": "Longitud del punto de referencia",
+          "radius_km": "Radio local (km)",
+          "min_mag": "Magnitud mínima local",
+          "total_max_mag": "Magnitud mínima para terremotos fuera del radio local"
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "La magnitud mínima para terremotos fuera del radio local debe ser mayor o igual que la magnitud mínima local."
+    }
+  }
+}

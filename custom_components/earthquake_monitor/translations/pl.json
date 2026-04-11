@@ -1,0 +1,40 @@
+{
+  "title": "Monitor Trzęsień Ziemi",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Monitor Trzęsień Ziemi",
+        "description": "Ustaw punkt odniesienia i progi magnitudy dla monitorowania trzęsień ziemi.",
+        "data": {
+          "name": "Nazwa encji",
+          "center_latitude": "Szerokość geograficzna punktu odniesienia",
+          "center_longitude": "Długość geograficzna punktu odniesienia",
+          "radius_km": "Promień lokalny (km)",
+          "min_mag": "Minimalna magnituda lokalna",
+          "total_max_mag": "Minimalna magnituda dla trzęsień ziemi poza lokalnym promieniem"
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "Minimalna magnituda dla trzęsień ziemi poza lokalnym promieniem musi być większa lub równa minimalnej magnitudzie lokalnej."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Monitor Trzęsień Ziemi",
+        "description": "Zmień punkt odniesienia i progi magnitudy dla monitorowania trzęsień ziemi.",
+        "data": {
+          "center_latitude": "Szerokość geograficzna punktu odniesienia",
+          "center_longitude": "Długość geograficzna punktu odniesienia",
+          "radius_km": "Promień lokalny (km)",
+          "min_mag": "Minimalna magnituda lokalna",
+          "total_max_mag": "Minimalna magnituda dla trzęsień ziemi poza lokalnym promieniem"
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "Minimalna magnituda dla trzęsień ziemi poza lokalnym promieniem musi być większa lub równa minimalnej magnitudzie lokalnej."
+    }
+  }
+}

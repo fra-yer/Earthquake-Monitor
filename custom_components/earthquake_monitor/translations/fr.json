@@ -1,0 +1,40 @@
+{
+  "title": "Surveillance des Séismes",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Surveillance des Séismes",
+        "description": "Définissez le point de référence et les seuils de magnitude pour la surveillance des séismes.",
+        "data": {
+          "name": "Nom de l'entité",
+          "center_latitude": "Latitude du point de référence",
+          "center_longitude": "Longitude du point de référence",
+          "radius_km": "Rayon local (km)",
+          "min_mag": "Magnitude minimale locale",
+          "total_max_mag": "Magnitude minimale pour les séismes hors du rayon local"
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "La magnitude minimale pour les séismes hors du rayon local doit être supérieure ou égale à la magnitude minimale locale."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options de Surveillance des Séismes",
+        "description": "Modifiez le point de référence et les seuils de magnitude pour la surveillance des séismes.",
+        "data": {
+          "center_latitude": "Latitude du point de référence",
+          "center_longitude": "Longitude du point de référence",
+          "radius_km": "Rayon local (km)",
+          "min_mag": "Magnitude minimale locale",
+          "total_max_mag": "Magnitude minimale pour les séismes hors du rayon local"
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "La magnitude minimale pour les séismes hors du rayon local doit être supérieure ou égale à la magnitude minimale locale."
+    }
+  }
+}

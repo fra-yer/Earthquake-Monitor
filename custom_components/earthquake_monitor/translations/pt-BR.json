@@ -1,0 +1,40 @@
+{
+  "title": "Monitor de Terremotos",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Monitor de Terremotos",
+        "description": "Defina o ponto de referência e os limites de magnitude para o monitoramento de terremotos.",
+        "data": {
+          "name": "Nome da entidade",
+          "center_latitude": "Latitude do ponto de referência",
+          "center_longitude": "Longitude do ponto de referência",
+          "radius_km": "Raio local (km)",
+          "min_mag": "Magnitude mínima local",
+          "total_max_mag": "Magnitude mínima para terremotos fora do raio local"
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "A magnitude mínima para terremotos fora do raio local deve ser maior ou igual à magnitude mínima local."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Monitor de Terremotos",
+        "description": "Altere o ponto de referência e os limites de magnitude para o monitoramento de terremotos.",
+        "data": {
+          "center_latitude": "Latitude do ponto de referência",
+          "center_longitude": "Longitude do ponto de referência",
+          "radius_km": "Raio local (km)",
+          "min_mag": "Magnitude mínima local",
+          "total_max_mag": "Magnitude mínima para terremotos fora do raio local"
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "A magnitude mínima para terremotos fora do raio local deve ser maior ou igual à magnitude mínima local."
+    }
+  }
+}
