@@ -56,11 +56,12 @@ This integration was inspired by the [**EMSC Earthquake** custom integration](ht
 
 ### Installation through the Home Assistant Community Store (HACS)
 
-The integration can be installed through HACS following these three steps:
+The integration can be installed through HACS following these four steps:
 
-1. Add repository ```https://github.com/fra-yer/Earthquake-Monitor``` to HACS Custom repositories
-2. Restart Home Assistant
-3. Setup via Settings → Devices & Services
+1.	Add ```https://github.com/fra-yer/Earthquake-Monitor``` to **HACS → Custom repositories** as an **Integration**.
+2.	Open the repository in HACS and click **Download**.
+3.	Restart Home Assistant.
+4.	Set up **Earthquake Monitor** via **Settings → Devices & Services**.
 
 ### Manual installation
 
