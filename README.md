@@ -74,9 +74,15 @@ Earthquake Monitor
 
 ## Configuration
 
+All relevant parameters fo Earthquake Monitor can be set on the configuration page that appears automatically when the integration is started for the first time, or when the cog icon on the main page of the integration is clicked. See below for a detailed description of the individual parameters.
+
+<p align="center">
+  <img src="docs/configuration.png" width="400">
+</p>
+
 ### Entity name
 
-The display name of the sensor entity created by the integration. Default is "Latest Earthquake" (or the equivalent in local translations). Keep it as the default unless you are not happy with this name.
+The display name of the sensor entity created by the integration. Default is "Latest Earthquake" (or the equivalent in local translations). Keep it as the default unless you are not happy with this name. This field is only shown when the sensor is set up for the first time. 
 
 ### Reference latitude
 
