@@ -34,16 +34,19 @@ The integration is intended for users who want a meaningful and stable “latest
 
 This integration was inspired by the [**EMSC Earthquake** custom integration](https://github.com/febalci/ha_emsc_earthquake) by [febalci](https://github.com/febalci), but provides revised selection logic, improved usability, persistence, localization, and richer location metadata.
 
-**Main differences include:**
+**Main improvements include:**
 
 - **Improved event selection logic**  
   The EMSC feed reports both *new* events and *updates* to older events. The Earthquake Monitor entity discriminates between these in its Action attribute, which is \`create\` for new events, or \`update\` for older events. If a newer earthquake has already been accepted, later updates to an older earthquake will be ignored. This prevents corrections to older events from overwriting the true latest event. Thus, the entity always provides the details (new or updated) of the latest recorded earthquake.
+
+- **Improved usability**
+  Configuration settings are validated to only allow meaningful values. 
 
 - **Relative location information**
   The sensor provides distance, bearing, and a readable relative location based on the configured reference point.
 
 - **Map support**
-  The sensor includes the attributes Latitude and Longitude so it can be displayed directly on Home Assistant map cards.
+  The sensor correctly implements the attributes Latitude and Longitude so that events can be displayed directly on Home Assistant map cards.
 
 - **Persistence across restarts**  
   The last accepted earthquake is restored after a restart of Home Assistant.
@@ -56,24 +59,27 @@ This integration was inspired by the [**EMSC Earthquake** custom integration](ht
 
 ### Installation through the Home Assistant Community Store (HACS)
 
-The integration can be installed through HACS following these four steps:
+The integration can be installed through HACS following these steps:
 
-1.	Add ```https://github.com/fra-yer/Earthquake-Monitor``` to **HACS → Custom repositories** as an **Integration**.
-2.	Open the repository in HACS and click **Download**.
-3.	Restart Home Assistant.
-4.	Set up **Earthquake Monitor** via **Settings → Devices & Services**.
+1.	Add ```https://github.com/fra-yer/Earthquake-Monitor``` to **HACS → Custom repositories** with type **Integration**
+2.	Open the repository in HACS and click **Download**
+3.	Restart Home Assistant
+4.	Go to **Settings → Devices & Services → Add Integration**
+5.	Search for **Earthquake Monitor**
+6.	Complete the configuration dialog, following the guidelines below
+
 
 ### Manual installation
+
+Alternatively, the integration can be installed manually from this Github repository:
 
 1. Copy the `earthquake_monitor` folder (with all its contents) into:
 ```
 	/config/custom_components/
 ```
-2. Restart Home Assistant.
-3. Go to:
-Settings -> Devices & Services -> Add Integration
-4. Search for:
-Earthquake Monitor
+2. Restart Home Assistant
+3. Go to **Settings → Devices & Services → Add Integration**
+4. Search for **Earthquake Monitor**
 5. Complete the configuration dialog, following the guidelines below
 
 
