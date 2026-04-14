@@ -1,3 +1,6 @@
+# Version 1.3.0 by FOF, April 2026
+# change-log: use earthquake_reference zone as default, fall back to user home zone
+
 from homeassistant import config_entries
 import voluptuous as vol
 from homeassistant.core import callback
@@ -16,23 +19,35 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle the initial step."""
         errors = {}
 
-        # Get the coordinates of zone.home
+        # Get the coordinates of defined zone or home zone as fallback
+        # Prefer a user-defined zone.earthquake_reference if it exists.
+        # Otherwise fall back to zone.home for coordinates only.
+        reference_zone = self.hass.states.get("zone.earthquake_reference")
         home_zone = self.hass.states.get("zone.home")
-        if home_zone:
-            home_latitude = home_zone.attributes.get(CONF_LATITUDE)
-            home_longitude = home_zone.attributes.get(CONF_LONGITUDE)
 
-            # and round it to 5 digits (corresponding to around 1m accuracy)
-            if home_latitude is not None:
-                home_latitude = round(float(home_latitude), 5)
-            if home_longitude is not None:
-                home_longitude = round(float(home_longitude), 5)
-        else:
-            home_latitude = None
-            home_longitude = None
+        default_latitude = None
+        default_longitude = None
+        default_radius_km = None
+
+        if reference_zone:
+            default_latitude = reference_zone.attributes.get(CONF_LATITUDE)
+            default_longitude = reference_zone.attributes.get(CONF_LONGITUDE)
+
+            zone_radius_m = reference_zone.attributes.get("radius")
+            if zone_radius_m is not None:
+                default_radius_km = float(round(float(zone_radius_m) / 1000))
+
+        elif home_zone:
+            default_latitude = home_zone.attributes.get(CONF_LATITUDE)
+            default_longitude = home_zone.attributes.get(CONF_LONGITUDE)
+
+        if default_latitude is not None:
+            default_latitude = round(float(default_latitude), 5)
+        if default_longitude is not None:
+            default_longitude = round(float(default_longitude), 5)
 
         if user_input is not None:
-            # Check that total_max_mag >= min_mag
+            # Check that the outside-radius threshold is not lower than the local threshold
             if user_input["total_max_mag"] < user_input["min_mag"]:
                 errors["base"] = "global_mag_lt_local_mag"
             else:
@@ -41,22 +56,25 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     data=user_input,
                 )
 
+        if default_radius_km is None:
+            default_radius_km = 100.0
+
         schema = vol.Schema(
             {
                 vol.Optional("name", default=DEFAULT_NAME): str,
-                vol.Required("center_latitude", default=home_latitude): vol.All(
+                vol.Required("center_latitude", default=default_latitude): vol.All(
                     vol.Coerce(float), vol.Range(min=-90, max=90)
                 ),
-                vol.Required("center_longitude", default=home_longitude): vol.All(
+                vol.Required("center_longitude", default=default_longitude): vol.All(
                     vol.Coerce(float), vol.Range(min=-180, max=180)
                 ),
-                vol.Required("radius_km"): vol.All(
+                vol.Required("radius_km", default=default_radius_km): vol.All(
                     vol.Coerce(float), vol.Range(min=0, min_included=False, max=500)
                 ),
-                vol.Required("min_mag"): vol.All(
+                vol.Required("min_mag", default=2.5): vol.All(
                     vol.Coerce(float), vol.Range(min=0, max=10)
                 ),
-                vol.Required("total_max_mag"): vol.All(
+                vol.Required("total_max_mag", default=8.0): vol.All(
                     vol.Coerce(float), vol.Range(min=0, max=10)
                 ),
             }
@@ -81,7 +99,7 @@ class EarthquakeMonitorOptionsFlowHandler(config_entries.OptionsFlow):
         errors = {}
 
         if user_input is not None:
-            # Check that total_max_mag >= min_mag
+            # Check that the outside-radius threshold is not lower than the local threshold
             if user_input["total_max_mag"] < user_input["min_mag"]:
                 errors["base"] = "global_mag_lt_local_mag"
             else:
