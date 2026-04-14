@@ -2,7 +2,7 @@
 # Based on EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake by febalci
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.2.0 by FOF, April 2026
+# Version 1.3.0 by FOF, April 2026
 
 import asyncio
 import json
