@@ -4,7 +4,7 @@
     "step": {
       "user": {
         "title": "Erdbeben-Monitor",
-        "description": "Einstellungen für Referenzpunkt (Voreinstellung: Home-Zone) und Erdbeben-Schwellenwerte",
+        "description": "Einstellungen für Referenzpunkt und Erdbeben-Schwellenwerte",
         "data": {
           "name": "Name der Entität",
           "center_latitude": "Breitengrad des Referenzpunkts",
@@ -23,7 +23,7 @@
     "step": {
       "init": {
         "title": "Optionen für Erdbeben-Monitor",
-        "description": "Einstellungen für Referenzpunkt (Voreinstellung: Home-Zone) und Erdbeben-Schwellenwerte",
+        "description": "Einstellungen für Referenzpunkt und Erdbeben-Schwellenwerte",
         "data": {
           "center_latitude": "Breitengrad des Referenzpunkts",
           "center_longitude": "Längengrad des Referenzpunkts",
