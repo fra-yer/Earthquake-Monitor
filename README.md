@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version 1.3.0
+Version 1.3.2
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -97,15 +97,15 @@ The display name of the sensor entity created by the integration. Default is "La
 
 ### Reference latitude
 
-Latitude of the point from which local distance and bearing are calculated. If the user has defined a zone named "earthquake_reference" in Home Assistant -> Settings -> Areas, Labels & Zones -> Zones, the center of this zone will be used as the default setting for the latitude and the radius. If no such zone exists, the integration will use the latitude of the user's home zone, rounded to 5 digits. This corresponds to an accuracy of around 1 m on the earth's surface. More than 5 decimal digits may be defined here, but provide no benefit.
+Latitude of the point from which local distance and bearing are calculated. If the user has defined a zone named "Earthquake Reference" (or "earthquake_reference") in Home Assistant -> Settings -> Areas, Labels & Zones -> Zones, the center of this zone will be used as the default setting for the latitude and the radius. If no such zone exists, the integration will use the latitude of the user's home zone, rounded to 5 digits. This corresponds to an accuracy of around 1 m on the earth's surface. More than 5 decimal digits may be defined here, but provide no benefit.
 
 ### Reference longitude
 
-Longitude of the point from which local distance and bearing are calculated. As for the latitude, the longitude will default to the center of the earthquake_reference zone, or of the user's home zone. Also for longitude, more than 5 decimal digits provide no benefit.
+Longitude of the point from which local distance and bearing are calculated. As for the latitude, the longitude will default to the center of the "Earthquake Reference" zone, or of the user's home zone. Also for longitude, more than 5 decimal digits provide no benefit.
 
 ### Local radius (km)
 
-The radius around the reference point within which earthquakes should be reported. If an earthquake_reference zone is defined, its radius will be used, otherwise a default of 100 km will apply. The maximum that can be set is 500 km.
+The radius around the reference point within which earthquakes should be reported. If an "Earthquake Reference" zone exists, its radius will be used, otherwise a default of 100 km will apply. The maximum that can be set is 500 km.
 
 ### Minimum local magnitude
 
