@@ -1,5 +1,6 @@
-# Version 1.3.0 by FOF, April 2026
-# change-log: use earthquake_reference zone as default, fall back to user home zone
+# Version 1.3.1 by FOF, April 2026
+# change-log: use earthquake_reference zone as default if it exists,
+# including HA-normalized entity IDs, OR fall back to zone.home
 
 from homeassistant import config_entries
 import voluptuous as vol
@@ -22,7 +23,10 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         # Get the coordinates of defined zone or home zone as fallback
         # Prefer a user-defined zone.earthquake_reference if it exists.
         # Otherwise fall back to zone.home for coordinates only.
-        reference_zone = self.hass.states.get("zone.earthquake_reference")
+        reference_zone = (
+            self.hass.states.get("zone.earthquake_reference")
+            or self.hass.states.get("zone.earthquakereference")
+        )
         home_zone = self.hass.states.get("zone.home")
 
         default_latitude = None
