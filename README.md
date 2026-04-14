@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version 1.2.0
+Version 1.3.0
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -85,7 +85,7 @@ Alternatively, the integration can be installed manually from this Github reposi
 
 ## Configuration
 
-All relevant parameters for the Earthquake Monitor can be set on the configuration page that appears automatically when the integration is started for the first time, or when the cog icon on the main page of the integration is clicked. See below for a detailed description of the individual parameters.
+All relevant parameters for the Earthquake Monitor can be set on the configuration page that appears automatically when the integration is started for the first time, or when the cog icon on the main page of the integration is clicked. See below for a detailed description of the individual parameters and their default values.
 
 <p align="center">
   <img src="docs/configuration.jpg" width="400">
@@ -97,23 +97,23 @@ The display name of the sensor entity created by the integration. Default is "La
 
 ### Reference latitude
 
-Latitude of the point from which local distance and bearing are calculated. Default is the latitude of the home zone of the user, rounded to 5 digits. This corresponds to an accuracy of around 1 m on the earth's surface. More than 5 digits may be defined here, but provide no benefit.
+Latitude of the point from which local distance and bearing are calculated. If the user has defined a zone named "earthquake_reference" in Home Assistant -> Settings -> Areas, Labels & Zones -> Zones, the center of this zone will be used as the default setting for the latitude and the radius. If no such zone exists, the integration will use the latitude of the user's home zone, rounded to 5 digits. This corresponds to an accuracy of around 1 m on the earth's surface. More than 5 decimal digits may be defined here, but provide no benefit.
 
 ### Reference longitude
 
-Longitude of the point from which local distance and bearing are calculated. Default is the longitude of the home zone of the user, rounded to 5 digits. As for latitude, more than 5 digits provide no benefit.
+Longitude of the point from which local distance and bearing are calculated. As for the latitude, the longitude will default to the center of the earthquake_reference zone, or of the user's home zone. Also for longitude, more than 5 decimal digits provide no benefit.
 
 ### Local radius (km)
 
-The radius around the reference point within which earthquakes should be reported. The maximum that can be set is 500 km.
+The radius around the reference point within which earthquakes should be reported. If an earthquake_reference zone is defined, its radius will be used, otherwise a default of 100 km will apply. The maximum that can be set is 500 km.
 
 ### Minimum local magnitude
 
-The minimum magnitude required for a local earthquake to be reported. Values from 0 to 10 are accepted. Values lower than 3 represent earthquakes that are too weak to be felt by humans; thus, setting the minimum local magnitude to less than 3 will report many insignificant earthquakes, and should be avoided. Check the information about earthquake magnitudes below. 
+The minimum magnitude required for a local earthquake to be reported. Values from 0 to 10 are accepted. Values lower than 3 represent earthquakes that are too weak to be felt by humans; thus, setting the minimum local magnitude to less than 3 will report many insignificant earthquakes, and should be avoided. Check the information about earthquake magnitudes below. The default value will be magnitude 2.5.
 
 ### Minimum magnitude for global earthquakes
 
-A second threshold that allows stronger earthquakes outside the local radius to be accepted as well. Values from 0 to 10 are accepted. Note that this global threshold must be equal to or greater than the local minimum threshold. *Set it to 10 if you do NOT want global earthquakes to be reported at all.*
+A second threshold that allows stronger earthquakes outside the local radius to be accepted as well. Values from 0 to 10 are accepted. Note that this global threshold cannot be set lower than the local minimum threshold. The default value is 8, which will only report very major earthquakes outside the local radius. *Set it to 10 if you do NOT want global earthquakes to be reported at all.*
 
 
 ## Local radius vs global threshold
