@@ -196,7 +196,7 @@ If you are a native speaker of any other language that you want to see implement
 - The current implementation focuses on practicality and robustness rather than a full multi-entity model.
 - The integration uses the EMSC feed as its only data source.
 - The integration depends on a WebSocket connection to the EMSC service.
-- If the upstream feed becomes unavailable, no new earthquake data can be received.
+- If the upstream feed becomes unavailable, no new earthquake data can be received. This can happen for a variety of reasons; e.g. the services were temporarily unavailable on April 16, 2026 from 08:00 to 12:00 CET due to mandatory electrical safety shutdown tests.
 - According to the website, the feed aims at "(near) Realtime Notification", but delays of a few minutes are normal, especially for weak earthquakes
 - In a few cases, earthquakes are reported with a longer delay (I observed up to 30 minutes delay). This is a limitation of the feed, not a bug in the integration. The sensor can only report earthquakes when they show up in the feed.
 - The sensor represents one current event only, not a list or history of earthquakes. Older events are shown in Activity of the entity, but only with its magnitude and timestamp (no rich attributes)
