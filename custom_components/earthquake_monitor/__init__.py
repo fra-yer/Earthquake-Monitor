@@ -12,7 +12,9 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up Earthquake Monitor from a config entry."""
-    hass.data[DOMAIN][entry.entry_id] = entry.data
+    hass.data[DOMAIN][entry.entry_id] = {
+        "config": entry.data,
+    }
 
     await hass.config_entries.async_forward_entry_setups(entry, ["sensor"])
     return True
