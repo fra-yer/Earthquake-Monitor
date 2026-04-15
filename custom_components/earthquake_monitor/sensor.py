@@ -1,22 +1,27 @@
 # Earthquake Monitor
-# Based on EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake by febalci
+# Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.3.1 by FOF, April 2026
+# Version 1.4.0 by FOF, April 2026
 
 import asyncio
+import io
 import json
 import logging
 import ssl
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
+from functools import lru_cache
 from math import radians, degrees, cos, sin, sqrt, atan2
+from pathlib import Path
 from typing import Any
 
+import reverse_geocoder as rg
 import websockets
 from homeassistant.components.sensor import RestoreSensor
 from homeassistant.core import HomeAssistant
 from homeassistant.util import dt as dt_util
+from shapely.geometry import Point, shape
 
 from .const import DOMAIN, DEFAULT_NAME
 
@@ -27,6 +32,76 @@ PING_INTERVAL = 15  # seconds
 
 # Thread pool executor for SSL context creation
 ssl_executor = ThreadPoolExecutor(max_workers=1)
+
+# Paths relative to this file (sensor.py)
+INTEGRATION_DIR = Path(__file__).resolve().parent
+CITIES_CSV = INTEGRATION_DIR / "geodata" / "cities25000.csv"
+COUNTRIES_GEOJSON = INTEGRATION_DIR / "geodata" / "ne_110m_admin_0_countries.geojson"
+
+
+@lru_cache(maxsize=1)
+def get_city_geocoder():
+    """Load city geocoder once."""
+    return rg.RGeocoder(
+        mode=2,
+        stream=io.StringIO(CITIES_CSV.read_text(encoding="utf-8")),
+    )
+
+
+@lru_cache(maxsize=1)
+def get_countries():
+    """Load country polygons once."""
+    with COUNTRIES_GEOJSON.open("r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    countries = []
+    for feature in data["features"]:
+        name = feature["properties"].get("NAME", "Unknown")
+        geom = shape(feature["geometry"])
+        countries.append((name, geom))
+
+    return countries
+
+
+def distance_km_between(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Distance between any two lat/lon points."""
+    r_earth_km = 6371.0
+
+    lat1 = radians(lat1)
+    lon1 = radians(lon1)
+    lat2 = radians(lat2)
+    lon2 = radians(lon2)
+
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return r_earth_km * c
+
+
+def nearest_city(lat: float, lon: float) -> str:
+    """Nearest city name, or 'none' if farther than 200 km."""
+    result = get_city_geocoder().query([(lat, lon)])[0]
+    city_lat = float(result["lat"])
+    city_lon = float(result["lon"])
+
+    distance = distance_km_between(lat, lon, city_lat, city_lon)
+    if distance > 200.0:
+        return "none"
+
+    return result.get("name", "Unknown")
+
+
+def country_of_epicenter(lat: float, lon: float) -> str:
+    """Country containing epicenter, or 'international waters' if offshore."""
+    point = Point(lon, lat)  # lon, lat order
+
+    for name, poly in get_countries():
+        if poly.covers(point):
+            return name
+
+    return "international waters"
 
 
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
@@ -41,6 +116,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     min_mag = config.get("min_mag")
 
     sensor = EarthquakeMonitorSensor(
+        entry_id=config_entry.entry_id,
         name=name,
         center_latitude=center_latitude,
         center_longitude=center_longitude,
@@ -58,6 +134,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
 
     def __init__(
         self,
+        entry_id: str,
         name: str,
         center_latitude: float,
         center_longitude: float,
@@ -66,6 +143,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
         total_max_mag: float,
     ) -> None:
         """Initialize the sensor."""
+        self._entry_id = entry_id
         self._name = name
         self._state = None
         self._attributes: dict[str, Any] = {}
@@ -99,7 +177,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
     @property
     def unique_id(self):
         """Return a unique ID for this sensor."""
-        return f"{DOMAIN}_{self._name}"
+        return f"{DOMAIN}_{self._entry_id}"
 
     @property
     def icon(self):
@@ -341,7 +419,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
 
             event_time = self.parse_emsc_datetime(event_time_str)
             lastupdate = self.parse_emsc_datetime(lastupdate_str)
-            
+
             event_time_local = dt_util.as_local(event_time) if event_time else None
             lastupdate_local = dt_util.as_local(lastupdate) if lastupdate else None
 
@@ -364,7 +442,18 @@ class EarthquakeMonitorSensor(RestoreSensor):
             bearing_deg = round(self.calculate_bearing_deg(lat, lon), 1)
             bearing_text = self.bearing_deg_to_text(bearing_deg)
             relative_location = f"{distance_km} km {bearing_text} of reference point"
-            
+
+            try:
+                country = country_of_epicenter(lat, lon)
+            except Exception as e:
+                _LOGGER.debug("Country lookup failed: %s", e)
+                country = "lookup failed"
+            try:
+                city = nearest_city(lat, lon)
+            except Exception as e:
+                _LOGGER.debug("Nearest city lookup failed: %s", e)
+                city = "lookup failed"
+
             self._state = mag
             self._attributes = {
                 "action": action,
@@ -379,6 +468,8 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 "lastupdate_utc_raw": lastupdate.isoformat() if lastupdate else None,
                 "magnitude": mag,
                 "region": info.get("flynn_region"),
+                "country": country,
+                "nearest_city": city,
                 "depth": info.get("depth"),
                 "latitude": lat,
                 "longitude": lon,
