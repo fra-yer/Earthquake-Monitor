@@ -12,7 +12,6 @@
     "websockets>=10.0",
     "reverse_geocoder==1.5.1",
     "shapely>=2.0.0"
-  ]  
-  "single_config_entry": false,
-  "version": "1.4"
+  ],
+  "version": "1.4.0"
 }
