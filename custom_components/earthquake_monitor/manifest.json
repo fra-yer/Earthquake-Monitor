@@ -13,7 +13,6 @@
     "reverse_geocoder==1.5.1",
     "shapely>=2.0.0"
   ]  
-  "requirements": ["websockets>=10.0"],
   "single_config_entry": false,
   "version": "1.4"
 }
