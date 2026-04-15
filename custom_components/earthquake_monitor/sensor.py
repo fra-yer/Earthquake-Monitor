@@ -106,8 +106,8 @@ def country_of_epicenter(lat: float, lon: float) -> str:
 
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
     """Set up the Earthquake Monitor sensor from a config entry."""
-    config = hass.data[DOMAIN][config_entry.entry_id]
-
+    config = hass.data[DOMAIN][config_entry.entry_id]["config"]
+    
     name = config.get("name", DEFAULT_NAME)
     center_latitude = config.get("center_latitude")
     center_longitude = config.get("center_longitude")
