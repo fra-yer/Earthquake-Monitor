@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version 1.3.2
+Version 1.4
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -28,6 +28,8 @@ The integration provides a Home Assistant sensor that includes:
 - distance from a configured reference point
 - bearing from the reference point
 - relative location such as `42.3 km SW of reference point`
+- country of epicenter
+- nearest city (population >25000) to epicenter
 
 
 The integration is intended for users who want a meaningful and stable “latest earthquake” entity in Home Assistant rather than observing a raw stream of feed updates in a web browser. It filters the feed and reports local earthquakes if they are within the configured radius around a reference point (typically, the user's home zone) and above the configured magnitude threshold. Stronger earthquakes outside the local radius are reported if they exceed a separate global threshold. Note that these will overwrite weaker local earthquakes. If this is not desired, set the global threshold to 10. 
@@ -43,7 +45,7 @@ This integration was inspired by the [**EMSC Earthquake** custom integration](ht
   Configuration settings are validated to only allow meaningful values. 
 
 - **Relative location information**
-  The sensor provides distance, bearing, and a readable relative location based on the configured reference point.
+  The sensor provides distance, bearing, and a readable relative location based on the configured reference point. Since v1.4 it also provides the country of the epicenter and the name of the nearest city to the epicenter.
 
 - **Map support**
   The sensor correctly implements the attributes Latitude and Longitude so that events can be displayed directly on Home Assistant map cards.
