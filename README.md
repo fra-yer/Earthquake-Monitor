@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version 1.4
+Version 1.4.0
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -87,7 +87,7 @@ Alternatively, the integration can be installed manually from this Github reposi
 
 ## Configuration
 
-All relevant parameters for the Earthquake Monitor can be set on the configuration page that appears automatically when the integration is started for the first time, or when the cog icon on the main page of the integration is clicked. See below for a detailed description of the individual parameters and their default values.
+All relevant parameters for the Earthquake Monitor can be set on the configuration page that appears automatically when the integration is started for the first time, or when the cog icon of an entity (on the main page of the integration) is clicked. See below for a detailed description of the individual parameters and their default values. You can set up more than one entity, which will provide independent sensors (e.g. for two different zones of interest). 
 
 <p align="center">
   <img src="docs/configuration.jpg" width="400">
@@ -95,7 +95,7 @@ All relevant parameters for the Earthquake Monitor can be set on the configurati
 
 ### Entity name
 
-The display name of the sensor entity created by the integration. Default is "Latest Earthquake" (or the equivalent in local translations). Keep it as the default unless you are not happy with this name. This field is only shown when the sensor is set up for the first time. 
+The display name of the sensor entity created by the integration. This field is only shown when the sensor is set up for the first time. Default is "Latest Earthquake" (or the equivalent in local translations). Keep it as the default unless you are not happy with this name. *If you create more than one entity, make sure you give them different names so you can tell them apart!*
 
 ### Reference latitude
 
@@ -193,19 +193,19 @@ If you are a native speaker of any other language that you want to see implement
 
 ## Known limitations
 
-- The current implementation focuses on practicality and robustness rather than a full multi-entity model.
-- The integration uses the EMSC feed as its only data source.
-- The integration depends on a WebSocket connection to the EMSC service.
+- The integration uses the EMSC feed as its only data source, and depends on a WebSocket connection to the EMSC service.
 - If the upstream feed becomes unavailable, no new earthquake data can be received. This can happen for a variety of reasons; e.g. the services were temporarily unavailable on April 16, 2026 from 08:00 to 12:00 CET due to mandatory electrical safety shutdown tests.
 - According to the website, the feed aims at "(near) Realtime Notification", but delays of a few minutes are normal, especially for weak earthquakes
 - In a few cases, earthquakes are reported with a longer delay (I observed up to 30 minutes delay). This is a limitation of the feed, not a bug in the integration. The sensor can only report earthquakes when they show up in the feed.
-- The sensor represents one current event only, not a list or history of earthquakes. Older events are shown in Activity of the entity, but only with its magnitude and timestamp (no rich attributes)
+- The sensor represents one current event per entity, not a list or history of earthquakes. Older events are shown in Activity of the entity, but only with its magnitude and timestamp (no rich attributes).
+- while more than one entity (sensor) can be configured, in practice it is best to limit the number to two or three.
 - Time formatting and wording may still be refined in future versions.
 
 
 ## Planned improvements
 
 This project may be extended in the future with:
+- improved websocket handling (only relevant for larger number of entities)
 - additional translations based on user requests and suggestions
 - more formats for "friendly" timestamps
 - additional diagnostics and system health information
