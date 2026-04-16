@@ -44,7 +44,7 @@ def get_city_geocoder():
     """Load city geocoder once."""
     return rg.RGeocoder(
         mode=2,
-        stream=io.StringIO(CITIES_CSV.read_text(encoding="utf-8")),
+        stream=io.StringIO(CITIES_CSV.read_text(encoding="utf-8-sig")),
     )
 
 
@@ -61,6 +61,12 @@ def get_countries():
         countries.append((name, geom))
 
     return countries
+
+
+def preload_geodata() -> None:
+    """Warm up cached geodata resources."""
+    get_countries()
+    get_city_geocoder()
 
 
 def distance_km_between(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
@@ -104,10 +110,19 @@ def country_of_epicenter(lat: float, lon: float) -> str:
     return "international waters"
 
 
+def lookup_geodata(lat: float, lon: float) -> tuple[str, str]:
+    """Return country and nearest city for an epicenter."""
+    country = country_of_epicenter(lat, lon)
+    city = nearest_city(lat, lon)
+    return country, city
+
+
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
     """Set up the Earthquake Monitor sensor from a config entry."""
     config = hass.data[DOMAIN][config_entry.entry_id]["config"]
-    
+
+    await hass.async_add_executor_job(preload_geodata)
+
     name = config.get("name", DEFAULT_NAME)
     center_latitude = config.get("center_latitude")
     center_longitude = config.get("center_longitude")
@@ -400,8 +415,10 @@ class EarthquakeMonitorSensor(RestoreSensor):
 
             if not passes_filter:
                 _LOGGER.debug(
-                    "Skipping event outside criteria: unid=%s action=%s mag=%s within_radius=%s "
+                    "[%s | %s] Skipping event outside criteria: unid=%s action=%s mag=%s within_radius=%s "
                     "min_mag=%s total_max_mag=%s region=%s time=%s lastupdate=%s",
+                    self._name,
+                    self._entry_id,
                     unid,
                     action,
                     mag,
@@ -425,8 +442,10 @@ class EarthquakeMonitorSensor(RestoreSensor):
 
             if not self.should_accept_event(unid, event_time):
                 _LOGGER.info(
-                    "Ignored update for older earthquake: current_unid=%s incoming_unid=%s "
-                    "current_time=%s incoming_time=%s action=%s mag=%s region=%s lastupdate=%s",
+                   "[%s | %s] Ignored update for older earthquake: current_unid=%s incoming_unid=%s "
+                   "current_time=%s incoming_time=%s action=%s mag=%s region=%s lastupdate=%s",
+                    self._name,
+                    self._entry_id,
                     self._current_unid,
                     unid,
                     self._current_event_time,
@@ -444,14 +463,10 @@ class EarthquakeMonitorSensor(RestoreSensor):
             relative_location = f"{distance_km} km {bearing_text} of reference point"
 
             try:
-                country = country_of_epicenter(lat, lon)
+                country, city = await self.hass.async_add_executor_job(lookup_geodata, lat, lon)
             except Exception as e:
-                _LOGGER.debug("Country lookup failed: %s", e)
+                _LOGGER.debug("Geodata lookup failed: %s", e)
                 country = "lookup failed"
-            try:
-                city = nearest_city(lat, lon)
-            except Exception as e:
-                _LOGGER.debug("Nearest city lookup failed: %s", e)
                 city = "lookup failed"
 
             self._state = mag
@@ -486,8 +501,10 @@ class EarthquakeMonitorSensor(RestoreSensor):
             self._current_lastupdate = lastupdate
 
             _LOGGER.info(
-                "Accepted earthquake event: unid=%s action=%s mag=%s time=%s lastupdate=%s "
+                "[%s | %s] Accepted earthquake event: unid=%s action=%s mag=%s time=%s lastupdate=%s "
                 "region=%s distance_km=%s bearing=%s depth=%s",
+                self._name,
+                self._entry_id,
                 unid,
                 action,
                 mag,
