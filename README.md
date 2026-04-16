@@ -199,6 +199,7 @@ If you are a native speaker of any other language that you want to see implement
 - In a few cases, earthquakes are reported with a longer delay (I observed up to 30 minutes delay). This is a limitation of the feed, not a bug in the integration. The sensor can only report earthquakes when they show up in the feed.
 - The sensor represents one current event per entity, not a list or history of earthquakes. Older events are shown in Activity of the entity, but only with its magnitude and timestamp (no rich attributes).
 - while more than one entity (sensor) can be configured, in practice it is best to limit the number to two or three.
+- determination of the country is a bit coarse and can miss islands
 - Time formatting and wording may still be refined in future versions.
 
 
