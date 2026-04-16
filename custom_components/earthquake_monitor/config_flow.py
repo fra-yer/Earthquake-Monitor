@@ -1,4 +1,4 @@
-# Version 1.3.1 by FOF, April 2026
+# Version 1.4.0 by FOF, April 2026
 # change-log: use earthquake_reference zone as default if it exists,
 # including HA-normalized entity IDs, OR fall back to zone.home
 
