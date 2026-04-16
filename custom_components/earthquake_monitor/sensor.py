@@ -36,7 +36,7 @@ ssl_executor = ThreadPoolExecutor(max_workers=1)
 # Paths relative to this file (sensor.py)
 INTEGRATION_DIR = Path(__file__).resolve().parent
 CITIES_CSV = INTEGRATION_DIR / "geodata" / "cities25000.csv"
-COUNTRIES_GEOJSON = INTEGRATION_DIR / "geodata" / "ne_110m_admin_0_countries.geojson"
+COUNTRIES_GEOJSON = INTEGRATION_DIR / "geodata" / "ne_10m_admin_0_countries.geojson"
 
 
 @lru_cache(maxsize=1)
