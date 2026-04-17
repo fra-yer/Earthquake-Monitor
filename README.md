@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version 1.4.0
+Version 1.4.1
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -41,8 +41,8 @@ This integration was inspired by the [**EMSC Earthquake** custom integration](ht
 - **Improved event selection logic**  
   The EMSC feed reports both *new* events and *updates* to older events. The Earthquake Monitor entity discriminates between these in its Action attribute, which is \`create\` for new events, or \`update\` for older events. If a newer earthquake has already been accepted, later updates to an older earthquake will be ignored. This prevents corrections to older events from overwriting the true latest event. Thus, the entity always provides the details (new or updated) of the latest recorded earthquake.
 
-- **Improved usability**
-  Configuration settings are validated to only allow meaningful values. 
+- **Improved configuration flow with validation of the user input**
+  Configuration settings provide defaults, and every user input is validated to only allow a meaningful value. 
 
 - **Relative location information**
   The sensor provides distance, bearing, and a readable relative location based on the configured reference point. Since v1.4 it also provides the country of the epicenter and the name of the nearest city to the epicenter.
@@ -53,7 +53,7 @@ This integration was inspired by the [**EMSC Earthquake** custom integration](ht
 - **Persistence across restarts**  
   The last accepted earthquake is restored after a restart of Home Assistant.
 
-- **Expanded translations and improved configuration flow with validation of the user input**
+- **Various translations**
   Available translations are listed below. 
 
 
@@ -107,15 +107,16 @@ Longitude of the point from which local distance and bearing are calculated. As 
 
 ### Local radius (km)
 
-The radius around the reference point within which earthquakes should be reported. If an "Earthquake Reference" zone exists, its radius will be used, otherwise a default of 100 km will apply. The maximum that can be set is 500 km.
+The radius around the reference point within which earthquakes are considered local and should be reported. If an "Earthquake Reference" zone exists, its radius will be used, otherwise a default of 100 km will apply. The maximum that can be set is 500 km.
 
 ### Minimum local magnitude
 
-The minimum magnitude required for a local earthquake to be reported. Values from 0 to 10 are accepted. Values lower than 3 represent earthquakes that are too weak to be felt by humans; thus, setting the minimum local magnitude to less than 3 will report many insignificant earthquakes, and should be avoided. Check the information about earthquake magnitudes below. The default value will be magnitude 2.5.
+The minimum magnitude required for a *local* earthquake to be reported. Values from 0 to 10 are accepted. Values lower than 3 represent earthquakes that are too weak to be felt by humans; thus, setting the minimum local magnitude to less than 3 will report many insignificant earthquakes, and should be avoided. Check the information about earthquake magnitudes below. The default value will be magnitude 2.5.
 
 ### Minimum magnitude for global earthquakes
 
-A second threshold that allows stronger earthquakes outside the local radius to be accepted as well. Values from 0 to 10 are accepted. Note that this global threshold cannot be set lower than the local minimum threshold. The default value is 8, which will only report very major earthquakes outside the local radius. *Set it to 10 if you do NOT want global earthquakes to be reported at all.*
+A second threshold that allows stronger earthquakes *outside the local radius* to be accepted as well. Values from 0 to 10 are accepted. Note that this global threshold cannot be set lower than the local minimum threshold. The default value is 8, which will only report very major earthquakes outside the local radius. 
+*Set it to 10 if you do NOT want global earthquakes to be reported at all.*
 
 
 ## Local radius vs global threshold
@@ -157,8 +158,10 @@ The sensor reports the raw geographical coordinates (attributes Latitude and Lon
 - Bearing deg: gives compass bearing from the reference point (where 0 is North, 90 is East, etc.)
 - Bearing text: gives the bearing from the reference point as text (e.g. "NW" for north-west)
 - Relative location: gives the location relative to the reference point (e.g. "24.4km NW of reference point")
+- Country: gives the country of the epicenter, for offshore earthquakes that cannot be assigned a country, it returns "international waters"
+- Nearest city: gives the city (with population >25000) closest to the epicenter
 
-Note that the Region attribute gives the Flinn-Engdahl region, a standardized geographic seismic zone name assigned from the latitude and longitude of an earthquake’s epicenter. This will, for example, show GREECE or NEAR N COAST OF PAPUA, INDONESIA. This attribute is *not a political boundary or a damage zone*. For example, two nearby quakes on opposite sides of a regional boundary may appear under different region names even if they are geographically close. Do not use this to assign the earthquake to a country!
+Note that the Region attribute gives the Flinn-Engdahl region, a standardized geographic seismic zone name assigned from the latitude and longitude of an earthquake’s epicenter. This will, for example, show GREECE or NEAR N COAST OF PAPUA, INDONESIA. This attribute is *not a political boundary or a damage zone*. For example, two nearby quakes on opposite sides of a regional boundary may appear under different region names even if they are geographically close. Do not use this Region attribute to assign the earthquake to a country. Instead, use the Country attribute.
 
 ## Persistence across restarts
 
