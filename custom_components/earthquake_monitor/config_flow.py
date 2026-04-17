@@ -1,6 +1,5 @@
-# Version 1.4.0 by FOF, April 2026
-# change-log: use earthquake_reference zone as default if it exists,
-# including HA-normalized entity IDs, OR fall back to zone.home
+# Version 1.4.1 by FOF, April 2026
+# change-log: no changes from 1.4.0
 
 from homeassistant import config_entries
 import voluptuous as vol
