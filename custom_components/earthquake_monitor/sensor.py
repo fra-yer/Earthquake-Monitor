@@ -87,13 +87,13 @@ def distance_km_between(lat1: float, lon1: float, lat2: float, lon2: float) -> f
 
 
 def nearest_city(lat: float, lon: float) -> str:
-    """Nearest city name, or 'none' if farther than 200 km."""
+    """Nearest city name, or 'none' if farther than 500 km."""
     result = get_city_geocoder().query([(lat, lon)])[0]
     city_lat = float(result["lat"])
     city_lon = float(result["lon"])
 
     distance = distance_km_between(lat, lon, city_lat, city_lon)
-    if distance > 200.0:
+    if distance > 500.0:
         return "none"
 
     return result.get("name", "Unknown")
