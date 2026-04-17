@@ -29,7 +29,7 @@ The integration provides a Home Assistant sensor that includes:
 - bearing from the reference point
 - relative location such as `42.3 km SW of reference point`
 - country of epicenter
-- nearest city (population >25000) to epicenter
+- nearest city (population >25000) to epicenter ("none" for very remote places or offshore points)
 
 
 The integration is intended for users who want a meaningful and stable “latest earthquake” entity in Home Assistant rather than observing a raw stream of feed updates in a web browser. It filters the feed and reports local earthquakes if they are within the configured radius around a reference point (typically, the user's home zone) and above the configured magnitude threshold. Stronger earthquakes outside the local radius are reported if they exceed a separate global threshold. Note that these will overwrite weaker local earthquakes. If this is not desired, set the global threshold to 10. 
@@ -42,7 +42,7 @@ This integration was inspired by the [**EMSC Earthquake** custom integration](ht
   The EMSC feed reports both *new* events and *updates* to older events. The Earthquake Monitor entity discriminates between these in its Action attribute, which is \`create\` for new events, or \`update\` for older events. If a newer earthquake has already been accepted, later updates to an older earthquake will be ignored. This prevents corrections to older events from overwriting the true latest event. Thus, the entity always provides the details (new or updated) of the latest recorded earthquake.
 
 - **Improved configuration flow with validation of the user input**
-  Configuration settings provide defaults, and every user input is validated to only allow a meaningful value. 
+  Configuration settings provide good defaults, and every user input is validated to only allow a meaningful value. 
 
 - **Relative location information**
   The sensor provides distance, bearing, and a readable relative location based on the configured reference point. Since v1.4 it also provides the country of the epicenter and the name of the nearest city to the epicenter.
@@ -159,7 +159,7 @@ The sensor reports the raw geographical coordinates (attributes Latitude and Lon
 - Bearing text: gives the bearing from the reference point as text (e.g. "NW" for north-west)
 - Relative location: gives the location relative to the reference point (e.g. "24.4km NW of reference point")
 - Country: gives the country of the epicenter, for offshore earthquakes that cannot be assigned a country, it returns "international waters"
-- Nearest city: gives the city (with population >25000) closest to the epicenter
+- Nearest city: gives the city (with population >25000) closest to the epicenter; returns "none" for very remote places or offshore points when the nearest city is more than 500 km away.
 
 Note that the Region attribute gives the Flinn-Engdahl region, a standardized geographic seismic zone name assigned from the latitude and longitude of an earthquake’s epicenter. This will, for example, show GREECE or NEAR N COAST OF PAPUA, INDONESIA. This attribute is *not a political boundary or a damage zone*. For example, two nearby quakes on opposite sides of a regional boundary may appear under different region names even if they are geographically close. Do not use this Region attribute to assign the earthquake to a country. Instead, use the Country attribute.
 
@@ -218,7 +218,7 @@ This project may be extended in the future with:
 ## Earthquake Magnitude
 The crust of the Earth is constantly stressed by tectonic forces. When this stress becomes great enough to rupture the crust, or to overcome the friction that prevents one block of crust from slipping past another, energy is released in the form of seismic waves. These waves travel through the ground and cause a ground-shaking "quaking" event when they reach the surface. Effects are strongest at the so called epicenter, which is the point on the Earth's surface directly above the point where the earthquake originates. The "strength" of an earthquake is described as its magnitude, which is an estimate of the energy released within the crust. There are different scales for earthquake magnitudes, based on different equations that derive the value from measurements of physical characteristics of a seismic wave, such as its timing, orientation, amplitude, frequency, and duration. For a more detailed description, see [this article on Wikipedia](https://en.wikipedia.org/wiki/Seismic_magnitude_scales). 
 
-The entity of Earthquake Monitor records the used scale for a specific earthquake in the Magtype attribute. The most common scales are the Richter scale, which is represented by Magtype ml ("local magnitude"), and the "moment magnitude" scale represented by Magtype mw. In particular, for very large earthquakes, moment magnitude gives the [most reliable estimate](https://www.usgs.gov/faqs/moment-magnitude-richter-scale-what-are-different-magnitude-scales-and-why-are-there-so-many?utm_source=chatgpt.com) of earthquake size. The Richter scale was designed for shallow, regional earthquakes. Therefore, seismologists often use the Moment Magnitude Scale (Magtype mw) to describe large quakes, as the original Richter scale becomes less accurate above magnitude 7.0. However, for general "felt" distances, the values remain comparable and differences are mainly of academic interest. This may be the reason that, although scientifically incorrect, Mw magnitudes are often referred to as "Richter scale" values in the general press. 
+The entity of Earthquake Monitor records the used scale for a specific earthquake in the Magtype attribute. The most common scales are the Richter scale, which is represented by Magtype ml ("local magnitude"), and the "moment magnitude" scale represented by Magtype mw. In particular, for very large earthquakes, moment magnitude gives the [most reliable estimate](https://www.usgs.gov/faqs/moment-magnitude-richter-scale-what-are-different-magnitude-scales-and-why-are-there-so-many?utm_source=chatgpt.com) of earthquake size. The Richter scale was designed for shallow, regional earthquakes. Therefore, seismologists often use the Moment Magnitude Scale to describe large quakes, as the original Richter scale becomes less accurate above magnitude 7.0. However, for general "felt" distances, the values remain comparable and differences are mainly of academic interest. This may be the reason that, although scientifically incorrect, Mw magnitudes are often referred to as "Richter scale" values in the general press. 
 
 All commonly used magnitude scales are logarithmic scales - this means that a difference of 1.0 in magnitude corresponds to about 10 times greater wave amplitude (ground shaking) and roughly 32 times more energy release. The shaking actually felt at the surface also depends on distance, depth, local geology, and building conditions. 
 
