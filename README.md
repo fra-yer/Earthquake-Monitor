@@ -32,7 +32,7 @@ The integration provides a Home Assistant sensor that includes:
 - nearest city (population >25000) to epicenter ("none" for very remote places or offshore points)
 
 
-The integration is intended for users who want a meaningful and stable “latest earthquake” entity in Home Assistant rather than observing a raw stream of feed updates in a web browser. It filters the feed and reports local earthquakes if they are within the configured radius around a reference point (typically, the user's home zone) and above the configured magnitude threshold. Stronger earthquakes outside the local radius are reported if they exceed a separate global threshold. Note that these will overwrite weaker local earthquakes. If this is not desired, set the global threshold to 10. 
+The integration is intended for users who want a meaningful and stable “latest earthquake” entity in Home Assistant rather than observing a raw stream of feed updates in a web browser. It filters the feed and reports local earthquakes if they are within the configured radius around a reference point (typically, the user's home zone) and above the configured magnitude threshold. Stronger earthquakes outside the local radius are reported if they exceed a separate global threshold. Note that these will overwrite weaker local earthquakes when only one entity is configured. If reporting global earthquakes is not desired, set the global threshold to 10. 
 
 This integration was inspired by the [**EMSC Earthquake** custom integration](https://github.com/febalci/ha_emsc_earthquake) by [febalci](https://github.com/febalci), but provides revised selection logic, improved usability, persistence, localization, and richer location metadata.
 
@@ -117,6 +117,10 @@ The minimum magnitude required for a *local* earthquake to be reported. Values f
 
 A second threshold that allows stronger earthquakes *outside the local radius* to be accepted as well. Values from 0 to 10 are accepted. Note that this global threshold cannot be set lower than the local minimum threshold. The default value is 8, which will only report very major earthquakes outside the local radius. 
 *Set it to 10 if you do NOT want global earthquakes to be reported at all.*
+
+### Useful advice
+- you can create separate entities to monitor local earthquakes at different reference points
+- you can cleanly separate major global earthquakes from smaller local earthquakes by setting up two separate entities. For example, set up a 'local' entity around your home zone, with a minimum local magnitude of 2.5 and minimum global magnitude of 10 (so, no global earthquakes will be reported in this entity), then set up an independent second 'global' entity with local *and* global minimum of magnitude 7.5
 
 
 ## Local radius vs global threshold
