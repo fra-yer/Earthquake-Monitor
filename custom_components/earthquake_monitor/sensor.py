@@ -2,7 +2,7 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.4.0 by FOF, April 2026
+# Version 1.4.1 by FOF, April 2026
 
 import asyncio
 import io
@@ -141,7 +141,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     )
 
     async_add_entities([sensor], True)
-    hass.loop.create_task(sensor.connect_to_websocket())
 
 
 class EarthquakeMonitorSensor(RestoreSensor):
@@ -163,6 +162,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
         self._state = None
         self._attributes: dict[str, Any] = {}
         self._ssl_context = None
+        self._ws_task = None
 
         self.center_latitude = float(center_latitude)
         self.center_longitude = float(center_longitude)
@@ -199,43 +199,59 @@ class EarthquakeMonitorSensor(RestoreSensor):
         """Return the icon for the sensor."""
         return "mdi:waveform"
 
+    @property
+    def should_poll(self) -> bool:
+        """This entity is updated via websocket."""
+        return False
+
     async def async_added_to_hass(self):
         """Restore the last accepted earthquake after HA restart."""
         await super().async_added_to_hass()
 
         last_sensor_data = await self.async_get_last_sensor_data()
-        if last_sensor_data is None:
-            return
+        if last_sensor_data is not None:
+            self._state = last_sensor_data.native_value
 
-        self._state = last_sensor_data.native_value
+            last_state = await self.async_get_last_state()
+            if last_state is not None:
+                self._attributes = dict(last_state.attributes)
 
-        last_state = await self.async_get_last_state()
-        if last_state is None:
-            return
+                self._current_unid = self._attributes.get("unid")
+                self._current_event_time = self.parse_emsc_datetime(
+                    self._attributes.get("time_utc_raw")
+                )
+                self._current_lastupdate = self.parse_emsc_datetime(
+                    self._attributes.get("lastupdate_utc_raw")
+                )
 
-        self._attributes = dict(last_state.attributes)
+        if self._ws_task is None or self._ws_task.done():
+            self._ws_task = asyncio.create_task(self.connect_to_websocket())
 
-        self._current_unid = self._attributes.get("unid")
-        self._current_event_time = self.parse_emsc_datetime(
-            self._attributes.get("time_utc_raw")
-        )
-        self._current_lastupdate = self.parse_emsc_datetime(
-            self._attributes.get("lastupdate_utc_raw")
-        )
+    async def async_will_remove_from_hass(self) -> None:
+        """Clean up when entity is removed from Home Assistant."""
+        if self._ws_task is not None:
+            self._ws_task.cancel()
+            try:
+                await self._ws_task
+            except asyncio.CancelledError:
+                pass
+            self._ws_task = None
+
+        await super().async_will_remove_from_hass()
 
     async def connect_to_websocket(self):
         """Connect to the EMSC WebSocket API and process messages."""
         while True:
             try:
                 self._ssl_context = await self.async_create_ssl_context()
-                _LOGGER.info("Connecting to WebSocket: %s", WEBSOCKET_URL)
+                _LOGGER.info("[%s | %s] Connecting to WebSocket: %s", self._name, self._entry_id, WEBSOCKET_URL)
 
                 async with websockets.connect(
                     WEBSOCKET_URL,
                     ssl=self._ssl_context,
                     ping_interval=PING_INTERVAL,
                 ) as websocket:
-                    _LOGGER.info("Connected to WebSocket. Listening for messages...")
+                    _LOGGER.info("[%s | %s] Connected to WebSocket. Listening for messages...", self._name, self._entry_id)
                     await self.listen_to_websocket(websocket)
 
             except Exception as e:
@@ -442,7 +458,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
 
             if not self.should_accept_event(unid, event_time):
                 _LOGGER.info(
-                   "[%s | %s] Ignored update for older earthquake: current_unid=%s incoming_unid=%s "
+                   "[%s | %s] Ignored older earthquake event ('update' or late-arriving 'create'): current_unid=%s incoming_unid=%s "
                    "current_time=%s incoming_time=%s action=%s mag=%s region=%s lastupdate=%s",
                     self._name,
                     self._entry_id,
