@@ -1,9 +1,9 @@
 {
-  "title": "Surveillance des Séismes",
+  "title": "Moniteur de Séismes",
   "config": {
     "step": {
       "user": {
-        "title": "Surveillance des Séismes",
+        "title": "Moniteur de Séismes",
         "description": "Définissez le point de référence et les seuils de magnitude pour la surveillance des séismes.",
         "data": {
           "name": "Nom de l'entité",
@@ -11,7 +11,8 @@
           "center_longitude": "Longitude du point de référence",
           "radius_km": "Rayon local (km)",
           "min_mag": "Magnitude minimale locale",
-          "total_max_mag": "Magnitude minimale pour les séismes hors du rayon local"
+          "total_max_mag": "Magnitude minimale pour les séismes hors du rayon local",
+          "reset_after_hours": "Durée du dernier événement (heures ; 0 = illimitée)"
         }
       }
     },
@@ -22,14 +23,15 @@
   "options": {
     "step": {
       "init": {
-        "title": "Options de Surveillance des Séismes",
+        "title": "Options du Moniteur de Séismes",
         "description": "Modifiez le point de référence et les seuils de magnitude pour la surveillance des séismes.",
         "data": {
           "center_latitude": "Latitude du point de référence",
           "center_longitude": "Longitude du point de référence",
           "radius_km": "Rayon local (km)",
           "min_mag": "Magnitude minimale locale",
-          "total_max_mag": "Magnitude minimale pour les séismes hors du rayon local"
+          "total_max_mag": "Magnitude minimale pour les séismes hors du rayon local",
+          "reset_after_hours": "Durée du dernier événement (heures ; 0 = illimitée)"
         }
       }
     },

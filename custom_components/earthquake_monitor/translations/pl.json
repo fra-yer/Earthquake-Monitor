@@ -11,7 +11,8 @@
           "center_longitude": "Długość geograficzna punktu odniesienia",
           "radius_km": "Promień lokalny (km)",
           "min_mag": "Minimalna magnituda lokalna",
-          "total_max_mag": "Minimalna magnituda dla trzęsień ziemi poza lokalnym promieniem"
+          "total_max_mag": "Minimalna magnituda dla trzęsień ziemi poza lokalnym promieniem",
+          "reset_after_hours": "Czas przechowywania ostatniego zdarzenia (godziny; 0 = bez ograniczenia)"
         }
       }
     },
@@ -29,7 +30,8 @@
           "center_longitude": "Długość geograficzna punktu odniesienia",
           "radius_km": "Promień lokalny (km)",
           "min_mag": "Minimalna magnituda lokalna",
-          "total_max_mag": "Minimalna magnituda dla trzęsień ziemi poza lokalnym promieniem"
+          "total_max_mag": "Minimalna magnituda dla trzęsień ziemi poza lokalnym promieniem",
+          "reset_after_hours": "Czas przechowywania ostatniego zdarzenia (godziny; 0 = bez ograniczenia)"
         }
       }
     },

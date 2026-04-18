@@ -11,7 +11,8 @@
           "center_longitude": "Referans noktasının boylamı",
           "radius_km": "Yerel yarıçap (km)",
           "min_mag": "En düşük yerel büyüklük",
-          "total_max_mag": "Yerel yarıçap dışındaki depremler için en düşük büyüklük"
+          "total_max_mag": "Yerel yarıçap dışındaki depremler için en düşük büyüklük",
+          "reset_after_hours": "Son olayın saklanma süresi (saat; 0 = süresiz)"
         }
       }
     },
@@ -29,7 +30,8 @@
           "center_longitude": "Referans noktasının boylamı",
           "radius_km": "Yerel yarıçap (km)",
           "min_mag": "En düşük yerel büyüklük",
-          "total_max_mag": "Yerel yarıçap dışındaki depremler için en düşük büyüklük"
+          "total_max_mag": "Yerel yarıçap dışındaki depremler için en düşük büyüklük",
+          "reset_after_hours": "Son olayın saklanma süresi (saat; 0 = süresiz)"
         }
       }
     },

@@ -11,7 +11,8 @@
           "center_longitude": "Longitud del punto de referencia",
           "radius_km": "Radio local (km)",
           "min_mag": "Magnitud mínima local",
-          "total_max_mag": "Magnitud mínima para terremotos fuera del radio local"
+          "total_max_mag": "Magnitud mínima para terremotos fuera del radio local",
+          "reset_after_hours": "Duración del último evento (horas; 0 = indefinida)"
         }
       }
     },
@@ -29,7 +30,8 @@
           "center_longitude": "Longitud del punto de referencia",
           "radius_km": "Radio local (km)",
           "min_mag": "Magnitud mínima local",
-          "total_max_mag": "Magnitud mínima para terremotos fuera del radio local"
+          "total_max_mag": "Magnitud mínima para terremotos fuera del radio local",
+          "reset_after_hours": "Duración del último evento (horas; 0 = indefinida)"
         }
       }
     },

@@ -11,7 +11,8 @@
           "center_longitude": "Lengtegraad van het referentiepunt",
           "radius_km": "Lokale straal (km)",
           "min_mag": "Minimale lokale magnitude",
-          "total_max_mag": "Minimale magnitude voor aardbevingen buiten de lokale straal"
+          "total_max_mag": "Minimale magnitude voor aardbevingen buiten de lokale straal",
+          "reset_after_hours": "Bewaarduur van de laatste gebeurtenis (uren; 0 = onbeperkt)"
         }
       }
     },
@@ -29,7 +30,8 @@
           "center_longitude": "Lengtegraad van het referentiepunt",
           "radius_km": "Lokale straal (km)",
           "min_mag": "Minimale lokale magnitude",
-          "total_max_mag": "Minimale magnitude voor aardbevingen buiten de lokale straal"
+          "total_max_mag": "Minimale magnitude voor aardbevingen buiten de lokale straal",
+          "reset_after_hours": "Bewaarduur van de laatste gebeurtenis (uren; 0 = onbeperkt)"
         }
       }
     },

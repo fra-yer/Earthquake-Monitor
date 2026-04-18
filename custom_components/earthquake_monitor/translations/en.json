@@ -11,7 +11,8 @@
           "center_longitude": "Reference longitude",
           "radius_km": "Local radius (km)",
           "min_mag": "Minimum local magnitude",
-          "total_max_mag": "Minimum magnitude for global earthquakes"
+          "total_max_mag": "Minimum magnitude for global earthquakes",
+          "reset_after_hours": "Lifetime of latest event (hours; 0 = indefinite)"
         }
       }
     },
@@ -29,7 +30,8 @@
           "center_longitude": "Reference longitude",
           "radius_km": "Local radius (km)",
           "min_mag": "Minimum local magnitude",
-          "total_max_mag": "Minimum magnitude for global earthquakes"
+          "total_max_mag": "Minimum magnitude for global earthquakes",
+          "reset_after_hours": "Lifetime of latest event (hours; 0 = indefinite)"
         }
       }
     },

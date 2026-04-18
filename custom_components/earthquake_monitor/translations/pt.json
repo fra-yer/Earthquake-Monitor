@@ -11,7 +11,8 @@
           "center_longitude": "Longitude do ponto de referência",
           "radius_km": "Raio local (km)",
           "min_mag": "Magnitude mínima local",
-          "total_max_mag": "Magnitude mínima para sismos fora do raio local"
+          "total_max_mag": "Magnitude mínima para sismos fora do raio local",
+          "reset_after_hours": "Duração do último evento (horas; 0 = indefinida)"
         }
       }
     },
@@ -29,7 +30,8 @@
           "center_longitude": "Longitude do ponto de referência",
           "radius_km": "Raio local (km)",
           "min_mag": "Magnitude mínima local",
-          "total_max_mag": "Magnitude mínima para sismos fora do raio local"
+          "total_max_mag": "Magnitude mínima para sismos fora do raio local",
+          "reset_after_hours": "Duração do último evento (horas; 0 = indefinida)"
         }
       }
     },

@@ -11,7 +11,8 @@
           "center_longitude": "Längengrad des Referenzpunkts",
           "radius_km": "Radius um den Referenzpunkt (km)",
           "min_mag": "Minimale lokale Magnitude",
-          "total_max_mag": "Minimale Magnitude für globale Erdbeben"
+          "total_max_mag": "Minimale Magnitude für globale Erdbeben",
+          "reset_after_hours": "Lebensdauer des letzten Ereignisses (Stunden; 0 = unbegrenzt)"
         }
       }
     },
@@ -29,7 +30,8 @@
           "center_longitude": "Längengrad des Referenzpunkts",
           "radius_km": "Radius um den Referenzpunkt (km)",
           "min_mag": "Minimale lokale Magnitude",
-          "total_max_mag": "Minimale Magnitude für globale Erdbeben"
+          "total_max_mag": "Minimale Magnitude für globale Erdbeben",
+          "reset_after_hours": "Lebensdauer des letzten Ereignisses (Stunden; 0 = unbegrenzt)"
         }
       }
     },
