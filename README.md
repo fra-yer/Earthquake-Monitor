@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version 1.4.1
+Version 1.5.0
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -38,22 +38,22 @@ This integration was inspired by the [**EMSC Earthquake** custom integration](ht
 
 **Main improvements include:**
 
-- **Improved event selection logic**  
+- **Improved event selection logic:**
   The EMSC feed reports both *new* events and *updates* to older events. The Earthquake Monitor entity discriminates between these in its Action attribute, which is \`create\` for new events, or \`update\` for older events. If a newer earthquake has already been accepted, later updates to an older earthquake will be ignored. This prevents corrections to older events from overwriting the true latest event. Thus, the entity always provides the details (new or updated) of the latest recorded earthquake.
 
-- **Improved configuration flow with validation of the user input**
+- **Improved configuration flow with validation of the user input:**
   Configuration settings provide good defaults, and every user input is validated to only allow a meaningful value. 
 
-- **Relative location information**
+- **Relative location information:**
   The sensor provides distance, bearing, and a readable relative location based on the configured reference point. Since v1.4 it also provides the country of the epicenter and the name of the nearest city to the epicenter.
 
-- **Map support**
+- **Map support:**
   The sensor correctly implements the attributes Latitude and Longitude so that events can be displayed directly on Home Assistant map cards.
 
-- **Persistence across restarts**  
+- **Persistence across restarts:**
   The last accepted earthquake is restored after a restart of Home Assistant.
 
-- **Various translations**
+- **Various translations:**
   Available translations are listed below. 
 
 
@@ -117,6 +117,11 @@ The minimum magnitude required for a *local* earthquake to be reported. Values f
 
 A second threshold that allows stronger earthquakes *outside the local radius* to be accepted as well. Values from 0 to 10 are accepted. Note that this global threshold cannot be set lower than the local minimum threshold. The default value is 8, which will only report very major earthquakes outside the local radius. 
 *Set it to 10 if you do NOT want global earthquakes to be reported at all.*
+
+### Lifetime of latest event
+
+This setting allows to keep the latest event for a defined amount of time, and then automatically "clear" the sensor. The default is 48 hours, which means that the sensor will clear two days after its last update. When this happens, the sensor will change its Status attribute from "active" to "cleared". 
+When the lifetime is set to 0, data of the last earthquake will never be cleared; this was the default behavior of older versions of the integration (before 1.5.0). 
 
 ### Useful advice
 - you can create separate entities to monitor local earthquakes at different reference points
@@ -201,7 +206,7 @@ If you are a native speaker of any other language that you want to see implement
 ## Known limitations
 
 - The integration uses the EMSC feed as its only data source, and depends on a WebSocket connection to the EMSC service.
-- If the upstream feed becomes unavailable, no new earthquake data can be received. This can happen for a variety of reasons; e.g. the services were temporarily unavailable on April 16, 2026 from 08:00 to 12:00 CET due to mandatory electrical safety shutdown tests.
+- If the upstream feed becomes unavailable, no new earthquake data can be received. This has occurred in the past for a variety of reasons, for example during mandatory electrical safety shutdown tests.
 - According to the website, the feed aims at "(near) Realtime Notification", but delays of a few minutes are normal, especially for weak earthquakes
 - In a few cases, earthquakes are reported with a longer delay (I observed up to 30 minutes delay). This is a limitation of the feed, not a bug in the integration. The sensor can only report earthquakes when they show up in the feed.
 - The sensor represents one current event per entity, not a list or history of earthquakes. Older events are shown in Activity of the entity, but only with its magnitude and timestamp (no rich attributes).
@@ -212,7 +217,6 @@ If you are a native speaker of any other language that you want to see implement
 ## Planned improvements
 
 This project may be extended in the future with:
-- improved websocket handling (only relevant for larger number of entities)
 - additional translations based on user requests and suggestions
 - more formats for "friendly" timestamps
 - additional diagnostics and system health information
