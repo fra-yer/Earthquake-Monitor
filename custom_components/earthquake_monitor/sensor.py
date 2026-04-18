@@ -2,7 +2,7 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.4.1 by FOF, April 2026
+# Version 1.5.0 by FÖF, April 2026
 
 import asyncio
 import io
@@ -129,6 +129,9 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     radius_km = config.get("radius_km")
     total_max_mag = config.get("total_max_mag")
     min_mag = config.get("min_mag")
+    reset_after_hours = 0
+# will be:   reset_after_hours = config.get("reset_after_hours", 0)
+
 
     sensor = EarthquakeMonitorSensor(
         entry_id=config_entry.entry_id,
@@ -138,6 +141,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
         radius_km=radius_km,
         min_mag=min_mag,
         total_max_mag=total_max_mag,
+        reset_after_hours=reset_after_hours,
     )
 
     async_add_entities([sensor], True)
@@ -155,6 +159,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
         radius_km: float,
         min_mag: float,
         total_max_mag: float,
+        reset_after_hours: float,
     ) -> None:
         """Initialize the sensor."""
         self._entry_id = entry_id
@@ -163,6 +168,8 @@ class EarthquakeMonitorSensor(RestoreSensor):
         self._attributes: dict[str, Any] = {}
         self._ssl_context = None
         self._ws_task = None
+        self.reset_after_hours = float(reset_after_hours)
+        self._clear_task = None
 
         self.center_latitude = float(center_latitude)
         self.center_longitude = float(center_longitude)
@@ -204,6 +211,61 @@ class EarthquakeMonitorSensor(RestoreSensor):
         """This entity is updated via websocket."""
         return False
 
+    def get_reference_clear_time(self) -> datetime | None:
+        """Return the timestamp used for auto-clear timing, preferring last update over origin time."""
+        if self._current_lastupdate is not None:
+            return self._current_lastupdate
+        return self._current_event_time
+
+    def clear_earthquake_state(self) -> None:
+        """Clear the current earthquake data."""
+        self._state = None
+        self._attributes = {"status": "cleared"}
+        self._current_unid = None
+        self._current_event_time = None
+        self._current_lastupdate = None
+        self.async_write_ha_state()
+
+    async def auto_clear_after_delay(self, delay_seconds: float) -> None:
+        """Clear the entity after a delay."""
+        try:
+            await asyncio.sleep(delay_seconds)
+            self.clear_earthquake_state()
+            _LOGGER.info(
+                "[%s | %s] Cleared earthquake entity after configured timeout",
+                self._name,
+                self._entry_id,
+            )
+        except asyncio.CancelledError:
+            raise
+
+    def schedule_auto_clear(self) -> None:
+        """Schedule auto-clear based on the configured timeout."""
+        if self._clear_task is not None:
+            self._clear_task.cancel()
+            self._clear_task = None
+
+        if self.reset_after_hours <= 0:
+            return
+
+        reference_time = self.get_reference_clear_time()
+        if reference_time is None:
+            return
+
+        clear_at = reference_time.timestamp() + (self.reset_after_hours * 3600)
+        delay_seconds = clear_at - datetime.now(timezone.utc).timestamp()
+
+        if delay_seconds <= 0:
+            self.clear_earthquake_state()
+            _LOGGER.info(
+                "[%s | %s] Cleared earthquake entity immediately because timeout had already elapsed",
+                self._name,
+                self._entry_id,
+            )
+            return
+
+        self._clear_task = asyncio.create_task(self.auto_clear_after_delay(delay_seconds))
+
     async def async_added_to_hass(self):
         """Restore the last accepted earthquake after HA restart."""
         await super().async_added_to_hass()
@@ -224,8 +286,17 @@ class EarthquakeMonitorSensor(RestoreSensor):
                     self._attributes.get("lastupdate_utc_raw")
                 )
 
+        # Backfill missing status for entities restored from older versions
+        # This is not necessary, but for good measure and consistency
+        if self._current_unid is not None and "status" not in self._attributes:
+            self._attributes["status"] = "active"
+
+        # Start websocket task
         if self._ws_task is None or self._ws_task.done():
             self._ws_task = asyncio.create_task(self.connect_to_websocket())
+
+        # Clear immediately if already expired, or schedule for later clearing.
+        self.schedule_auto_clear()
 
     async def async_will_remove_from_hass(self) -> None:
         """Clean up when entity is removed from Home Assistant."""
@@ -236,6 +307,14 @@ class EarthquakeMonitorSensor(RestoreSensor):
             except asyncio.CancelledError:
                 pass
             self._ws_task = None
+
+        if self._clear_task is not None:
+            self._clear_task.cancel()
+            try:
+                await self._clear_task
+            except asyncio.CancelledError:
+                pass
+            self._clear_task = None
 
         await super().async_will_remove_from_hass()
 
@@ -487,6 +566,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
 
             self._state = mag
             self._attributes = {
+                "status": "active", 
                 "action": action,
                 "unid": unid,
                 "time": event_time_local.strftime("%-d. %B %Y %H:%M:%S") if event_time_local else None,
@@ -532,6 +612,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 info.get("depth"),
             )
             self.async_write_ha_state()
+            self.schedule_auto_clear()
 
         except Exception as e:
             _LOGGER.error("Error processing WebSocket message: %s", e)
