@@ -1,5 +1,5 @@
-# Version 1.4.1 by FOF, April 2026
-# change-log: no changes from 1.4.0
+# Version 1.5.0 by FOF, April 2026
+# change-log: add setting for auto-clear as reset_after_hours
 
 from homeassistant import config_entries
 import voluptuous as vol
@@ -80,6 +80,9 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required("total_max_mag", default=8.0): vol.All(
                     vol.Coerce(float), vol.Range(min=0, max=10)
                 ),
+                vol.Required("reset_after_hours", default=48.0): vol.All(
+                    vol.Coerce(float), vol.Range(min=0, max=8760)
+                ),
             }
         )
 
@@ -147,6 +150,12 @@ class EarthquakeMonitorOptionsFlowHandler(config_entries.OptionsFlow):
                     default=self.config_entry.data.get("total_max_mag"),
                 ): vol.All(
                     vol.Coerce(float), vol.Range(min=0, max=10)
+                ),
+                vol.Required(
+                    "reset_after_hours",
+                    default=self.config_entry.data.get("reset_after_hours", 0.0),
+                ): vol.All(
+                    vol.Coerce(float), vol.Range(min=0, max=8760)
                 ),
             }
         )
