@@ -1,5 +1,5 @@
 # Version 1.5.0 by FOF, April 2026
-# change-log: add setting for auto-clear as reset_after_hours
+# change-log: add reset_after_hours setting and split initial setup into two steps
 
 from homeassistant import config_entries
 import voluptuous as vol
@@ -15,13 +15,14 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_PUSH
 
+    def __init__(self):
+        """Initialize the config flow."""
+        self._user_data = {}
+
     async def async_step_user(self, user_input=None):
-        """Handle the initial step."""
+        """Handle step 1: reference point and thresholds."""
         errors = {}
 
-        # Get the coordinates of defined zone or home zone as fallback
-        # Prefer a user-defined zone.earthquake_reference if it exists.
-        # Otherwise fall back to zone.home for coordinates only.
         reference_zone = (
             self.hass.states.get("zone.earthquake_reference")
             or self.hass.states.get("zone.earthquakereference")
@@ -49,18 +50,15 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         if default_longitude is not None:
             default_longitude = round(float(default_longitude), 5)
 
+        if default_radius_km is None:
+            default_radius_km = 100.0
+
         if user_input is not None:
-            # Check that the outside-radius threshold is not lower than the local threshold
             if user_input["total_max_mag"] < user_input["min_mag"]:
                 errors["base"] = "global_mag_lt_local_mag"
             else:
-                return self.async_create_entry(
-                    title=user_input.get("name", DEFAULT_NAME),
-                    data=user_input,
-                )
-
-        if default_radius_km is None:
-            default_radius_km = 100.0
+                self._user_data = dict(user_input)
+                return await self.async_step_retention()
 
         schema = vol.Schema(
             {
@@ -80,6 +78,26 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required("total_max_mag", default=8.0): vol.All(
                     vol.Coerce(float), vol.Range(min=0, max=10)
                 ),
+            }
+        )
+
+        return self.async_show_form(
+            step_id="user",
+            data_schema=schema,
+            errors=errors,
+        )
+
+    async def async_step_retention(self, user_input=None):
+        """Handle step 2: lifetime of latest event."""
+        if user_input is not None:
+            self._user_data.update(user_input)
+            return self.async_create_entry(
+                title=self._user_data.get("name", DEFAULT_NAME),
+                data=self._user_data,
+            )
+
+        schema = vol.Schema(
+            {
                 vol.Required("reset_after_hours", default=48.0): vol.All(
                     vol.Coerce(float), vol.Range(min=0, max=8760)
                 ),
@@ -87,7 +105,9 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
         return self.async_show_form(
-            step_id="user", data_schema=schema, errors=errors
+            step_id="retention",
+            data_schema=schema,
+            errors={},
         )
 
     @staticmethod
