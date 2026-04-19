@@ -90,7 +90,8 @@ Alternatively, the integration can be installed manually from this Github reposi
 All relevant parameters for the Earthquake Monitor can be set on the configuration page that appears automatically when the integration is started for the first time, or when the cog icon of an entity (on the main page of the integration) is clicked. See below for a detailed description of the individual parameters and their default values. You can set up more than one entity, which will provide independent sensors within Home Assistant (e.g. for two different zones of interest). Note that the initial configuration is split into two screens - the first is for the configuration of the reference point and criteria for reporting earthquakes, while the second is for setting the lifetime of the latest event.
 
 <p align="center">
-  <img src="docs/configuration.jpg" width="400">
+  <img src="docs/configuration1.jpg" width="400">
+  <img src="docs/configuration2.jpg" width="400"
 </p>
 
 ### Entity name
@@ -200,7 +201,7 @@ If you chose a different name for the entity during the initial configuration, u
 
 ## Translations
 
-At the time of initial publishing, the Earthquake Monitor is available in 12 languages. These were selected to provide a broad coverage of potential users - both in terms of earthquake relevance and Home Assistant user base. In particular, Earthquake Monitor is currently available in **English, German, Greek, Spanish, French, Italian, Dutch, Japanese, Polish, Portuguese, Brazilian Portuguese, and Turkish**. Except for the first four, I do not speak these languages and the translations were created with the help of AI (ChatGPT GPT 5.4 Thinking). If you are a native speaker of any of these languages and find a mistake, please notify me so I can correct it. 
+The Earthquake Monitor is currently localized in 13 languages. These were selected to provide a broad coverage of potential users - both in terms of earthquake relevance and Home Assistant user base. In particular, the available languages are  **English, German, Greek, Spanish, French, Italian, Dutch, Japanese, Polish, Portuguese, Brazilian Portuguese, Turkish and Ukrainian**. Except for the first four, I do not speak these languages and the translations were created with the help of AI (ChatGPT GPT 5.4 Thinking). If you are a native speaker of any of these languages and find a mistake, please notify me so I can correct it. 
 If you are a native speaker of any other language that you want to see implemented, please contact me, too.
 
 ## Known limitations
