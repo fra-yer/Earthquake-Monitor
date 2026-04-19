@@ -1,5 +1,5 @@
 # Version 1.5.1 by FOF, April 2026
-# change-log: bugfix for entities losing their name after restart/restore
+# change-log: bugfix for entities losing their custom name after options update and restart
 
 from homeassistant import config_entries
 import voluptuous as vol
