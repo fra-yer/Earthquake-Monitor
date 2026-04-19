@@ -2,7 +2,7 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.5.0 by FÖF, April 2026
+# Version 1.5.1 by FOF, April 2026
 
 import asyncio
 import io
@@ -564,7 +564,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
 
             self._state = mag
             self._attributes = {
-                "status": "active", 
+                "status": "active",
                 "action": action,
                 "unid": unid,
                 "time": event_time_local.strftime("%-d. %B %Y %H:%M:%S") if event_time_local else None,
