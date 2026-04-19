@@ -123,7 +123,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
 
     await hass.async_add_executor_job(preload_geodata)
 
-    name = config.get("name", DEFAULT_NAME)
+    name = config.get("name") or config_entry.title or DEFAULT_NAME
     center_latitude = config.get("center_latitude")
     center_longitude = config.get("center_longitude")
     radius_km = config.get("radius_km")
