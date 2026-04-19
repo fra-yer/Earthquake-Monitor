@@ -11,8 +11,14 @@
           "center_longitude": "Referans noktasının boylamı",
           "radius_km": "Yerel yarıçap (km)",
           "min_mag": "En düşük yerel büyüklük",
-          "total_max_mag": "Yerel yarıçap dışındaki depremler için en düşük büyüklük",
-          "reset_after_hours": "Son olayın saklanma süresi (saat; 0 = süresiz)"
+          "total_max_mag": "Yerel yarıçap dışındaki depremler için en düşük büyüklük"
+        }
+      },
+      "retention": {
+        "title": "Deprem İzleyici",
+        "description": "Son olayın ne kadar süre görünür kalacağını ayarlayın (0 = süresiz).",
+        "data": {
+          "reset_after_hours": "Son olayın saklanma süresi (saat)"
         }
       }
     },
@@ -23,7 +29,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "Deprem İzleyici seçenekleri",
+        "title": "Deprem İzleyici",
         "description": "Referans noktasını ve deprem takibi için büyüklük eşiklerini değiştirin.",
         "data": {
           "center_latitude": "Referans noktasının enlemi",
@@ -31,7 +37,7 @@
           "radius_km": "Yerel yarıçap (km)",
           "min_mag": "En düşük yerel büyüklük",
           "total_max_mag": "Yerel yarıçap dışındaki depremler için en düşük büyüklük",
-          "reset_after_hours": "Son olayın saklanma süresi (saat; 0 = süresiz)"
+          "reset_after_hours": "Son olayın saklanma süresi (saat)"
         }
       }
     },

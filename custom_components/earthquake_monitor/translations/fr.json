@@ -11,8 +11,14 @@
           "center_longitude": "Longitude du point de référence",
           "radius_km": "Rayon local (km)",
           "min_mag": "Magnitude minimale locale",
-          "total_max_mag": "Magnitude minimale pour les séismes hors du rayon local",
-          "reset_after_hours": "Durée du dernier événement (heures ; 0 = illimitée)"
+          "total_max_mag": "Magnitude minimale pour les séismes hors du rayon local"
+        }
+      },
+      "retention": {
+        "title": "Moniteur de Séismes",
+        "description": "Définissez combien de temps le dernier événement doit rester visible (0 = illimité).",
+        "data": {
+          "reset_after_hours": "Durée du dernier événement (heures)"
         }
       }
     },
@@ -23,7 +29,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "Options du Moniteur de Séismes",
+        "title": "Moniteur de Séismes",
         "description": "Modifiez le point de référence et les seuils de magnitude pour la surveillance des séismes.",
         "data": {
           "center_latitude": "Latitude du point de référence",
@@ -31,7 +37,7 @@
           "radius_km": "Rayon local (km)",
           "min_mag": "Magnitude minimale locale",
           "total_max_mag": "Magnitude minimale pour les séismes hors du rayon local",
-          "reset_after_hours": "Durée du dernier événement (heures ; 0 = illimitée)"
+          "reset_after_hours": "Durée du dernier événement (heures)"
         }
       }
     },

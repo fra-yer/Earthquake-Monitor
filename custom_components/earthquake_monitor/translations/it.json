@@ -11,8 +11,14 @@
           "center_longitude": "Longitudine del punto di riferimento",
           "radius_km": "Raggio locale (km)",
           "min_mag": "Magnitudo minima locale",
-          "total_max_mag": "Magnitudo minima per terremoti fuori dal raggio locale",
-          "reset_after_hours": "Durata dell'ultimo evento (ore; 0 = illimitata)"
+          "total_max_mag": "Magnitudo minima per terremoti fuori dal raggio locale"
+        }
+      },
+      "retention": {
+        "title": "Monitor Terremoti",
+        "description": "Imposta per quanto tempo l'ultimo evento deve rimanere visibile (0 = illimitato).",
+        "data": {
+          "reset_after_hours": "Durata dell'ultimo evento (ore)"
         }
       }
     },
@@ -23,7 +29,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "Opzioni del Monitor Terremoti",
+        "title": "Monitor Terremoti",
         "description": "Modifica il punto di riferimento e le soglie di magnitudo per il monitoraggio dei terremoti.",
         "data": {
           "center_latitude": "Latitudine del punto di riferimento",
@@ -31,7 +37,7 @@
           "radius_km": "Raggio locale (km)",
           "min_mag": "Magnitudo minima locale",
           "total_max_mag": "Magnitudo minima per terremoti fuori dal raggio locale",
-          "reset_after_hours": "Durata dell'ultimo evento (ore; 0 = illimitata)"
+          "reset_after_hours": "Durata dell'ultimo evento (ore)"
         }
       }
     },

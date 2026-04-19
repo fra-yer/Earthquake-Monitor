@@ -11,8 +11,14 @@
           "center_longitude": "Reference longitude",
           "radius_km": "Local radius (km)",
           "min_mag": "Minimum local magnitude",
-          "total_max_mag": "Minimum magnitude for global earthquakes",
-          "reset_after_hours": "Lifetime of latest event (hours; 0 = indefinite)"
+          "total_max_mag": "Minimum magnitude for global earthquakes"
+        }
+      },
+      "retention": {
+        "title": "Earthquake Monitor",
+        "description": "Configure how long the latest event should remain visible (0 = indefinite).",
+        "data": {
+          "reset_after_hours": "Lifetime of latest event (hours)"
         }
       }
     },
@@ -23,7 +29,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "Earthquake Monitor options",
+        "title": "Earthquake Monitor",
         "description": "Adjust the reference point and earthquake thresholds.",
         "data": {
           "center_latitude": "Reference latitude",
@@ -31,7 +37,7 @@
           "radius_km": "Local radius (km)",
           "min_mag": "Minimum local magnitude",
           "total_max_mag": "Minimum magnitude for global earthquakes",
-          "reset_after_hours": "Lifetime of latest event (hours; 0 = indefinite)"
+          "reset_after_hours": "Lifetime of latest event (hours)"
         }
       }
     },

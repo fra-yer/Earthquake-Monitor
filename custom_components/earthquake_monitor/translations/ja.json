@@ -11,8 +11,14 @@
           "center_longitude": "基準点の経度",
           "radius_km": "ローカル半径 (km)",
           "min_mag": "ローカル地震の最小マグニチュード",
-          "total_max_mag": "ローカル半径外の地震に対する最小マグニチュード",
-          "reset_after_hours": "最新イベントの保持時間（時間、0 = 無期限）"
+          "total_max_mag": "ローカル半径外の地震に対する最小マグニチュード"
+        }
+      },
+      "retention": {
+        "title": "地震モニター",
+        "description": "最新のイベントをどのくらい表示したままにするかを設定します（0 = 無期限）。",
+        "data": {
+          "reset_after_hours": "最新イベントの保持時間（時間）"
         }
       }
     },
@@ -23,7 +29,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "地震モニターのオプション",
+        "title": "地震モニター",
         "description": "基準点と地震監視のためのマグニチュードしきい値を変更します。",
         "data": {
           "center_latitude": "基準点の緯度",
@@ -31,7 +37,7 @@
           "radius_km": "ローカル半径 (km)",
           "min_mag": "ローカル地震の最小マグニチュード",
           "total_max_mag": "ローカル半径外の地震に対する最小マグニチュード",
-          "reset_after_hours": "最新イベントの保持時間（時間、0 = 無期限）"
+          "reset_after_hours": "最新イベントの保持時間（時間）"
         }
       }
     },

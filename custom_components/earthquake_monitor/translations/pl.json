@@ -11,8 +11,14 @@
           "center_longitude": "Długość geograficzna punktu odniesienia",
           "radius_km": "Promień lokalny (km)",
           "min_mag": "Minimalna magnituda lokalna",
-          "total_max_mag": "Minimalna magnituda dla trzęsień ziemi poza lokalnym promieniem",
-          "reset_after_hours": "Czas przechowywania ostatniego zdarzenia (godziny; 0 = bez ograniczenia)"
+          "total_max_mag": "Minimalna magnituda dla trzęsień ziemi poza lokalnym promieniem"
+        }
+      },
+      "retention": {
+        "title": "Monitor Trzęsień Ziemi",
+        "description": "Ustaw, jak długo ostatnie zdarzenie ma pozostać widoczne (0 = bez ograniczenia).",
+        "data": {
+          "reset_after_hours": "Czas przechowywania ostatniego zdarzenia (godziny)"
         }
       }
     },
@@ -31,7 +37,7 @@
           "radius_km": "Promień lokalny (km)",
           "min_mag": "Minimalna magnituda lokalna",
           "total_max_mag": "Minimalna magnituda dla trzęsień ziemi poza lokalnym promieniem",
-          "reset_after_hours": "Czas przechowywania ostatniego zdarzenia (godziny; 0 = bez ograniczenia)"
+          "reset_after_hours": "Czas przechowywania ostatniego zdarzenia (godziny)"
         }
       }
     },

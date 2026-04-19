@@ -11,8 +11,14 @@
           "center_longitude": "Longitud del punto de referencia",
           "radius_km": "Radio local (km)",
           "min_mag": "Magnitud mínima local",
-          "total_max_mag": "Magnitud mínima para terremotos fuera del radio local",
-          "reset_after_hours": "Duración del último evento (horas; 0 = indefinida)"
+          "total_max_mag": "Magnitud mínima para terremotos fuera del radio local"
+        }
+      },
+      "retention": {
+        "title": "Monitor de Terremotos",
+        "description": "Define cuánto tiempo debe permanecer visible el último evento (0 = indefinido).",
+        "data": {
+          "reset_after_hours": "Duración del último evento (horas)"
         }
       }
     },
@@ -23,7 +29,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "Opciones del Monitor de Terremotos",
+        "title": "Monitor de Terremotos",
         "description": "Ajusta el punto de referencia y los umbrales de magnitud para el seguimiento de terremotos.",
         "data": {
           "center_latitude": "Latitud del punto de referencia",
@@ -31,7 +37,7 @@
           "radius_km": "Radio local (km)",
           "min_mag": "Magnitud mínima local",
           "total_max_mag": "Magnitud mínima para terremotos fuera del radio local",
-          "reset_after_hours": "Duración del último evento (horas; 0 = indefinida)"
+          "reset_after_hours": "Duración del último evento (horas)"
         }
       }
     },

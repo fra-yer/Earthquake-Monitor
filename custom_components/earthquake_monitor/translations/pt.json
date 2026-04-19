@@ -11,8 +11,14 @@
           "center_longitude": "Longitude do ponto de referência",
           "radius_km": "Raio local (km)",
           "min_mag": "Magnitude mínima local",
-          "total_max_mag": "Magnitude mínima para sismos fora do raio local",
-          "reset_after_hours": "Duração do último evento (horas; 0 = indefinida)"
+          "total_max_mag": "Magnitude mínima para sismos fora do raio local"
+        }
+      },
+      "retention": {
+        "title": "Monitor de Sismos",
+        "description": "Defina durante quanto tempo o último evento deve permanecer visível (0 = indefinido).",
+        "data": {
+          "reset_after_hours": "Duração do último evento (horas)"
         }
       }
     },
@@ -31,7 +37,7 @@
           "radius_km": "Raio local (km)",
           "min_mag": "Magnitude mínima local",
           "total_max_mag": "Magnitude mínima para sismos fora do raio local",
-          "reset_after_hours": "Duração do último evento (horas; 0 = indefinida)"
+          "reset_after_hours": "Duração do último evento (horas)"
         }
       }
     },

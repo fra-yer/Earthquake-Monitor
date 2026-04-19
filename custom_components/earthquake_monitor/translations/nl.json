@@ -11,8 +11,14 @@
           "center_longitude": "Lengtegraad van het referentiepunt",
           "radius_km": "Lokale straal (km)",
           "min_mag": "Minimale lokale magnitude",
-          "total_max_mag": "Minimale magnitude voor aardbevingen buiten de lokale straal",
-          "reset_after_hours": "Bewaarduur van de laatste gebeurtenis (uren; 0 = onbeperkt)"
+          "total_max_mag": "Minimale magnitude voor aardbevingen buiten de lokale straal"
+        }
+      },
+      "retention": {
+        "title": "Aardbevingsmonitor",
+        "description": "Stel in hoe lang de laatste gebeurtenis zichtbaar moet blijven (0 = onbeperkt).",
+        "data": {
+          "reset_after_hours": "Bewaarduur van de laatste gebeurtenis (uren)"
         }
       }
     },
@@ -23,7 +29,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "Opties voor Aardbevingsmonitor",
+        "title": "Aardbevingsmonitor",
         "description": "Pas het referentiepunt en de magnitudedrempels voor het volgen van aardbevingen aan.",
         "data": {
           "center_latitude": "Breedtegraad van het referentiepunt",
@@ -31,7 +37,7 @@
           "radius_km": "Lokale straal (km)",
           "min_mag": "Minimale lokale magnitude",
           "total_max_mag": "Minimale magnitude voor aardbevingen buiten de lokale straal",
-          "reset_after_hours": "Bewaarduur van de laatste gebeurtenis (uren; 0 = onbeperkt)"
+          "reset_after_hours": "Bewaarduur van de laatste gebeurtenis (uren)"
         }
       }
     },
