@@ -132,9 +132,11 @@ class EarthquakeMonitorOptionsFlowHandler(config_entries.OptionsFlow):
                 # Deliberately store updated settings back into config entry data
                 # rather than splitting them into data/options, to keep one single
                 # source of truth for this small integration.
+
                 self.hass.config_entries.async_update_entry(
                     self.config_entry, data=user_input
                 )
+                await self.hass.config_entries.async_reload(self.config_entry.entry_id)
                 return self.async_create_entry(
                     title=self.config_entry.title, data=user_input
                 )

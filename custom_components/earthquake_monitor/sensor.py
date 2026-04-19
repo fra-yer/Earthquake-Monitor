@@ -129,9 +129,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     radius_km = config.get("radius_km")
     total_max_mag = config.get("total_max_mag")
     min_mag = config.get("min_mag")
-    reset_after_hours = 0
-# will be:   reset_after_hours = config.get("reset_after_hours", 0)
-
+    reset_after_hours = config.get("reset_after_hours", 0)
 
     sensor = EarthquakeMonitorSensor(
         entry_id=config_entry.entry_id,
