@@ -1,5 +1,5 @@
-# Version 1.5.0 by FOF, April 2026
-# change-log: add reset_after_hours setting and split initial setup into two steps
+# Version 1.5.1 by FOF, April 2026
+# change-log: bugfix for entities losing their name after restart/restore
 
 from homeassistant import config_entries
 import voluptuous as vol
@@ -133,12 +133,14 @@ class EarthquakeMonitorOptionsFlowHandler(config_entries.OptionsFlow):
                 # rather than splitting them into data/options, to keep one single
                 # source of truth for this small integration.
 
+                new_data = {**self.config_entry.data, **user_input}
+
                 self.hass.config_entries.async_update_entry(
-                    self.config_entry, data=user_input
+                    self.config_entry, data=new_data
                 )
                 await self.hass.config_entries.async_reload(self.config_entry.entry_id)
                 return self.async_create_entry(
-                    title=self.config_entry.title, data=user_input
+                    title=self.config_entry.title, data={}
                 )
 
         schema = vol.Schema(
