@@ -87,7 +87,7 @@ Alternatively, the integration can be installed manually from this Github reposi
 
 ## Configuration
 
-All relevant parameters for the Earthquake Monitor can be set on the configuration page that appears automatically when the integration is started for the first time, or when the cog icon of an entity (on the main page of the integration) is clicked. See below for a detailed description of the individual parameters and their default values. You can set up more than one entity, which will provide independent sensors within Home Assistant (e.g. for two different zones of interest). Note that the initial configuration is split into two screens - the first is for the configuration of the reference point and criteria for reporting earthquakes, while the second is for setting the lifetime of the latest event.
+All relevant parameters for the Earthquake Monitor can be set on the configuration page that appears automatically when the integration is started for the first time, or when the cog icon of an entity (on the main page of the integration) is clicked. See below for a detailed description of the individual parameters and their default values. You can set up more than one entity, which will provide independent sensors within Home Assistant (e.g. for two different zones of interest). Note that the configuration of a *new* entity is split in two screens - the first is for the configuration of the reference point and criteria for reporting earthquakes, while the second is for setting the lifetime of the latest event. 
 
 <p align="center">
   <img src="docs/configuration1.jpg" width="350">
