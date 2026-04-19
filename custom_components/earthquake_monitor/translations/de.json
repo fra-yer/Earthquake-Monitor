@@ -11,19 +11,25 @@
           "center_longitude": "Längengrad des Referenzpunkts",
           "radius_km": "Radius um den Referenzpunkt (km)",
           "min_mag": "Minimale lokale Magnitude",
-          "total_max_mag": "Minimale Magnitude für globale Erdbeben",
-          "reset_after_hours": "Lebensdauer des letzten Ereignisses (Stunden; 0 = unbegrenzt)"
+          "total_max_mag": "Minimale Magnitude für globale Erdbeben"
+        }
+      },
+      "retention": {
+        "title": "Erdbeben-Monitor",
+        "description": "Stelle ein, wie lange das letzte Ereignis sichtbar bleiben soll (0 = unbegrenzt).",
+        "data": {
+          "reset_after_hours": "Lebensdauer des letzten Ereignisses (Stunden)"
         }
       }
     },
     "error": {
-      "global_mag_lt_local_mag": "Die minimale Magnitude für globale Erdbeben muss grösser oder gleich der minimalen lokalen Magnitude sein."
+      "global_mag_lt_local_mag": "Die minimale Magnitude für globale Erdbeben muss größer oder gleich der minimalen lokalen Magnitude sein."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Optionen für Erdbeben-Monitor",
+        "title": "Erdbeben-Monitor",
         "description": "Einstellungen für Referenzpunkt und Erdbeben-Schwellenwerte",
         "data": {
           "center_latitude": "Breitengrad des Referenzpunkts",
@@ -31,12 +37,12 @@
           "radius_km": "Radius um den Referenzpunkt (km)",
           "min_mag": "Minimale lokale Magnitude",
           "total_max_mag": "Minimale Magnitude für globale Erdbeben",
-          "reset_after_hours": "Lebensdauer des letzten Ereignisses (Stunden; 0 = unbegrenzt)"
+          "reset_after_hours": "Lebensdauer des letzten Ereignisses (Stunden)"
         }
       }
     },
     "error": {
-      "global_mag_lt_local_mag": "Die minimale Magnitude für globale Erdbeben muss grösser oder gleich der minimalen lokalen Magnitude sein."
+      "global_mag_lt_local_mag": "Die minimale Magnitude für globale Erdbeben muss größer oder gleich der minimalen lokalen Magnitude sein."
     }
   }
 }
