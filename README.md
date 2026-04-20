@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version 1.5.1
+Version 1.5.2
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -39,22 +39,22 @@ This integration was inspired by the [**EMSC Earthquake** custom integration](ht
 **Main improvements include:**
 
 - **Improved event selection logic:**
-  The EMSC feed reports both *new* events and *updates* to older events. The Earthquake Monitor entity discriminates between these in its Action attribute, which is \`create\` for new events, or \`update\` for older events. If a newer earthquake has already been accepted, later updates to an older earthquake will be ignored. This prevents corrections to older events from overwriting the true latest event. Thus, the entity always provides the details (new or updated) of the latest recorded earthquake.
+  The EMSC feed reports both *new* events and *updates* to older events. The Earthquake Monitor entity discriminates between these in its `action` attribute, which is \`create\` for new events, or \`update\` for older events. If a newer earthquake has already been accepted, later updates to an older earthquake will be ignored. This prevents corrections to older events from overwriting the true latest event. Thus, the entity always provides the details (new or updated) of the latest recorded earthquake.
 
 - **Improved configuration flow with validation of the user input:**
   Configuration settings provide good defaults, and every user input is validated to only allow a meaningful value. 
 
 - **Relative location information:**
-  The sensor provides distance, bearing, and a readable relative location based on the configured reference point. Since v1.4 it also provides the country of the epicenter and the name of the nearest city to the epicenter.
+  The sensor provides distance, bearing, and a readable relative location based on the configured reference point. For easier reference, it also provides the country of the epicenter and the name of the nearest city to the epicenter.
 
 - **Map support:**
-  The sensor correctly implements the attributes Latitude and Longitude so that events can be displayed directly on Home Assistant map cards.
+  The sensor correctly implements the attributes `latitude` and `longitude` so that events can be displayed directly on Home Assistant map cards.
 
 - **Persistence across restarts:**
   The last accepted earthquake is restored after a restart of Home Assistant.
 
 - **Various translations:**
-  Available translations are listed below. 
+  The currently available 13 translations are listed below. 
 
 
 ## Installation
@@ -108,11 +108,11 @@ Longitude of the point from which local distance and bearing are calculated. As 
 
 ### Local radius (km)
 
-The radius around the reference point within which earthquakes are considered local and should be reported. If an "Earthquake Reference" zone exists, its radius will be used, otherwise a default of 100 km will apply. The maximum that can be set is 500 km.
+The radius around the reference point within which earthquakes are considered local and should be reported. If an "Earthquake Reference" zone exists, its radius will be used, otherwise a default of 100 km will be suggested. The maximum that can be set is 500 km.
 
 ### Minimum local magnitude
 
-The minimum magnitude required for a *local* earthquake to be reported. Values from 0 to 10 are accepted. Values lower than 3 represent earthquakes that are too weak to be felt by humans; thus, setting the minimum local magnitude to less than 3 will report many insignificant earthquakes, and should be avoided. Check the information about earthquake magnitudes below. The default value will be magnitude 2.5.
+The minimum magnitude required for a *local* earthquake to be reported. Values from 0 to 10 are accepted. Values lower than 3 represent earthquakes that are too weak to be felt by humans; thus, setting the minimum local magnitude to much less than 3 will report many insignificant earthquakes, and should be avoided unless reporting of very weak quakes is desired. Check the information about earthquake magnitudes below. The default value is magnitude 2.5. 
 
 ### Minimum magnitude for global earthquakes
 
@@ -121,7 +121,7 @@ A second threshold that allows stronger earthquakes *outside the local radius* t
 
 ### Lifetime of latest event
 
-This setting allows to keep the latest event for a defined amount of time, and then automatically "clear" the sensor. The default is 48 hours, which means that the sensor will clear two days after its last update. When this happens, the sensor will change its Status attribute from "active" to "cleared". 
+This setting allows to keep the latest event for a defined amount of time, and then automatically "clear" the sensor. The default is 48 hours, which means that the sensor will clear two days after its last update. When this happens, the sensor will change its `status` attribute from "active" to "cleared". 
 When the lifetime is set to 0, data of the last earthquake will never be cleared; this was the default behavior of older versions of the integration (before 1.5.0). 
 
 ### Useful advice
@@ -149,29 +149,30 @@ An earthquake is also reported (and overwrites the latest local earthquake) if i
 ## Timestamps
 The sensor reports the time of the latest event in several forms, for maximum compatibility and flexibility. These include the raw timestamps as reported by the EMSC feed (both as local time and UTC time), and timestamps in a more user-friendly formatted way. In particular, the timestamps are as follows: 
 
-- Time - gives the time of the actual event, formatted in a user-friendly way
-- Time utc - as above, but for the time in UTC
-- Lastupdate - gives the time of the last update of the latest event, in a user-friendly way
-- Lastupdate utc - as above, but for the time in UTC
-- Time raw - original timestamp of the actual event
-- Time utc raw - as above, but for the time in UTC
-- Lastupdate raw - original timestamp of the last update
-- Lastupdate utc raw - as above, but for the time in UTC
+- `time` - gives the time of the actual event, formatted in a user-friendly way
+- `time_utc` - as above, but for the time in UTC
+- `lastupdate` - gives the time of the last update of the latest event, in a user-friendly way
+- `lastupdate_utc` - as above, but for the time in UTC
+- `time_raw` - original timestamp of the actual event
+- `time_utc_raw` - as above, but for the time in UTC
+- `lastupdate_raw` - original timestamp of the last update
+- `lastupdate_utc_raw` - as above, but for the time in UTC
 
 Important note: When you display these timestamps in the Details view of the entity itself, the "raw" time of the event, or its latest update, will be identical between UTC and local. This is not a bug in the integration, but the result of Home Assistant trying to be "helpful" and converting every timestamp to local time for display. Internally, the timestamps are correct and can be used, e.g. in an automation. The benefit of these "raw" timestamps is that they are automatically formatted in a way that fits to the language and location.  
 
 ## Location of an earthquake
 
-The sensor reports the raw geographical coordinates (attributes Latitude and Longitude) and geographic location (attribute Region) it received from the EMSC feed. In addition, the integration calculates the following attributes that can be used for display or automations:
+The sensor reports the raw geographical coordinates (attributes `latitude` and `longitude`), depth (attribute `depth`) and geographic location (attribute `region`) it received from the EMSC feed. In addition, the integration calculates the following attributes that can be used for display or automations:
 
-- Distance km: gives the distance from the configured reference point in kilometers
-- Bearing deg: gives compass bearing from the reference point (where 0 is North, 90 is East, etc.)
-- Bearing text: gives the bearing from the reference point as text (e.g. "NW" for north-west)
-- Relative location: gives the location relative to the reference point (e.g. "24.4km NW of reference point")
-- Country: gives the country of the epicenter, for offshore earthquakes that cannot be assigned a country, it returns "international waters"
-- Nearest city: gives the city (with population >25000) closest to the epicenter; returns "none" for very remote places or offshore points when the nearest city is more than 500 km away.
+- `distance_km`: gives the distance from the configured reference point in kilometers
+- `bearing_deg`: gives compass bearing from the reference point (where 0 is North, 90 is East, etc.)
+- `bearing text`: gives the bearing from the reference point as text (e.g. "NW" for north-west)
+- `relative_location`: gives the location relative to the reference point (e.g. "24.4km NW of reference point")
+- `country`: gives the country of the epicenter, for offshore earthquakes that cannot be assigned a country, it returns "international waters"
+- `nearest_city`: gives the city (with population >25000) closest to the epicenter; returns "none" for very remote places or offshore points when the nearest city is more than 500 km away.
+- `within_radius`: indicates whether the epicenter is within the user-defined local radius
 
-Note that the Region attribute gives the Flinn-Engdahl region, a standardized geographic seismic zone name assigned from the latitude and longitude of an earthquake’s epicenter. This will, for example, show GREECE or NEAR N COAST OF PAPUA, INDONESIA. This attribute is *not a political boundary or a damage zone*. For example, two nearby quakes on opposite sides of a regional boundary may appear under different region names even if they are geographically close. Do not use this Region attribute to assign the earthquake to a country. Instead, use the Country attribute.
+Note that the `region` attribute gives the Flinn-Engdahl region, a standardized geographic seismic zone name assigned from the latitude and longitude of an earthquake’s epicenter. This will, for example, show GREECE or NEAR N COAST OF PAPUA, INDONESIA. This attribute is *not a political boundary or a damage zone*. For example, two nearby quakes on opposite sides of a regional boundary may appear under different region names even if they are geographically close. Do not use this `region` attribute to assign the earthquake to a country. Instead, use the `country` attribute.
 
 ## Persistence across restarts
 
@@ -185,7 +186,7 @@ This means:
 
 ## Map support
 
-The sensor includes the attributes latitude and longitude, which allow Home Assistant to directly display the earthquake event on the built-in Home Assistant Map Card. Note that these attributes are initially empty, until the first earthquake was recorded. In practice, this means that the entity of Earthquake Monitor will not show up in the visual editor of the Map Card before the first event is available. If you do not want to wait for the first earthquake, you can set up the card manually in the code editor, like so: 
+The sensor includes the attributes `latitude` and `longitude`, which allow Home Assistant to directly display the earthquake event on the built-in Home Assistant Map Card. Note that these attributes are initially empty, until the first earthquake was recorded. In practice, this means that the entity of Earthquake Monitor will not show up in the visual editor of the Map Card before the first event is available. If you do not want to wait for the first earthquake, you can set up the card manually in the code editor, like so: 
 
 ```yaml
 type: map
@@ -226,7 +227,7 @@ This project may be extended in the future with:
 ## Earthquake Magnitude and Intensity
 The crust of the Earth is constantly stressed by tectonic forces. When this stress becomes great enough to rupture the crust, or to overcome the friction that prevents one block of crust from slipping past another, energy is released in the form of seismic waves. These waves travel through the ground and cause a ground-shaking "quaking" event when they reach the surface. Effects are strongest at the so called epicenter, which is the point on the Earth's surface directly above the point where the earthquake originates. The "strength" of an earthquake is described as its magnitude, which is an estimate of the energy released within the crust. There are different scales for earthquake magnitudes, based on different equations that derive the value from measurements of physical characteristics of a seismic wave, such as its timing, orientation, amplitude, frequency, and duration. For a more detailed description, see [this article on Wikipedia](https://en.wikipedia.org/wiki/Seismic_magnitude_scales). 
 
-The entity of Earthquake Monitor records the used scale for a specific earthquake in the Magtype attribute. The most common scales are the [Richter scale](https://en.wikipedia.org/wiki/Richter_scale), which is represented by Magtype ml ("local magnitude"), and the ["Moment magnitude" scale](https://en.wikipedia.org/wiki/Moment_magnitude_scale) represented by Magtype mw. In particular, for very large earthquakes, moment magnitude gives the [most reliable estimate](https://www.usgs.gov/faqs/moment-magnitude-richter-scale-what-are-different-magnitude-scales-and-why-are-there-so-many?utm_source=chatgpt.com) of earthquake size. The Richter scale was designed for shallow, regional earthquakes. Therefore, seismologists often use the moment magnitude scale to describe large quakes, as the original Richter scale becomes less accurate above magnitude 7.0. For general "felt" distances, the values remain comparable and differences are mainly of academic interest. This may be the reason that, although scientifically incorrect, Mw magnitudes are often referred to as "Richter scale" values in the general press. 
+The Earthquake Monitor records both the magnitude (attribute `magnitude`) and the used scale (attribute `magtype`) for a specific earthquake. The most common scales are the [Richter scale](https://en.wikipedia.org/wiki/Richter_scale), which is represented by `magtype` ml ("local magnitude"), and the ["Moment magnitude" scale](https://en.wikipedia.org/wiki/Moment_magnitude_scale) represented by `magtype` mw. In particular, for very large earthquakes, moment magnitude gives the [most reliable estimate](https://www.usgs.gov/faqs/moment-magnitude-richter-scale-what-are-different-magnitude-scales-and-why-are-there-so-many?utm_source=chatgpt.com) of earthquake size. The Richter scale was designed for shallow, regional earthquakes. Therefore, seismologists often use the moment magnitude scale to describe large quakes, as the original Richter scale becomes less accurate above magnitude 7.0. For general "felt" distances, the values remain comparable and differences are mainly of academic interest. This may be the reason that, although scientifically incorrect, Mw magnitudes are often referred to as "Richter scale" values in the general press. 
 
 All commonly used magnitude scales are logarithmic scales - this means that a difference of 1.0 in magnitude corresponds to about 10 times greater wave amplitude (ground shaking) and roughly 32 times more energy release. The shaking actually felt at the surface also depends on distance, depth, local geology, and building conditions. 
 
