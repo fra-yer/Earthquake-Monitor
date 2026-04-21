@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version 1.5.2
+Version 1.6.0
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -124,6 +124,10 @@ A second threshold that allows stronger earthquakes *outside the local radius* t
 This setting allows to keep the latest event for a defined amount of time, and then automatically "clear" the sensor. The default is 48 hours, which means that the sensor will clear two days after its last update. When this happens, the sensor will change its `status` attribute from "active" to "cleared". 
 When the lifetime is set to 0, data of the last earthquake will never be cleared; this was the default behavior of older versions of the integration (before 1.5.0). 
 
+### Timestamp settings
+
+This setting allows to choose the formatting of the "user-friendly timestamp" from four different options: 22.04.2026 14:35:08, 22/04/2026 14:35:08, 04/22/2026 02:35:08 PM, and 2026-04-22 14:35:08. See below for a more detailed discussion of the timestamps. 
+
 ### Useful advice
 - you can create separate entities to monitor local earthquakes at different reference points
 - you can cleanly separate major global earthquakes from smaller local earthquakes by setting up two separate entities. For example, set up a 'local' entity around your home zone, with a minimum local magnitude of 2.5 and minimum global magnitude of 10 (so, no global earthquakes will be reported in this entity), then set up an independent second 'global' entity with local *and* global minimum of magnitude 7.5
@@ -147,11 +151,11 @@ An earthquake is also reported (and overwrites the latest local earthquake) if i
 
 
 ## Timestamps
-The sensor reports the time of the latest event in several forms, for maximum compatibility and flexibility. These include the raw timestamps as reported by the EMSC feed (both as local time and UTC time), and timestamps in a more user-friendly formatted way. In particular, the timestamps are as follows: 
+The sensor reports the time of the latest event in several forms, for maximum compatibility and flexibility. These include the raw timestamps as reported by the EMSC feed, both as local time and UTC time. In addition, it provides the timestamps in the format chosen in the configuration. In particular, the timestamps are as follows: 
 
-- `time` - gives the time of the actual event, formatted in a user-friendly way
+- `time` - gives the time of the actual event, as a string in the user-selected format
 - `time_utc` - as above, but for the time in UTC
-- `lastupdate` - gives the time of the last update of the latest event, in a user-friendly way
+- `lastupdate` - gives the time of the last update of the latest event, as a string in the user-selected format
 - `lastupdate_utc` - as above, but for the time in UTC
 - `time_raw` - original timestamp of the actual event
 - `time_utc_raw` - as above, but for the time in UTC
