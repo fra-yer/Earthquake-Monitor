@@ -7,12 +7,14 @@ from homeassistant import config_entries
 import voluptuous as vol
 from homeassistant.core import callback
 from homeassistant.const import CONF_LATITUDE, CONF_LONGITUDE
+from homeassistant.data_entry_flow import section
+from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig
 
 from .const import DOMAIN, DEFAULT_NAME
 
 
 def get_localized_default_name(hass) -> str:
-    """Return a localized default name for the earthquake entity."""
+    """Return a localized default name for the configured monitor instance"""
     language = hass.config.language.lower().replace("-", "_")
 
     localized_names = {
@@ -120,9 +122,11 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_retention(self, user_input=None):
-        """Handle step 2: lifetime of latest event."""
+        """Handle step 2: lifetime of latest event and user-defined timestamp format."""
         if user_input is not None:
-            self._user_data.update(user_input)
+            self._user_data["reset_after_hours"] = user_input["retention_settings"]["reset_after_hours"]
+            self._user_data["timestamp_format"] = user_input["timestamp_settings"]["timestamp_format"]
+
             return self.async_create_entry(
                 title=self._user_data.get("name", DEFAULT_NAME),
                 data=self._user_data,
@@ -130,8 +134,34 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         schema = vol.Schema(
             {
-                vol.Required("reset_after_hours", default=48.0): vol.All(
-                    vol.Coerce(float), vol.Range(min=0, max=8760)
+                vol.Required("retention_settings"): section(
+                    vol.Schema(
+                        {
+                            vol.Required("reset_after_hours", default=48.0): vol.All(
+                                vol.Coerce(float), vol.Range(min=0, max=8760)
+                            ),
+                        }
+                    )
+                ),
+                vol.Required("timestamp_settings"): section(
+                    vol.Schema(
+                        {
+                            vol.Required(
+                                "timestamp_format",
+                                default="dmy_dot",
+                            ): SelectSelector(
+                                SelectSelectorConfig(
+                                    options=[
+                                        "dmy_dot",
+                                        "dmy_slash",
+                                        "mdy_slash_12h",
+                                        "ymd_dash",
+                                    ],
+                                    translation_key="timestamp_format",
+                                )
+                            ),
+                        }
+                    )
                 ),
             }
         )
@@ -146,74 +176,113 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry):
         """Get the options flow for this handler."""
-        return EarthquakeMonitorOptionsFlowHandler()
+        return EarthquakeMonitorOptionsFlowHandler(config_entry)
 
 
 class EarthquakeMonitorOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle options for the Earthquake Monitor integration."""
 
+    def __init__(self, config_entry):
+        """Initialize the options flow."""
+        self.config_entry = config_entry
+        self._user_data = dict(config_entry.data)
+
     async def async_step_init(self, user_input=None):
-        """Manage the options for the integration."""
+        """Manage step 1: reference point and thresholds."""
         errors = {}
 
         if user_input is not None:
-            # Check that the outside-radius threshold is not lower than the local threshold
             if user_input["total_max_mag"] < user_input["min_mag"]:
                 errors["base"] = "global_mag_lt_local_mag"
             else:
-                # Deliberately store updated settings back into config entry data
-                # rather than splitting them into data/options, to keep one single
-                # source of truth for this small integration.
-
-                new_data = {**self.config_entry.data, **user_input}
-
-                self.hass.config_entries.async_update_entry(
-                    self.config_entry, data=new_data
-                )
-                await self.hass.config_entries.async_reload(self.config_entry.entry_id)
-                return self.async_create_entry(
-                    title=self.config_entry.title, data={}
-                )
+                self._user_data.update(user_input)
+                return await self.async_step_retention()
 
         schema = vol.Schema(
             {
                 vol.Required(
                     "center_latitude",
                     default=self.config_entry.data.get("center_latitude"),
-                ): vol.All(
-                    vol.Coerce(float), vol.Range(min=-90, max=90)
-                ),
+                ): vol.All(vol.Coerce(float), vol.Range(min=-90, max=90)),
                 vol.Required(
                     "center_longitude",
                     default=self.config_entry.data.get("center_longitude"),
-                ): vol.All(
-                    vol.Coerce(float), vol.Range(min=-180, max=180)
-                ),
+                ): vol.All(vol.Coerce(float), vol.Range(min=-180, max=180)),
                 vol.Required(
                     "radius_km",
                     default=self.config_entry.data.get("radius_km"),
-                ): vol.All(
-                    vol.Coerce(float), vol.Range(min=0, min_included=False, max=500)
-                ),
+                ): vol.All(vol.Coerce(float), vol.Range(min=0, min_included=False, max=500)),
                 vol.Required(
                     "min_mag",
                     default=self.config_entry.data.get("min_mag"),
-                ): vol.All(
-                    vol.Coerce(float), vol.Range(min=0, max=10)
-                ),
+                ): vol.All(vol.Coerce(float), vol.Range(min=0, max=10)),
                 vol.Required(
                     "total_max_mag",
                     default=self.config_entry.data.get("total_max_mag"),
-                ): vol.All(
-                    vol.Coerce(float), vol.Range(min=0, max=10)
+                ): vol.All(vol.Coerce(float), vol.Range(min=0, max=10)),
+            }
+        )
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=schema,
+            errors=errors,
+        )
+
+    async def async_step_retention(self, user_input=None):
+        """Manage step 2: event retention and timestamp format."""
+        if user_input is not None:
+            self._user_data["reset_after_hours"] = user_input["retention_settings"]["reset_after_hours"]
+            self._user_data["timestamp_format"] = user_input["timestamp_settings"]["timestamp_format"]
+
+            self.hass.config_entries.async_update_entry(
+                self.config_entry,
+                data=self._user_data,
+            )
+            await self.hass.config_entries.async_reload(self.config_entry.entry_id)
+
+            return self.async_create_entry(
+                title=self.config_entry.title,
+                data={},
+            )
+
+        schema = vol.Schema(
+            {
+                vol.Required("retention_settings"): section(
+                    vol.Schema(
+                        {
+                            vol.Required(
+                                "reset_after_hours",
+                                default=self.config_entry.data.get("reset_after_hours", 48.0),
+                            ): vol.All(vol.Coerce(float), vol.Range(min=0, max=8760)),
+                        }
+                    )
                 ),
-                vol.Required(
-                    "reset_after_hours",
-                    default=self.config_entry.data.get("reset_after_hours", 0.0),
-                ): vol.All(
-                    vol.Coerce(float), vol.Range(min=0, max=8760)
+                vol.Required("timestamp_settings"): section(
+                    vol.Schema(
+                        {
+                            vol.Required(
+                                "timestamp_format",
+                                default=self.config_entry.data.get("timestamp_format", "dmy_dot"),
+                            ): SelectSelector(
+                                SelectSelectorConfig(
+                                    options=[
+                                        "dmy_dot",
+                                        "dmy_slash",
+                                        "mdy_slash_12h",
+                                        "ymd_dash",
+                                    ],
+                                    translation_key="timestamp_format",
+                                )
+                            ),
+                        }
+                    )
                 ),
             }
         )
 
-        return self.async_show_form(step_id="init", data_schema=schema, errors=errors)
+        return self.async_show_form(
+            step_id="retention",
+            data_schema=schema,
+            errors={},
+        )
