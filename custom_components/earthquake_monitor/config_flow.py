@@ -1,5 +1,7 @@
-# Version 1.5.1 by FOF, April 2026
-# change-log: bugfix for entities losing their custom name after options update and restart
+# Version 1.6.0 by FOF, April 2026
+# change-log: 
+#   add localized default names for new monitor instances
+#   add user-selectable timestamp format
 
 from homeassistant import config_entries
 import voluptuous as vol
@@ -7,6 +9,35 @@ from homeassistant.core import callback
 from homeassistant.const import CONF_LATITUDE, CONF_LONGITUDE
 
 from .const import DOMAIN, DEFAULT_NAME
+
+
+def get_localized_default_name(hass) -> str:
+    """Return a localized default name for the earthquake entity."""
+    language = hass.config.language.lower().replace("-", "_")
+
+    localized_names = {
+        "en": "Latest Earthquake",
+        "de": "Letztes Erdbeben",
+        "el": "Τελευταίος σεισμός",
+        "es": "Último terremoto",
+        "fr": "Dernier séisme",
+        "it": "Ultimo terremoto",
+        "nl": "Laatste aardbeving",
+        "ja": "最新の地震",
+        "pl": "Ostatnie trzęsienie ziemi",
+        "pt": "Último sismo",
+        "pt_br": "Último terremoto",
+        "tr": "Son deprem",
+        "uk": "Останній землетрус",
+    }
+
+    # Exact match first, e.g. pt_br
+    if language in localized_names:
+        return localized_names[language]
+
+    # Fallback to base language, e.g. pt from pt_pt
+    base_language = language.split("_")[0]
+    return localized_names.get(base_language, DEFAULT_NAME)
 
 
 class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -29,6 +60,7 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         )
         home_zone = self.hass.states.get("zone.home")
 
+        default_name = get_localized_default_name(self.hass)
         default_latitude = None
         default_longitude = None
         default_radius_km = None
@@ -62,7 +94,7 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         schema = vol.Schema(
             {
-                vol.Optional("name", default=DEFAULT_NAME): str,
+                vol.Optional("name", default=default_name): str,
                 vol.Required("center_latitude", default=default_latitude): vol.All(
                     vol.Coerce(float), vol.Range(min=-90, max=90)
                 ),
