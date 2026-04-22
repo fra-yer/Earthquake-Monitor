@@ -224,8 +224,6 @@ If you are a native speaker of any other language that you want to see implement
 
 This project may be extended in the future with:
 - additional translations based on user requests and suggestions
-- more formats for "friendly" timestamps
-- optional support for other earthquake data sources
 
 
 ## Earthquake Magnitude and Intensity
