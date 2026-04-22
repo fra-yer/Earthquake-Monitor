@@ -6,7 +6,7 @@
         "title": "Earthquake Monitor",
         "description": "Configure the reference point and earthquake thresholds.",
         "data": {
-          "name": "Entity name",
+          "name": "Name",
           "center_latitude": "Reference latitude",
           "center_longitude": "Reference longitude",
           "radius_km": "Local radius (km)",
@@ -16,9 +16,18 @@
       },
       "retention": {
         "title": "Earthquake Monitor",
-        "description": "Configure how long the latest event should remain visible (0 = indefinite).",
+        "description": "Configure event retention and timestamp display.",
         "data": {
-          "reset_after_hours": "Lifetime of latest event (hours)"
+          "reset_after_hours": "Lifetime of latest event (hours)",
+          "timestamp_format": "Timestamp format"
+        },
+        "sections": {
+          "retention_settings": {
+            "name": "Event retention"
+          },
+          "timestamp_settings": {
+            "name": "Timestamp format"
+          }
         }
       }
     },
@@ -36,13 +45,38 @@
           "center_longitude": "Reference longitude",
           "radius_km": "Local radius (km)",
           "min_mag": "Minimum local magnitude",
-          "total_max_mag": "Minimum magnitude for global earthquakes",
-          "reset_after_hours": "Lifetime of latest event (hours)"
+          "total_max_mag": "Minimum magnitude for global earthquakes"
+        }
+      },
+      "retention": {
+        "title": "Earthquake Monitor",
+        "description": "Configure event retention and timestamp display.",
+        "data": {
+          "reset_after_hours": "Lifetime of latest event (hours)",
+          "timestamp_format": "Timestamp format"
+        },
+        "sections": {
+          "retention_settings": {
+            "name": "Event retention"
+          },
+          "timestamp_settings": {
+            "name": "Timestamp format"
+          }
         }
       }
     },
     "error": {
       "global_mag_lt_local_mag": "Global override magnitude must be greater than or equal to local minimum magnitude."
+    }
+  },
+  "selector": {
+    "timestamp_format": {
+      "options": {
+        "dmy_dot": "22.04.2026 14:35:08",
+        "dmy_slash": "22/04/2026 14:35:08",
+        "mdy_slash_12h": "04/22/2026 02:35:08 PM",
+        "ymd_dash": "2026-04-22 14:35:08"
+      }
     }
   }
 }
