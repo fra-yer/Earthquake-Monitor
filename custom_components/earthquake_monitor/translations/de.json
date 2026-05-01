@@ -6,7 +6,7 @@
         "title": "Erdbeben-Monitor",
         "description": "Einstellungen für Referenzpunkt und Erdbeben-Schwellenwerte",
         "data": {
-          "name": "Name der Entität",
+          "name": "Name",
           "center_latitude": "Breitengrad des Referenzpunkts",
           "center_longitude": "Längengrad des Referenzpunkts",
           "radius_km": "Radius um den Referenzpunkt (km)",
@@ -16,9 +16,20 @@
       },
       "retention": {
         "title": "Erdbeben-Monitor",
-        "description": "Stelle ein, wie lange das letzte Ereignis sichtbar bleiben soll (0 = unbegrenzt).",
-        "data": {
-          "reset_after_hours": "Lebensdauer des letzten Ereignisses (Stunden)"
+        "description": "Stelle ein, wie lange das letzte Ereignis sichtbar bleiben soll (0 = unbegrenzt) und wie Zeitmarken angezeigt werden sollen.",
+        "sections": {
+          "retention_settings": {
+            "name": "Lebensdauer",
+            "data": {
+              "reset_after_hours": "Lebensdauer des letzten Ereignisses (Stunden)"
+            }
+          },
+          "timestamp_settings": {
+            "name": "Zeitmarken",
+            "data": {
+              "timestamp_format": "Format der Zeitmarken"
+            }
+          }
         }
       }
     },
@@ -36,13 +47,40 @@
           "center_longitude": "Längengrad des Referenzpunkts",
           "radius_km": "Radius um den Referenzpunkt (km)",
           "min_mag": "Minimale lokale Magnitude",
-          "total_max_mag": "Minimale Magnitude für globale Erdbeben",
-          "reset_after_hours": "Lebensdauer des letzten Ereignisses (Stunden)"
+          "total_max_mag": "Minimale Magnitude für globale Erdbeben"
+        }
+      },
+      "retention": {
+        "title": "Erdbeben-Monitor",
+        "description": "Stelle ein, wie lange das letzte Ereignis sichtbar bleiben soll (0 = unbegrenzt) und wie Zeitmarken angezeigt werden sollen.",
+        "sections": {
+          "retention_settings": {
+            "name": "Lebensdauer",
+            "data": {
+              "reset_after_hours": "Lebensdauer des letzten Ereignisses (Stunden)"
+            }
+          },
+          "timestamp_settings": {
+            "name": "Zeitmarken",
+            "data": {
+              "timestamp_format": "Format der Zeitmarken"
+            }
+          }
         }
       }
     },
     "error": {
       "global_mag_lt_local_mag": "Die minimale Magnitude für globale Erdbeben muss größer oder gleich der minimalen lokalen Magnitude sein."
+    }
+  },
+  "selector": {
+    "timestamp_format": {
+      "options": {
+        "dmy_dot": "22.04.2026 14:35:08",
+        "dmy_slash": "22/04/2026 14:35:08",
+        "mdy_slash_12h": "04/22/2026 02:35:08 PM",
+        "ymd_dash": "2026-04-22 14:35:08"
+      }
     }
   }
 }
