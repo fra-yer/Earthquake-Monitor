@@ -6,7 +6,7 @@
         "title": "Monitor Terremoti",
         "description": "Imposta il punto di riferimento e le soglie di magnitudo per il monitoraggio dei terremoti.",
         "data": {
-          "name": "Nome dell'entità",
+          "name": "Nome",
           "center_latitude": "Latitudine del punto di riferimento",
           "center_longitude": "Longitudine del punto di riferimento",
           "radius_km": "Raggio locale (km)",
@@ -16,9 +16,20 @@
       },
       "retention": {
         "title": "Monitor Terremoti",
-        "description": "Imposta per quanto tempo l'ultimo evento deve rimanere visibile (0 = illimitato).",
-        "data": {
-          "reset_after_hours": "Durata dell'ultimo evento (ore)"
+        "description": "Imposta per quanto tempo l'ultimo evento deve rimanere visibile (0 = illimitato) e come devono essere visualizzati i timestamp.",
+        "sections": {
+          "retention_settings": {
+            "name": "Durata",
+            "data": {
+              "reset_after_hours": "Durata dell'ultimo evento (ore)"
+            }
+          },
+          "timestamp_settings": {
+            "name": "Timestamp",
+            "data": {
+              "timestamp_format": "Formato dei timestamp"
+            }
+          }
         }
       }
     },
@@ -36,13 +47,40 @@
           "center_longitude": "Longitudine del punto di riferimento",
           "radius_km": "Raggio locale (km)",
           "min_mag": "Magnitudo minima locale",
-          "total_max_mag": "Magnitudo minima per terremoti fuori dal raggio locale",
-          "reset_after_hours": "Durata dell'ultimo evento (ore)"
+          "total_max_mag": "Magnitudo minima per terremoti fuori dal raggio locale"
+        }
+      },
+      "retention": {
+        "title": "Monitor Terremoti",
+        "description": "Imposta per quanto tempo l'ultimo evento deve rimanere visibile (0 = illimitato) e come devono essere visualizzati i timestamp.",
+        "sections": {
+          "retention_settings": {
+            "name": "Durata",
+            "data": {
+              "reset_after_hours": "Durata dell'ultimo evento (ore)"
+            }
+          },
+          "timestamp_settings": {
+            "name": "Timestamp",
+            "data": {
+              "timestamp_format": "Formato dei timestamp"
+            }
+          }
         }
       }
     },
     "error": {
       "global_mag_lt_local_mag": "La magnitudo minima per i terremoti fuori dal raggio locale deve essere maggiore o uguale alla magnitudo minima locale."
+    }
+  },
+  "selector": {
+    "timestamp_format": {
+      "options": {
+        "dmy_dot": "22.04.2026 14:35:08",
+        "dmy_slash": "22/04/2026 14:35:08",
+        "mdy_slash_12h": "04/22/2026 02:35:08 PM",
+        "ymd_dash": "2026-04-22 14:35:08"
+      }
     }
   }
 }
