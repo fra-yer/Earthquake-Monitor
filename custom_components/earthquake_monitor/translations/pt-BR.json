@@ -6,7 +6,7 @@
         "title": "Monitor de Terremotos",
         "description": "Defina o ponto de referência e os limites de magnitude para o monitoramento de terremotos.",
         "data": {
-          "name": "Nome da entidade",
+          "name": "Nome",
           "center_latitude": "Latitude do ponto de referência",
           "center_longitude": "Longitude do ponto de referência",
           "radius_km": "Raio local (km)",
@@ -16,9 +16,20 @@
       },
       "retention": {
         "title": "Monitor de Terremotos",
-        "description": "Defina por quanto tempo o último evento deve permanecer visível (0 = indefinido).",
-        "data": {
-          "reset_after_hours": "Duração do último evento (horas)"
+        "description": "Defina por quanto tempo o último evento deve permanecer visível (0 = indefinido) e como os carimbos de data e hora devem ser exibidos.",
+        "sections": {
+          "retention_settings": {
+            "name": "Duração",
+            "data": {
+              "reset_after_hours": "Duração do último evento (horas)"
+            }
+          },
+          "timestamp_settings": {
+            "name": "Carimbos de data e hora",
+            "data": {
+              "timestamp_format": "Formato dos carimbos de data e hora"
+            }
+          }
         }
       }
     },
@@ -36,13 +47,40 @@
           "center_longitude": "Longitude do ponto de referência",
           "radius_km": "Raio local (km)",
           "min_mag": "Magnitude mínima local",
-          "total_max_mag": "Magnitude mínima para terremotos fora do raio local",
-          "reset_after_hours": "Duração do último evento (horas)"
+          "total_max_mag": "Magnitude mínima para terremotos fora do raio local"
+        }
+      },
+      "retention": {
+        "title": "Monitor de Terremotos",
+        "description": "Defina por quanto tempo o último evento deve permanecer visível (0 = indefinido) e como os carimbos de data e hora devem ser exibidos.",
+        "sections": {
+          "retention_settings": {
+            "name": "Duração",
+            "data": {
+              "reset_after_hours": "Duração do último evento (horas)"
+            }
+          },
+          "timestamp_settings": {
+            "name": "Carimbos de data e hora",
+            "data": {
+              "timestamp_format": "Formato dos carimbos de data e hora"
+            }
+          }
         }
       }
     },
     "error": {
       "global_mag_lt_local_mag": "A magnitude mínima para terremotos fora do raio local deve ser maior ou igual à magnitude mínima local."
+    }
+  },
+  "selector": {
+    "timestamp_format": {
+      "options": {
+        "dmy_dot": "22.04.2026 14:35:08",
+        "dmy_slash": "22/04/2026 14:35:08",
+        "mdy_slash_12h": "04/22/2026 02:35:08 PM",
+        "ymd_dash": "2026-04-22 14:35:08"
+      }
     }
   }
 }
