@@ -94,9 +94,9 @@ All relevant parameters for the Earthquake Monitor can be set on the configurati
   <img src="docs/configuration2.jpg" width="350"
 </p>
 
-### Entity name
+### Name
 
-The display name of the sensor entity created by the integration. This field is only shown when the sensor is set up for the first time. Default is "Latest Earthquake" (or the equivalent in local translations). Keep it as the default unless you are not happy with this name. *If you create more than one entity, make sure you give them different names so you can tell them apart!*
+The display name of the sensor service and its entity created by the integration. This field is only shown when the sensor is set up for the first time. Default is "Latest Earthquake" (or the equivalent in local translations). Keep it as the default unless you are not happy with this name. *If you create more than one service, make sure you give them different names so you can tell them apart!*
 
 ### Reference latitude
 
