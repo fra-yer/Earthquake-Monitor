@@ -91,7 +91,7 @@ All relevant parameters for the Earthquake Monitor can be set on the configurati
 
 <p align="center">
   <img src="docs/configuration1.jpg" width="350">
-  <img src="docs/configuration2.jpg" width="350"
+  <img src="docs/configuration2n.jpg" width="350"
 </p>
 
 ### Name
