@@ -16,17 +16,17 @@
       },
       "retention": {
         "title": "Earthquake Monitor",
-        "description": "Configure event retention and timestamp display.",
+        "description": "Configure how long the latest event should remain visible (0 = indefinite) and how timestamps should be displayed.",
         "data": {
           "reset_after_hours": "Lifetime of latest event (hours)",
           "timestamp_format": "Timestamp format"
         },
         "sections": {
           "retention_settings": {
-            "name": "Event retention"
+            "name": "Retention"
           },
           "timestamp_settings": {
-            "name": "Timestamp format"
+            "name": "Timestamps"
           }
         }
       }
@@ -50,17 +50,17 @@
       },
       "retention": {
         "title": "Earthquake Monitor",
-        "description": "Configure event retention and timestamp display.",
+        "description": "Configure how long the latest event should remain visible (0 = indefinite) and how timestamps should be displayed.",
         "data": {
           "reset_after_hours": "Lifetime of latest event (hours)",
           "timestamp_format": "Timestamp format"
         },
         "sections": {
           "retention_settings": {
-            "name": "Event retention"
+            "name": "Retention"
           },
           "timestamp_settings": {
-            "name": "Timestamp format"
+            "name": "Timestamps"
           }
         }
       }
