@@ -1,6 +1,6 @@
-# Version 1.6.0 by FOF, April 2026
-# change-log: 
-#   add localized default names for new monitor instances
+# Version 1.6.0 by FOF, May 2026
+# change-log:
+#   add localized default names for new monitor instances (using HA backend language)
 #   add user-selectable timestamp format
 
 from homeassistant import config_entries
@@ -14,7 +14,7 @@ from .const import DOMAIN, DEFAULT_NAME
 
 
 def get_localized_default_name(hass) -> str:
-    """Return a localized default name for the configured monitor instance"""
+    """Return a localized default name for the configured monitor instance."""
     language = hass.config.language.lower().replace("-", "_")
 
     localized_names = {
@@ -124,8 +124,12 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_retention(self, user_input=None):
         """Handle step 2: lifetime of latest event and user-defined timestamp format."""
         if user_input is not None:
-            self._user_data["reset_after_hours"] = user_input["retention_settings"]["reset_after_hours"]
-            self._user_data["timestamp_format"] = user_input["timestamp_settings"]["timestamp_format"]
+            self._user_data["reset_after_hours"] = user_input["retention_settings"][
+                "reset_after_hours"
+            ]
+            self._user_data["timestamp_format"] = user_input["timestamp_settings"][
+                "timestamp_format"
+            ]
 
             return self.async_create_entry(
                 title=self._user_data.get("name", DEFAULT_NAME),
@@ -137,7 +141,9 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required("retention_settings"): section(
                     vol.Schema(
                         {
-                            vol.Required("reset_after_hours", default=48.0): vol.All(
+                            vol.Required(
+                                "reset_after_hours", default=48.0
+                            ): vol.All(
                                 vol.Coerce(float), vol.Range(min=0, max=8760)
                             ),
                         }
@@ -176,20 +182,18 @@ class EarthquakeMonitorFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry):
         """Get the options flow for this handler."""
-        return EarthquakeMonitorOptionsFlowHandler(config_entry)
+        return EarthquakeMonitorOptionsFlowHandler()
 
 
 class EarthquakeMonitorOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle options for the Earthquake Monitor integration."""
 
-    def __init__(self, config_entry):
-        """Initialize the options flow."""
-        self.config_entry = config_entry
-        self._user_data = dict(config_entry.data)
-
     async def async_step_init(self, user_input=None):
         """Manage step 1: reference point and thresholds."""
         errors = {}
+
+        if not hasattr(self, "_user_data"):
+            self._user_data = dict(self.config_entry.data)
 
         if user_input is not None:
             if user_input["total_max_mag"] < user_input["min_mag"]:
@@ -211,7 +215,9 @@ class EarthquakeMonitorOptionsFlowHandler(config_entries.OptionsFlow):
                 vol.Required(
                     "radius_km",
                     default=self.config_entry.data.get("radius_km"),
-                ): vol.All(vol.Coerce(float), vol.Range(min=0, min_included=False, max=500)),
+                ): vol.All(
+                    vol.Coerce(float), vol.Range(min=0, min_included=False, max=500)
+                ),
                 vol.Required(
                     "min_mag",
                     default=self.config_entry.data.get("min_mag"),
@@ -232,8 +238,12 @@ class EarthquakeMonitorOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_retention(self, user_input=None):
         """Manage step 2: event retention and timestamp format."""
         if user_input is not None:
-            self._user_data["reset_after_hours"] = user_input["retention_settings"]["reset_after_hours"]
-            self._user_data["timestamp_format"] = user_input["timestamp_settings"]["timestamp_format"]
+            self._user_data["reset_after_hours"] = user_input["retention_settings"][
+                "reset_after_hours"
+            ]
+            self._user_data["timestamp_format"] = user_input["timestamp_settings"][
+                "timestamp_format"
+            ]
 
             self.hass.config_entries.async_update_entry(
                 self.config_entry,
@@ -253,8 +263,12 @@ class EarthquakeMonitorOptionsFlowHandler(config_entries.OptionsFlow):
                         {
                             vol.Required(
                                 "reset_after_hours",
-                                default=self.config_entry.data.get("reset_after_hours", 48.0),
-                            ): vol.All(vol.Coerce(float), vol.Range(min=0, max=8760)),
+                                default=self.config_entry.data.get(
+                                    "reset_after_hours", 48.0
+                                ),
+                            ): vol.All(
+                                vol.Coerce(float), vol.Range(min=0, max=8760)
+                            ),
                         }
                     )
                 ),
@@ -263,7 +277,9 @@ class EarthquakeMonitorOptionsFlowHandler(config_entries.OptionsFlow):
                         {
                             vol.Required(
                                 "timestamp_format",
-                                default=self.config_entry.data.get("timestamp_format", "dmy_dot"),
+                                default=self.config_entry.data.get(
+                                    "timestamp_format", "dmy_dot"
+                                ),
                             ): SelectSelector(
                                 SelectSelectorConfig(
                                     options=[
