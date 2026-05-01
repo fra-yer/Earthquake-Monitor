@@ -2,7 +2,7 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.5.1 by FOF, April 2026
+# Version 1.6.0 by FOF, May 2026
 
 import asyncio
 import io
@@ -130,6 +130,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     total_max_mag = config.get("total_max_mag")
     min_mag = config.get("min_mag")
     reset_after_hours = config.get("reset_after_hours", 0)
+    timestamp_format = config.get("timestamp_format", "dmy_dot")
 
     sensor = EarthquakeMonitorSensor(
         entry_id=config_entry.entry_id,
@@ -140,6 +141,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
         min_mag=min_mag,
         total_max_mag=total_max_mag,
         reset_after_hours=reset_after_hours,
+        timestamp_format=timestamp_format,
     )
 
     async_add_entities([sensor], True)
@@ -158,6 +160,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
         min_mag: float,
         total_max_mag: float,
         reset_after_hours: float,
+        timestamp_format: str,
     ) -> None:
         """Initialize the sensor."""
         self._entry_id = entry_id
@@ -167,6 +170,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
         self._ssl_context = None
         self._ws_task = None
         self.reset_after_hours = float(reset_after_hours)
+        self.timestamp_format = timestamp_format
         self._clear_task = None
 
         self.center_latitude = float(center_latitude)
@@ -262,7 +266,37 @@ class EarthquakeMonitorSensor(RestoreSensor):
             )
             return
 
-        self._clear_task = asyncio.create_task(self.auto_clear_after_delay(delay_seconds))
+        self._clear_task = asyncio.create_task(
+            self.auto_clear_after_delay(delay_seconds)
+        )
+
+    def format_friendly_datetime(
+        self,
+        dt: datetime | None,
+        use_utc: bool = False,
+    ) -> str | None:
+        """Format a datetime according to the configured timestamp style."""
+        if dt is None:
+            return None
+
+        work_dt = dt.astimezone(timezone.utc) if use_utc else dt_util.as_local(dt)
+
+        if self.timestamp_format == "dmy_dot":
+            return work_dt.strftime("%d.%m.%Y %H:%M:%S")
+        if self.timestamp_format == "dmy_slash":
+            return work_dt.strftime("%d/%m/%Y %H:%M:%S")
+        if self.timestamp_format == "mdy_slash_12h":
+            return work_dt.strftime("%m/%d/%Y %I:%M:%S %p")
+        if self.timestamp_format == "ymd_dash":
+            return work_dt.strftime("%Y-%m-%d %H:%M:%S")
+
+        return work_dt.strftime("%d.%m.%Y %H:%M:%S")
+
+    def format_utc_text(self, dt: datetime | None) -> str | None:
+        """Format UTC datetime as plain text so HA does not reinterpret it."""
+        if dt is None:
+            return None
+        return f"{self.format_friendly_datetime(dt, use_utc=True)} UTC"
 
     async def async_added_to_hass(self):
         """Restore the last accepted earthquake after HA restart."""
@@ -285,15 +319,12 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 )
 
         # Backfill missing status for entities restored from older versions
-        # This is not necessary, but for good measure and consistency
         if self._current_unid is not None and "status" not in self._attributes:
             self._attributes["status"] = "active"
 
-        # Start websocket task
         if self._ws_task is None or self._ws_task.done():
             self._ws_task = asyncio.create_task(self.connect_to_websocket())
 
-        # Clear immediately if already expired, or schedule for later clearing.
         self.schedule_auto_clear()
 
     async def async_will_remove_from_hass(self) -> None:
@@ -321,14 +352,23 @@ class EarthquakeMonitorSensor(RestoreSensor):
         while True:
             try:
                 self._ssl_context = await self.async_create_ssl_context()
-                _LOGGER.info("[%s | %s] Connecting to WebSocket: %s", self._name, self._entry_id, WEBSOCKET_URL)
+                _LOGGER.info(
+                    "[%s | %s] Connecting to WebSocket: %s",
+                    self._name,
+                    self._entry_id,
+                    WEBSOCKET_URL,
+                )
 
                 async with websockets.connect(
                     WEBSOCKET_URL,
                     ssl=self._ssl_context,
                     ping_interval=PING_INTERVAL,
                 ) as websocket:
-                    _LOGGER.info("[%s | %s] Connected to WebSocket. Listening for messages...", self._name, self._entry_id)
+                    _LOGGER.info(
+                        "[%s | %s] Connected to WebSocket. Listening for messages...",
+                        self._name,
+                        self._entry_id,
+                    )
                     await self.listen_to_websocket(websocket)
 
             except Exception as e:
@@ -357,11 +397,22 @@ class EarthquakeMonitorSensor(RestoreSensor):
         except Exception as e:
             _LOGGER.error("Error while listening to WebSocket: %s", e)
 
-    def is_within_radius(self, earthquake_latitude: float, earthquake_longitude: float) -> bool:
+    def is_within_radius(
+        self,
+        earthquake_latitude: float,
+        earthquake_longitude: float,
+    ) -> bool:
         """Check if the given earthquake is within the specified radius."""
-        return self.calculate_distance_km(earthquake_latitude, earthquake_longitude) <= self.radius_km
+        return (
+            self.calculate_distance_km(earthquake_latitude, earthquake_longitude)
+            <= self.radius_km
+        )
 
-    def calculate_distance_km(self, earthquake_latitude: float, earthquake_longitude: float) -> float:
+    def calculate_distance_km(
+        self,
+        earthquake_latitude: float,
+        earthquake_longitude: float,
+    ) -> float:
         """Calculate distance between configured center and earthquake location."""
         r_earth_km = 6371.0
 
@@ -377,7 +428,11 @@ class EarthquakeMonitorSensor(RestoreSensor):
         c = 2 * atan2(sqrt(a), sqrt(1 - a))
         return r_earth_km * c
 
-    def calculate_bearing_deg(self, earthquake_latitude: float, earthquake_longitude: float) -> float:
+    def calculate_bearing_deg(
+        self,
+        earthquake_latitude: float,
+        earthquake_longitude: float,
+    ) -> float:
         """Calculate initial bearing from home position to earthquake location."""
         lat1 = radians(self.center_latitude)
         lon1 = radians(self.center_longitude)
@@ -401,7 +456,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
             "S", "SSW", "SW", "WSW",
             "W", "WNW", "NW", "NNW",
         ]
-        index = int((bearing_deg + 11.25) // 22.5) % 16  # Correct rounding - gives cleaner compass-sector boundaries
+        index = int((bearing_deg + 11.25) // 22.5) % 16
         return directions[index]
 
     def parse_emsc_datetime(self, value: Any) -> datetime | None:
@@ -411,14 +466,12 @@ class EarthquakeMonitorSensor(RestoreSensor):
 
         text = value.strip()
 
-        # Normalize a trailing Z to +00:00 for fromisoformat
         if text.endswith("Z"):
             text = text[:-1] + "+00:00"
 
         try:
             dt = datetime.fromisoformat(text)
         except ValueError:
-            # Fallback patterns for slightly inconsistent payloads
             for fmt in (
                 "%Y-%m-%dT%H:%M:%S.%f%z",
                 "%Y-%m-%dT%H:%M:%S%z",
@@ -453,9 +506,8 @@ class EarthquakeMonitorSensor(RestoreSensor):
         Rules:
         - First event matching the defined criteria (radius, magnitude) is accepted.
         - Updates to the last event (same unid) are accepted.
-        - A different event is accepted only if its origin time is newer, i.e. updates to older events are discarded.
-        - If timestamps are missing, be conservative and do not replace an existing event
-          unless it is the same unid.
+        - A different event is accepted only if its origin time is newer.
+        - If timestamps are missing, do not replace an existing event unless it is the same unid.
         """
         if self._current_unid is None:
             return True
@@ -504,7 +556,10 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 return
 
             within_radius = self.is_within_radius(lat, lon)
-            passes_filter = (within_radius and mag >= self.min_mag) or (mag >= self.total_max_mag)
+            passes_filter = (
+                (within_radius and mag >= self.min_mag)
+                or (mag >= self.total_max_mag)
+            )
 
             if not passes_filter:
                 _LOGGER.debug(
@@ -530,13 +585,10 @@ class EarthquakeMonitorSensor(RestoreSensor):
             event_time = self.parse_emsc_datetime(event_time_str)
             lastupdate = self.parse_emsc_datetime(lastupdate_str)
 
-            event_time_local = dt_util.as_local(event_time) if event_time else None
-            lastupdate_local = dt_util.as_local(lastupdate) if lastupdate else None
-
             if not self.should_accept_event(unid, event_time):
                 _LOGGER.info(
-                   "[%s | %s] Ignored older earthquake event ('update' or late-arriving 'create'): current_unid=%s incoming_unid=%s "
-                   "current_time=%s incoming_time=%s action=%s mag=%s region=%s lastupdate=%s",
+                    "[%s | %s] Ignored older earthquake event ('update' or late-arriving 'create'): current_unid=%s incoming_unid=%s "
+                    "current_time=%s incoming_time=%s action=%s mag=%s region=%s lastupdate=%s",
                     self._name,
                     self._entry_id,
                     self._current_unid,
@@ -556,7 +608,11 @@ class EarthquakeMonitorSensor(RestoreSensor):
             relative_location = f"{distance_km} km {bearing_text} of reference point"
 
             try:
-                country, city = await self.hass.async_add_executor_job(lookup_geodata, lat, lon)
+                country, city = await self.hass.async_add_executor_job(
+                    lookup_geodata,
+                    lat,
+                    lon,
+                )
             except Exception as e:
                 _LOGGER.debug("Geodata lookup failed: %s", e)
                 country = "lookup failed"
@@ -567,10 +623,10 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 "status": "active",
                 "action": action,
                 "unid": unid,
-                "time": event_time_local.strftime("%-d. %B %Y %H:%M:%S") if event_time_local else None,
-                "time_utc": event_time.strftime("%-d. %B %Y %H:%M:%S") if event_time else None,
-                "lastupdate": lastupdate_local.strftime("%-d. %B %Y %H:%M:%S") if lastupdate_local else None,
-                "lastupdate_utc": lastupdate.strftime("%-d. %B %Y %H:%M:%S") if lastupdate else None,
+                "time": self.format_friendly_datetime(event_time, use_utc=False),
+                "time_utc": self.format_utc_text(event_time),
+                "lastupdate": self.format_friendly_datetime(lastupdate, use_utc=False),
+                "lastupdate_utc": self.format_utc_text(lastupdate),
                 "time_raw": event_time_str,
                 "time_utc_raw": event_time.isoformat() if event_time else None,
                 "lastupdate_raw": lastupdate_str,
