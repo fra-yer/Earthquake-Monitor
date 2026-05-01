@@ -6,7 +6,7 @@
         "title": "Moniteur de Séismes",
         "description": "Définissez le point de référence et les seuils de magnitude pour la surveillance des séismes.",
         "data": {
-          "name": "Nom de l'entité",
+          "name": "Nom",
           "center_latitude": "Latitude du point de référence",
           "center_longitude": "Longitude du point de référence",
           "radius_km": "Rayon local (km)",
@@ -16,9 +16,20 @@
       },
       "retention": {
         "title": "Moniteur de Séismes",
-        "description": "Définissez combien de temps le dernier événement doit rester visible (0 = illimité).",
-        "data": {
-          "reset_after_hours": "Durée du dernier événement (heures)"
+        "description": "Définissez combien de temps le dernier événement doit rester visible (0 = illimité) et comment les horodatages doivent être affichés.",
+        "sections": {
+          "retention_settings": {
+            "name": "Durée",
+            "data": {
+              "reset_after_hours": "Durée du dernier événement (heures)"
+            }
+          },
+          "timestamp_settings": {
+            "name": "Horodatages",
+            "data": {
+              "timestamp_format": "Format des horodatages"
+            }
+          }
         }
       }
     },
@@ -36,13 +47,40 @@
           "center_longitude": "Longitude du point de référence",
           "radius_km": "Rayon local (km)",
           "min_mag": "Magnitude minimale locale",
-          "total_max_mag": "Magnitude minimale pour les séismes hors du rayon local",
-          "reset_after_hours": "Durée du dernier événement (heures)"
+          "total_max_mag": "Magnitude minimale pour les séismes hors du rayon local"
+        }
+      },
+      "retention": {
+        "title": "Moniteur de Séismes",
+        "description": "Définissez combien de temps le dernier événement doit rester visible (0 = illimité) et comment les horodatages doivent être affichés.",
+        "sections": {
+          "retention_settings": {
+            "name": "Durée",
+            "data": {
+              "reset_after_hours": "Durée du dernier événement (heures)"
+            }
+          },
+          "timestamp_settings": {
+            "name": "Horodatages",
+            "data": {
+              "timestamp_format": "Format des horodatages"
+            }
+          }
         }
       }
     },
     "error": {
       "global_mag_lt_local_mag": "La magnitude minimale pour les séismes hors du rayon local doit être supérieure ou égale à la magnitude minimale locale."
+    }
+  },
+  "selector": {
+    "timestamp_format": {
+      "options": {
+        "dmy_dot": "22.04.2026 14:35:08",
+        "dmy_slash": "22/04/2026 14:35:08",
+        "mdy_slash_12h": "04/22/2026 02:35:08 PM",
+        "ymd_dash": "2026-04-22 14:35:08"
+      }
     }
   }
 }
