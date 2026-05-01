@@ -6,7 +6,7 @@
         "title": "Monitor de Terremotos",
         "description": "Define el punto de referencia y los umbrales de magnitud para el seguimiento de terremotos.",
         "data": {
-          "name": "Nombre de la entidad",
+          "name": "Nombre",
           "center_latitude": "Latitud del punto de referencia",
           "center_longitude": "Longitud del punto de referencia",
           "radius_km": "Radio local (km)",
@@ -16,9 +16,20 @@
       },
       "retention": {
         "title": "Monitor de Terremotos",
-        "description": "Define cuánto tiempo debe permanecer visible el último evento (0 = indefinido).",
-        "data": {
-          "reset_after_hours": "Duración del último evento (horas)"
+        "description": "Define cuánto tiempo debe permanecer visible el último evento (0 = indefinido) y cómo deben mostrarse las marcas de tiempo.",
+        "sections": {
+          "retention_settings": {
+            "name": "Duración",
+            "data": {
+              "reset_after_hours": "Duración del último evento (horas)"
+            }
+          },
+          "timestamp_settings": {
+            "name": "Marcas de tiempo",
+            "data": {
+              "timestamp_format": "Formato de las marcas de tiempo"
+            }
+          }
         }
       }
     },
@@ -36,13 +47,40 @@
           "center_longitude": "Longitud del punto de referencia",
           "radius_km": "Radio local (km)",
           "min_mag": "Magnitud mínima local",
-          "total_max_mag": "Magnitud mínima para terremotos fuera del radio local",
-          "reset_after_hours": "Duración del último evento (horas)"
+          "total_max_mag": "Magnitud mínima para terremotos fuera del radio local"
+        }
+      },
+      "retention": {
+        "title": "Monitor de Terremotos",
+        "description": "Define cuánto tiempo debe permanecer visible el último evento (0 = indefinido) y cómo deben mostrarse las marcas de tiempo.",
+        "sections": {
+          "retention_settings": {
+            "name": "Duración",
+            "data": {
+              "reset_after_hours": "Duración del último evento (horas)"
+            }
+          },
+          "timestamp_settings": {
+            "name": "Marcas de tiempo",
+            "data": {
+              "timestamp_format": "Formato de las marcas de tiempo"
+            }
+          }
         }
       }
     },
     "error": {
       "global_mag_lt_local_mag": "La magnitud mínima para terremotos fuera del radio local debe ser mayor o igual que la magnitud mínima local."
+    }
+  },
+  "selector": {
+    "timestamp_format": {
+      "options": {
+        "dmy_dot": "22.04.2026 14:35:08",
+        "dmy_slash": "22/04/2026 14:35:08",
+        "mdy_slash_12h": "04/22/2026 02:35:08 PM",
+        "ymd_dash": "2026-04-22 14:35:08"
+      }
     }
   }
 }
