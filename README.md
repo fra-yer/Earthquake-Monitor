@@ -87,7 +87,7 @@ Alternatively, the integration can be installed manually from this Github reposi
 
 ## Configuration
 
-All relevant parameters for the Earthquake Monitor can be set on the configuration page that appears automatically when the integration is started for the first time, or when the cog icon of an entity (on the main page of the integration) is clicked. See below for a detailed description of the individual parameters and their default values. You can set up more than one entity, which will provide independent sensors within Home Assistant (e.g. for two different zones of interest). Note that the configuration of a *new* entity is split in two screens - the first is for the configuration of the reference point and criteria for reporting earthquakes, while the second is for setting the lifetime of the latest event. 
+All relevant parameters for the Earthquake Monitor can be set on the configuration page that appears automatically when the integration is started for the first time, or when the cog icon of an entity (on the main page of the integration) is clicked. See below for a detailed description of the individual parameters and their default values. You can set up more than one entity, which will provide independent sensors within Home Assistant (e.g. for two different zones of interest). Note that the configuration of every service/entity is split in two screens - the first is for the configuration of the reference point and criteria for reporting earthquakes, while the second is for setting the lifetime of the latest event and the user-defined format of timestamps. 
 
 <p align="center">
   <img src="docs/configuration1n.jpg" width="350">
@@ -126,7 +126,7 @@ When the lifetime is set to 0, data of the last earthquake will never be cleared
 
 ### Timestamp settings
 
-This setting allows to choose the formatting of the "user-friendly timestamp" from four different options: 22.04.2026 14:35:08, 22/04/2026 14:35:08, 04/22/2026 02:35:08 PM, and 2026-04-22 14:35:08. See below for a more detailed discussion of the timestamps. 
+This setting allows to choose the formatting of the "user-friendly timestamp" attributes from four different options: 22.04.2026 14:35:08, 22/04/2026 14:35:08, 04/22/2026 02:35:08 PM, and 2026-04-22 14:35:08. See below for a more detailed discussion of the timestamps. 
 
 ### Useful advice
 - you can create separate entities to monitor local earthquakes at different reference points
