@@ -6,19 +6,30 @@
         "title": "地震モニター",
         "description": "基準点と地震監視のためのマグニチュードしきい値を設定します。",
         "data": {
-          "name": "エンティティ名",
+          "name": "名前",
           "center_latitude": "基準点の緯度",
           "center_longitude": "基準点の経度",
-          "radius_km": "ローカル半径 (km)",
+          "radius_km": "ローカル半径(km)",
           "min_mag": "ローカル地震の最小マグニチュード",
           "total_max_mag": "ローカル半径外の地震に対する最小マグニチュード"
         }
       },
       "retention": {
         "title": "地震モニター",
-        "description": "最新のイベントをどのくらい表示したままにするかを設定します（0 = 無期限）。",
-        "data": {
-          "reset_after_hours": "最新イベントの保持時間（時間）"
+        "description": "最新イベントを表示し続ける時間を設定します（0 = 無期限）。タイムスタンプの表示形式も設定できます。",
+        "sections": {
+          "retention_settings": {
+            "name": "保持期間",
+            "data": {
+              "reset_after_hours": "最新イベントの保持時間（時間）"
+            }
+          },
+          "timestamp_settings": {
+            "name": "タイムスタンプ",
+            "data": {
+              "timestamp_format": "タイムスタンプの形式"
+            }
+          }
         }
       }
     },
@@ -34,15 +45,42 @@
         "data": {
           "center_latitude": "基準点の緯度",
           "center_longitude": "基準点の経度",
-          "radius_km": "ローカル半径 (km)",
+          "radius_km": "ローカル半径(km)",
           "min_mag": "ローカル地震の最小マグニチュード",
-          "total_max_mag": "ローカル半径外の地震に対する最小マグニチュード",
-          "reset_after_hours": "最新イベントの保持時間（時間）"
+          "total_max_mag": "ローカル半径外の地震に対する最小マグニチュード"
+        }
+      },
+      "retention": {
+        "title": "地震モニター",
+        "description": "最新イベントを表示し続ける時間を設定します（0 = 無期限）。タイムスタンプの表示形式も設定できます。",
+        "sections": {
+          "retention_settings": {
+            "name": "保持期間",
+            "data": {
+              "reset_after_hours": "最新イベントの保持時間（時間）"
+            }
+          },
+          "timestamp_settings": {
+            "name": "タイムスタンプ",
+            "data": {
+              "timestamp_format": "タイムスタンプの形式"
+            }
+          }
         }
       }
     },
     "error": {
       "global_mag_lt_local_mag": "ローカル半径外の地震に対する最小マグニチュードは、ローカル地震の最小マグニチュード以上である必要があります。"
+    }
+  },
+  "selector": {
+    "timestamp_format": {
+      "options": {
+        "dmy_dot": "22.04.2026 14:35:08",
+        "dmy_slash": "22/04/2026 14:35:08",
+        "mdy_slash_12h": "04/22/2026 02:35:08 PM",
+        "ymd_dash": "2026-04-22 14:35:08"
+      }
     }
   }
 }
