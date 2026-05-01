@@ -6,7 +6,7 @@
         "title": "Deprem İzleyici",
         "description": "Referans noktasını ve deprem takibi için büyüklük eşiklerini ayarlayın.",
         "data": {
-          "name": "Varlık adı",
+          "name": "Ad",
           "center_latitude": "Referans noktasının enlemi",
           "center_longitude": "Referans noktasının boylamı",
           "radius_km": "Yerel yarıçap (km)",
@@ -16,9 +16,20 @@
       },
       "retention": {
         "title": "Deprem İzleyici",
-        "description": "Son olayın ne kadar süre görünür kalacağını ayarlayın (0 = süresiz).",
-        "data": {
-          "reset_after_hours": "Son olayın saklanma süresi (saat)"
+        "description": "Son olayın ne kadar süre görünür kalacağını (0 = süresiz) ve zaman damgalarının nasıl gösterileceğini ayarlayın.",
+        "sections": {
+          "retention_settings": {
+            "name": "Saklama süresi",
+            "data": {
+              "reset_after_hours": "Son olayın saklanma süresi (saat)"
+            }
+          },
+          "timestamp_settings": {
+            "name": "Zaman damgaları",
+            "data": {
+              "timestamp_format": "Zaman damgası biçimi"
+            }
+          }
         }
       }
     },
@@ -36,13 +47,40 @@
           "center_longitude": "Referans noktasının boylamı",
           "radius_km": "Yerel yarıçap (km)",
           "min_mag": "En düşük yerel büyüklük",
-          "total_max_mag": "Yerel yarıçap dışındaki depremler için en düşük büyüklük",
-          "reset_after_hours": "Son olayın saklanma süresi (saat)"
+          "total_max_mag": "Yerel yarıçap dışındaki depremler için en düşük büyüklük"
+        }
+      },
+      "retention": {
+        "title": "Deprem İzleyici",
+        "description": "Son olayın ne kadar süre görünür kalacağını (0 = süresiz) ve zaman damgalarının nasıl gösterileceğini ayarlayın.",
+        "sections": {
+          "retention_settings": {
+            "name": "Saklama süresi",
+            "data": {
+              "reset_after_hours": "Son olayın saklanma süresi (saat)"
+            }
+          },
+          "timestamp_settings": {
+            "name": "Zaman damgaları",
+            "data": {
+              "timestamp_format": "Zaman damgası biçimi"
+            }
+          }
         }
       }
     },
     "error": {
       "global_mag_lt_local_mag": "Yerel yarıçap dışındaki depremler için en düşük büyüklük, en düşük yerel büyüklüğe eşit veya ondan büyük olmalıdır."
+    }
+  },
+  "selector": {
+    "timestamp_format": {
+      "options": {
+        "dmy_dot": "22.04.2026 14:35:08",
+        "dmy_slash": "22/04/2026 14:35:08",
+        "mdy_slash_12h": "04/22/2026 02:35:08 PM",
+        "ymd_dash": "2026-04-22 14:35:08"
+      }
     }
   }
 }
