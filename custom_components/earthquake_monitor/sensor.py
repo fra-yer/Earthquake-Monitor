@@ -2,7 +2,7 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.6.0 by FOF, May 2026
+# Version 1.6.1 by FOF, May 2026
 
 import asyncio
 import io
@@ -100,14 +100,14 @@ def nearest_city(lat: float, lon: float) -> str:
 
 
 def country_of_epicenter(lat: float, lon: float) -> str:
-    """Country containing epicenter, or 'international waters' if offshore."""
+    """Country containing epicenter, or 'offshore' if offshore."""
     point = Point(lon, lat)  # lon, lat order
 
     for name, poly in get_countries():
         if poly.covers(point):
             return name
 
-    return "international waters"
+    return "offshore"
 
 
 def lookup_geodata(lat: float, lon: float) -> tuple[str, str]:
