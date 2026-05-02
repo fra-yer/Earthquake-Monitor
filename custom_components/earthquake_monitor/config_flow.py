@@ -1,4 +1,4 @@
-# Version 1.6.0 by FOF, May 2026
+# Version 1.6.1 by FOF, May 2026
 # change-log:
 #   add localized default names for new monitor instances (using HA backend language)
 #   add two-page configuration for initial setup
