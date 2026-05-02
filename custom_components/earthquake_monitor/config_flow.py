@@ -1,6 +1,7 @@
 # Version 1.6.0 by FOF, May 2026
 # change-log:
 #   add localized default names for new monitor instances (using HA backend language)
+#   add two-page configuration for initial setup
 #   add user-selectable timestamp format
 
 from homeassistant import config_entries
