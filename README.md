@@ -172,7 +172,7 @@ The sensor reports the raw geographical coordinates (attributes `latitude` and `
 - `bearing_deg`: gives compass bearing from the reference point (where 0 is North, 90 is East, etc.)
 - `bearing text`: gives the bearing from the reference point as text (e.g. "NW" for north-west)
 - `relative_location`: gives the location relative to the reference point (e.g. "24.4km NW of reference point")
-- `country`: gives the country of the epicenter, for offshore earthquakes that cannot be assigned a country, it returns "international waters"
+- `country`: gives the country of the epicenter, for offshore earthquakes that cannot be assigned a country, it returns "offshore"
 - `nearest_city`: gives the city (with population >25000) closest to the epicenter; returns "none" for very remote places or offshore points when the nearest city is more than 500 km away.
 - `within_radius`: indicates whether the epicenter is within the user-defined local radius
 
@@ -215,14 +215,15 @@ If you are a native speaker of any other language that you want to see implement
 - If the upstream feed becomes unavailable, no new earthquake data can be received. This has occurred in the past for a variety of reasons, for example during mandatory electrical safety shutdown tests.
 - According to the website, the feed aims at "(near) Realtime Notification", but delays of a few minutes are normal, especially for weak earthquakes
 - In a few cases, earthquakes are reported with a longer delay (I observed up to 30 minutes delay). This is a limitation of the feed, not a bug in the integration. The sensor can only report earthquakes when they show up in the feed.
-- The sensor represents one current event per entity, not a list or history of earthquakes. Older events are shown in Activity of the entity, but only with its magnitude and timestamp (no rich attributes).
+- The sensor represents one current event per entity, not a list or history of earthquakes. Older events are shown in Activity of the entity, but only with its magnitude and timestamp (no rich attributes). 
 - while more than one entity (sensor) can be configured, in practice it is best to limit the number to two or three.
-- Time formatting and wording may still be refined in future versions.
+- the attribute ´country´ is currently based on the land-country polygon dataset from [Natural Earth](https://www.naturalearthdata.com/). While this gives very high accuracy for "solid ground" locations, it sometimes misses the correct country for offshore earthquakes. These are the shown as "offshore" although they are in a maritime location legally belonging to a country. 
 
 
 ## Planned improvements
 
 This project may be extended in the future with:
+- improve determining the ´country´ attribute by using a different dataset (plannend for version 1.7).
 - additional translations based on user requests and suggestions
 
 
