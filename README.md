@@ -96,7 +96,9 @@ All relevant parameters for the Earthquake Monitor can be set on the configurati
 
 ### Name
 
-The display name of the sensor service and its entity created by the integration. This field is only shown when the sensor is set up for the first time. Default is "Latest Earthquake" (or the equivalent in local translations). Keep it as the default unless you are not happy with this name. *If you create more than one service, make sure you give them different names so you can tell them apart!*
+The display name of the sensor service and its entity created by the integration. This field is only shown when the sensor is set up for the first time. Default is "Latest Earthquake" (or the equivalent in local translations\*). Keep it as the default unless you are not happy with this name. *If you create more than one service, make sure you give them different names so you can tell them apart!*
+
+\* Note that the default name follows Home Assistant’s *backend language* set under Settings → System → Home Information → Language, not the frontend language set in your individual user profile. Ideally, it would follow the frontend language, but a known limitation in Home Assistant’s current architecture means that only the backend language setting can be used here.
 
 ### Reference latitude
 
@@ -217,7 +219,7 @@ If you are a native speaker of any other language that you want to see implement
 - In a few cases, earthquakes are reported with a longer delay (I observed up to 30 minutes delay). This is a limitation of the feed, not a bug in the integration. The sensor can only report earthquakes when they show up in the feed.
 - The sensor represents one current event per entity, not a list or history of earthquakes. Older events are shown in Activity of the entity, but only with its magnitude and timestamp (no rich attributes). 
 - while more than one entity (sensor) can be configured, in practice it is best to limit the number to two or three.
-- the attribute ´country´ is currently based on the land-country polygon dataset from [Natural Earth](https://www.naturalearthdata.com/). While this gives very high accuracy for "solid ground" locations, it sometimes misses the correct country for offshore earthquakes. These are the shown as "offshore" although they are in a maritime location legally belonging to a country. 
+- the attribute ´country´ is currently based on the land-country polygon dataset from [Natural Earth](https://www.naturalearthdata.com/). While this gives very high accuracy for "solid ground" locations, it sometimes misses the correct country for offshore earthquakes. These are then shown as "offshore" although they are in a maritime location legally belonging to a country. 
 
 
 ## Planned improvements
