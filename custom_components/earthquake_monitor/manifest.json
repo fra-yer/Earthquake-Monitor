@@ -13,6 +13,6 @@
     "reverse_geocoder==1.5.1",
     "shapely>=2.0.0"
   ],
-  "version": "1.6.0"
+  "version": "1.6.1"
 }
 
