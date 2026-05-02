@@ -1,5 +1,5 @@
 # Version 1.6.1 by FOF, May 2026
-# change-log:
+# change-log of 1.6.0 (no changes in 1.6.1):
 #   add localized default names for new monitor instances (using HA backend language)
 #   add two-page configuration for initial setup
 #   add user-selectable timestamp format
