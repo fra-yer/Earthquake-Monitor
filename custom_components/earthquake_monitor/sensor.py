@@ -166,7 +166,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
         self._entry_id = entry_id
         self._name = name
         self._state = None
-        self._attributes: dict[str, Any] = {}
+        self._attributes: dict[str, Any] = {"status": "cleared"}
         self._ssl_context = None
         self._ws_task = None
         self.reset_after_hours = float(reset_after_hours)
