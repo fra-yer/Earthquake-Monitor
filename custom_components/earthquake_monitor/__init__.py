@@ -1,4 +1,4 @@
-# v1.6.0
+# v1.6.1
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
