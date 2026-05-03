@@ -1,6 +1,6 @@
 # Version 1.6.2 by FOF, May 2026
 # change-log of 1.6.2
-#    add Chinese localized entity name (zh_hant and zh)
+#    add localized entity name for Chinese (zh_hant and zh) and Bahasa Indonesia (id)
 
 from homeassistant import config_entries
 import voluptuous as vol
@@ -32,6 +32,7 @@ def get_localized_default_name(hass) -> str:
         "uk": "Останній землетрус",
         "zh": "最新地震",
         "zh_hant": "最新地震",
+        "id": "Gempa Bumi Terbaru",
     }
 
     # Exact match first, e.g. pt_br or zh_hant
