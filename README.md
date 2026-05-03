@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version 1.6.1
+Version 1.6.2
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -53,8 +53,11 @@ This integration was inspired by the [**EMSC Earthquake** custom integration](ht
 - **Persistence across restarts:**
   The last accepted earthquake is restored after a restart of Home Assistant.
 
+- **Clearing the sensor after user-configured time:**
+  To avoid an earthquake to be shown forever, the sensor will automatically be cleared some time after its last update. This lifetime can be set by the user during configuration of a sensor. 
+
 - **Various translations:**
-  The currently available 13 translations are listed below. 
+  The currently available 14 translations are listed below. These languages were selected to cover a large percentage of HA users, especially in earthquake-prone countries. If your native language is missing, please drop me a note (and help in translation if you can).
 
 
 ## Installation
@@ -208,7 +211,7 @@ If you chose a different name for the entity during the initial configuration, u
 
 ## Translations
 
-The Earthquake Monitor is currently localized in 13 languages. These were selected to provide a broad coverage of potential users - both in terms of earthquake relevance and Home Assistant user base. In particular, the available languages are  **English, German, Greek, Spanish, French, Italian, Dutch, Japanese, Polish, Portuguese, Brazilian Portuguese, Turkish and Ukrainian**. Except for the first four, I do not speak these languages and the translations were created with the help of AI (ChatGPT GPT 5.4 Thinking). If you are a native speaker of any of these languages and find a mistake, please notify me so I can correct it. 
+The Earthquake Monitor is currently localized in 14 languages. These were selected to provide a broad coverage of potential users - both in terms of earthquake relevance and Home Assistant user base. In particular, the available languages are  **English, German, Greek, Spanish, French, Italian, Dutch, Japanese, Polish, Portuguese, Brazilian Portuguese, Turkish, Traditional Chinese and Ukrainian**. Except for the first four, I do not speak these languages and the translations were created with the help of AI (ChatGPT GPT 5.4 Thinking and Claude Sonnet 4.6). If you are a native speaker of any of these languages and find a mistake, please notify me so I can correct it. 
 If you are a native speaker of any other language that you want to see implemented, please contact me, too.
 
 ## Known limitations
@@ -226,7 +229,7 @@ If you are a native speaker of any other language that you want to see implement
 
 This project may be extended in the future with:
 - improve determining the ´country´ attribute by using a different dataset (plannend for version 1.7).
-- additional translations based on user requests and suggestions
+- additional (or improved) translations based on user requests and suggestions
 
 
 ## Earthquake Magnitude and Intensity
