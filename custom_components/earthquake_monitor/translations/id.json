@@ -1,0 +1,86 @@
+{
+  "title": "Monitor Gempa Bumi",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Monitor Gempa Bumi",
+        "description": "Atur titik referensi dan ambang magnitudo untuk pemantauan gempa bumi.",
+        "data": {
+          "name": "Nama",
+          "center_latitude": "Lintang referensi",
+          "center_longitude": "Bujur referensi",
+          "radius_km": "Radius lokal (km)",
+          "min_mag": "Magnitudo lokal minimum",
+          "total_max_mag": "Magnitudo minimum untuk gempa bumi global"
+        }
+      },
+      "retention": {
+        "title": "Monitor Gempa Bumi",
+        "description": "Atur berapa lama kejadian terbaru harus tetap terlihat (0 = tanpa batas) dan bagaimana stempel waktu harus ditampilkan.",
+        "sections": {
+          "retention_settings": {
+            "name": "Retensi",
+            "data": {
+              "reset_after_hours": "Masa tampil kejadian terbaru (jam)"
+            }
+          },
+          "timestamp_settings": {
+            "name": "Stempel waktu",
+            "data": {
+              "timestamp_format": "Format stempel waktu"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "Magnitudo minimum global harus lebih besar atau sama dengan magnitudo lokal minimum."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Monitor Gempa Bumi",
+        "description": "Sesuaikan titik referensi dan ambang magnitudo untuk pemantauan gempa bumi.",
+        "data": {
+          "center_latitude": "Lintang referensi",
+          "center_longitude": "Bujur referensi",
+          "radius_km": "Radius lokal (km)",
+          "min_mag": "Magnitudo lokal minimum",
+          "total_max_mag": "Magnitudo minimum untuk gempa bumi global"
+        }
+      },
+      "retention": {
+        "title": "Monitor Gempa Bumi",
+        "description": "Atur berapa lama kejadian terbaru harus tetap terlihat (0 = tanpa batas) dan bagaimana stempel waktu harus ditampilkan.",
+        "sections": {
+          "retention_settings": {
+            "name": "Retensi",
+            "data": {
+              "reset_after_hours": "Masa tampil kejadian terbaru (jam)"
+            }
+          },
+          "timestamp_settings": {
+            "name": "Stempel waktu",
+            "data": {
+              "timestamp_format": "Format stempel waktu"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "global_mag_lt_local_mag": "Magnitudo minimum global harus lebih besar atau sama dengan magnitudo lokal minimum."
+    }
+  },
+  "selector": {
+    "timestamp_format": {
+      "options": {
+        "dmy_dot": "22.04.2026 14:35:08",
+        "dmy_slash": "22/04/2026 14:35:08",
+        "mdy_slash_12h": "04/22/2026 02:35:08 PM",
+        "ymd_dash": "2026-04-22 14:35:08"
+      }
+    }
+  }
+}
