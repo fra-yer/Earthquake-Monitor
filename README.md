@@ -117,7 +117,7 @@ The radius around the reference point within which earthquakes are considered lo
 
 ### Minimum local magnitude
 
-The minimum magnitude required for a *local* earthquake to be reported. Values from 0 to 10 are accepted. Values lower than 3 represent earthquakes that are too weak to be felt by humans; thus, setting the minimum local magnitude to much less than 3 will report many insignificant earthquakes, and should be avoided unless reporting of very weak quakes is desired. Check the information about earthquake magnitudes below. The default value is magnitude 2.5. 
+The minimum magnitude required for a *local* earthquake to be reported. Values from 0 to 10 are accepted. Values lower than 3 represent earthquakes that are too weak to be felt by humans; thus, setting the minimum local magnitude to much less than 3 will report many insignificant earthquakes, and should be avoided unless reporting of very weak quakes is desired. Check the [information about earthquake magnitudes](https://github.com/fra-yer/Earthquake-Monitor/blob/main/README.md#earthquake-magnitude-and-intensity) below. The default value is magnitude 2.5. 
 
 ### Minimum magnitude for global earthquakes
 
