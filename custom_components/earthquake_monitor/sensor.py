@@ -2,10 +2,9 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.6.1 by FOF, May 2026
+# Version 1.6.2 by FOF, May 2026
 # change-log:
-#   initialize new entities with status = "cleared"
-#   change offshore fallback value from "international waters" to "offshore"
+#   no changes in this file from v1.6.1
 
 import asyncio
 import io
