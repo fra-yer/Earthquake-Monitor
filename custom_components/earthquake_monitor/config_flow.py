@@ -1,6 +1,6 @@
 # Version 1.6.2 by FOF, May 2026
 # change-log of 1.6.2
-#    add localized entity name for Chinese (zh_hant and zh) and Bahasa Indonesia (id)
+#    add localized entity name for Chinese (zh_hant and zh) and Indonesian (id)
 
 from homeassistant import config_entries
 import voluptuous as vol
