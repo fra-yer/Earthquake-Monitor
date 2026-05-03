@@ -16,18 +16,18 @@
       },
       "retention": {
         "title": "Monitor Gempa Bumi",
-        "description": "Atur berapa lama kejadian terbaru harus tetap terlihat (0 = tanpa batas) dan bagaimana stempel waktu harus ditampilkan.",
+        "description": "Atur berapa lama kejadian terbaru harus tetap terlihat (0 = tanpa batas) dan bagaimana timestamp harus ditampilkan.",
         "sections": {
           "retention_settings": {
-            "name": "Retensi",
+            "name": "Durasi tampil",
             "data": {
               "reset_after_hours": "Masa tampil kejadian terbaru (jam)"
             }
           },
           "timestamp_settings": {
-            "name": "Stempel waktu",
+            "name": "Timestamp",
             "data": {
-              "timestamp_format": "Format stempel waktu"
+              "timestamp_format": "Format timestamp"
             }
           }
         }
@@ -52,18 +52,18 @@
       },
       "retention": {
         "title": "Monitor Gempa Bumi",
-        "description": "Atur berapa lama kejadian terbaru harus tetap terlihat (0 = tanpa batas) dan bagaimana stempel waktu harus ditampilkan.",
+        "description": "Atur berapa lama kejadian terbaru harus tetap terlihat (0 = tanpa batas) dan bagaimana timestamp harus ditampilkan.",
         "sections": {
           "retention_settings": {
-            "name": "Retensi",
+            "name": "Durasi tampil",
             "data": {
               "reset_after_hours": "Masa tampil kejadian terbaru (jam)"
             }
           },
           "timestamp_settings": {
-            "name": "Stempel waktu",
+            "name": "Timestamp",
             "data": {
-              "timestamp_format": "Format stempel waktu"
+              "timestamp_format": "Format timestamp"
             }
           }
         }
