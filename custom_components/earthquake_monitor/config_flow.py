@@ -1,8 +1,6 @@
-# Version 1.6.1 by FOF, May 2026
-# change-log of 1.6.0 (no changes in 1.6.1):
-#   add localized default names for new monitor instances (using HA backend language)
-#   add two-page configuration for initial setup
-#   add user-selectable timestamp format
+# Version 1.6.2 by FOF, May 2026
+# change-log of 1.6.2
+#    add Chinese localized entity name (zh_hant and zh)
 
 from homeassistant import config_entries
 import voluptuous as vol
@@ -32,13 +30,15 @@ def get_localized_default_name(hass) -> str:
         "pt_br": "Último terremoto",
         "tr": "Son deprem",
         "uk": "Останній землетрус",
+        "zh": "最新地震",
+        "zh_hant": "最新地震",
     }
 
-    # Exact match first, e.g. pt_br
+    # Exact match first, e.g. pt_br or zh_hant
     if language in localized_names:
         return localized_names[language]
 
-    # Fallback to base language, e.g. pt from pt_pt
+    # Fallback to base language, e.g. pt from pt_pt or zh from zh_tw
     base_language = language.split("_")[0]
     return localized_names.get(base_language, DEFAULT_NAME)
 
