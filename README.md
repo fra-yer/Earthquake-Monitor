@@ -57,7 +57,7 @@ This integration was inspired by the [**EMSC Earthquake** custom integration](ht
   To avoid an earthquake to be shown forever, the sensor will automatically be cleared some time after its last update. This lifetime can be set by the user during configuration of a sensor. 
 
 - **Various translations:**
-  The currently available 14 translations are listed below. These languages were selected to cover a large percentage of HA users, especially in earthquake-prone countries. If your native language is missing, please drop me a note (and help in translation if you can).
+  The currently available 15 translations are listed below. These languages were selected to cover a large percentage of HA users, especially in earthquake-prone countries. If your native language is missing, please drop me a note (and help in translation if you can).
 
 
 ## Installation
@@ -211,7 +211,7 @@ If you chose a different name for the entity during the initial configuration, u
 
 ## Translations
 
-The Earthquake Monitor is currently localized in 14 languages. These were selected to provide a broad coverage of potential users - both in terms of earthquake relevance and Home Assistant user base. In particular, the available languages are  **English, German, Greek, Spanish, French, Italian, Dutch, Japanese, Polish, Portuguese, Brazilian Portuguese, Turkish, Traditional Chinese and Ukrainian**. Except for the first four, I do not speak these languages and the translations were created with the help of AI (ChatGPT GPT 5.4 Thinking and Claude Sonnet 4.6). If you are a native speaker of any of these languages and find a mistake, please notify me so I can correct it. 
+The Earthquake Monitor is currently localized in 14 languages. These were selected to provide a broad coverage of potential users - both in terms of earthquake relevance and Home Assistant user base. In particular, the available languages are  **English, German, Greek, Spanish, French, Italian, Dutch, Japanese, Polish, Ukrainian, Portuguese, Brazilian Portuguese, Turkish, Traditional Chinese, and Indonesian**. Except for the first four, I do not speak these languages and the translations were created with the help of AI (ChatGPT GPT 5.4 Thinking and Claude Sonnet 4.6). If you are a native speaker of any of these languages and find a mistake, please notify me so I can correct it. 
 If you are a native speaker of any other language that you want to see implemented, please contact me, too.
 
 ## Known limitations
