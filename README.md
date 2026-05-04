@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version 1.6.2
+Version 1.7.0
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -26,7 +26,7 @@ The integration provides a Home Assistant sensor that includes:
 - region
 - epicenter coordinates
 - distance from a configured reference point
-- bearing from the reference point
+- bearing from the reference point (map-intuitive and geodetically correct shortest path on great circle)
 - relative location such as `42.3 km SW of reference point`
 - country of epicenter
 - nearest city (population >25000) to epicenter ("none" for very remote places or offshore points)
@@ -174,14 +174,23 @@ Important note: When you display these timestamps in the Details view of the ent
 The sensor reports the raw geographical coordinates (attributes `latitude` and `longitude`), depth (attribute `depth`) and geographic location (attribute `region`) it received from the EMSC feed. In addition, the integration calculates the following attributes that can be used for display or automations:
 
 - `distance_km`: gives the distance from the configured reference point in kilometers
-- `bearing_deg`: gives compass bearing from the reference point (where 0 is North, 90 is East, etc.)
+- `bearing_deg`: gives the compass bearing from the reference point (where 0 is North, 90 is East, etc.)
 - `bearing text`: gives the bearing from the reference point as text (e.g. "NW" for north-west)
+- `bearing_deg_geo`: gives the initial compass bearing of the shortest path from the reference point (geodetically correct great-circle measurement)
+- `bearing text_geo`: gives the initial bearing of the shortest path from the reference point as text (geodetically correct)
 - `relative_location`: gives the location relative to the reference point (e.g. "24.4km NW of reference point")
 - `country`: gives the country of the epicenter, for offshore earthquakes that cannot be assigned a country, it returns "offshore"
 - `nearest_city`: gives the city (with population >25000) closest to the epicenter; returns "none" for very remote places or offshore points when the nearest city is more than 500 km away.
 - `within_radius`: indicates whether the epicenter is within the user-defined local radius
 
 Note that the `region` attribute gives the Flinn-Engdahl region, a standardized geographic seismic zone name assigned from the latitude and longitude of an earthquake’s epicenter. This will, for example, show GREECE or NEAR N COAST OF PAPUA, INDONESIA. This attribute is *not a political boundary or a damage zone*. For example, two nearby quakes on opposite sides of a regional boundary may appear under different region names even if they are geographically close. Do not use this `region` attribute to assign the earthquake to a country. Instead, use the `country` attribute.
+
+Regarding the `bearing` attributes, the integration provides four values. The first two, `bearing_deg` and `bearing_text`, give the direction in an intuitive flat-map sense. The second two, `bearing_deg_geo` and `bearing_text_geo`, provide the geodetically correct initial great-circle bearing.
+
+This distinction is useful because the geodetically correct great-circle bearings become increasingly unintuitive the farther away an event occurs. For example, the great-circle bearing from Greece to Tonga in the South Pacific genuinely starts toward the north-east. The great-circle route first curves up over Northern Europe and crosses the Arctic, before turning south through the Pacific. This is the shortest path *on the sphere*, but deeply counterintuitive when you think in flat-map terms, where Tonga lies to the south-east of Greece. The same effect is seen with transatlantic flights from Europe to the US East Coast that appear to arc northward on a flat map, but actually follow the shortest route on the globe.
+
+For earthquakes up to a few thousand kilometers away, the intuitive and geodetically correct bearings are very similar. Therefore, the `relative_location` attribute uses the geodetically correct bearing for events up to 4000 km from the reference point, and the more intuitive flat-map bearing for more distant events.
+
 
 ## Persistence across restarts
 
@@ -211,8 +220,8 @@ If you chose a different name for the entity during the initial configuration, u
 
 ## Translations
 
-The Earthquake Monitor is currently localized in 15 languages. These were selected to provide a broad coverage of potential users - both in terms of earthquake relevance and Home Assistant user base. In particular, the available languages are  **English, German, Greek, Spanish, French, Italian, Dutch, Japanese, Polish, Ukrainian, Portuguese, Brazilian Portuguese, Turkish, Traditional Chinese, and Indonesian**. Except for the first four, I do not speak these languages and the translations were created with the help of AI (ChatGPT GPT 5.4 Thinking and Claude Sonnet 4.6). If you are a native speaker of any of these languages and find a mistake, please notify me so I can correct it. 
-If you are a native speaker of any other language that you want to see implemented, please contact me, too.
+The Earthquake Monitor is currently localized in 15 languages that were selected to provide a broad coverage of potential users - both in terms of earthquake relevance and Home Assistant user base. The available languages are **English, German, Greek, Spanish, French, Italian, Dutch, Japanese, Polish, Ukrainian, Portuguese, Brazilian Portuguese, Turkish, Traditional Chinese, and Indonesian**.
+Except for the first four, I do not speak these languages and the translations were created with the help of AI (ChatGPT GPT 5.4 Thinking and Claude Sonnet 4.6). If you are a native speaker of any of these languages and find a mistake, please notify me so I can correct it. If you are a native speaker of any other language that you want to see implemented, please contact me, too.
 
 ## Known limitations
 
@@ -222,13 +231,13 @@ If you are a native speaker of any other language that you want to see implement
 - In a few cases, earthquakes are reported with a longer delay (I observed up to 30 minutes delay). This is a limitation of the feed, not a bug in the integration. The sensor can only report earthquakes when they show up in the feed.
 - The sensor represents one current event per entity, not a list or history of earthquakes. Older events are shown in Activity of the entity, but only with its magnitude and timestamp (no rich attributes). 
 - while more than one entity (sensor) can be configured, in practice it is best to limit the number to two or three.
-- the attribute ´country´ is currently based on the land-country polygon dataset from [Natural Earth](https://www.naturalearthdata.com/). While this gives very high accuracy for "solid ground" locations, it sometimes misses the correct country for offshore earthquakes. These are then shown as "offshore" although they are in a maritime location legally belonging to a country. 
+- the attribute `country` is currently based on the land-country polygon dataset from [Natural Earth](https://www.naturalearthdata.com/). While this gives very high accuracy for "solid ground" locations, it sometimes misses the correct country for offshore earthquakes. These are then shown as "offshore" although they are in a maritime location legally belonging to a country. 
 
 
 ## Planned improvements
 
 This project may be extended in the future with:
-- improve determining the ´country´ attribute by using a different dataset (plannend for version 1.7).
+- improve determining the ´country´ attribute by using a different dataset (plannend for version 1.7.5).
 - additional (or improved) translations based on user requests and suggestions
 
 
