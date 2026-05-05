@@ -1,4 +1,4 @@
-# v1.6.2
+# v1.7.0
 # fix CONFIG_SCHEMA warning
 
 from homeassistant.config_entries import ConfigEntry
