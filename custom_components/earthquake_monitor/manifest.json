@@ -4,7 +4,7 @@
   "codeowners": ["@fra-yer"],
   "config_flow": true,
   "dependencies": [],
-  "documentation": "https://github.com/fra-yer/Earthquake-Monitor/blob/v1.6.2/README.md",
+  "documentation": "https://github.com/fra-yer/Earthquake-Monitor/blob/v1.7.0/README.md",
   "integration_type": "service",
   "iot_class": "cloud_push",
   "issue_tracker": "https://github.com/fra-yer/Earthquake-Monitor/issues",
@@ -13,6 +13,6 @@
     "reverse_geocoder==1.5.1",
     "shapely>=2.0.0"
   ],
-  "version": "1.6.2"
+  "version": "1.7.0"
 }
 
