@@ -1,6 +1,6 @@
 # Version 1.7.0 by FOF, May 2026
 # change-log of 1.7.0
-#    no changes from 1.6.2
+#    no changes from 1.6.2 in this file
 
 from homeassistant import config_entries
 import voluptuous as vol
