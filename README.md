@@ -230,9 +230,10 @@ Except for the first four, I do not speak these languages and the translations w
 - If the upstream feed becomes unavailable, no new earthquake data can be received. This has occurred in the past for a variety of reasons, for example during mandatory electrical safety shutdown tests.
 - According to the website, the feed aims at "(near) Realtime Notification", but delays of a few minutes are normal, especially for weak earthquakes
 - In a few cases, earthquakes are reported with a longer delay (I observed up to 30 minutes delay). This is a limitation of the feed, not a bug in the integration. The sensor can only report earthquakes when they show up in the feed.
-- The sensor represents one current event per entity, not a list or history of earthquakes. Older events are shown in Activity of the entity, but only with its magnitude and timestamp (no rich attributes). 
+- The sensor represents one current event per entity, not a list or history of earthquakes. Older events are shown in Activity of the entity, but only with its magnitude and timestamp (no rich attributes). If I get enough feedback from users, I will develop a small independent integration that writes an earthquake log as a csv file. 
 - while more than one entity (sensor) can be configured, in practice it is best to limit the number to two or three.
-- the attribute `country` is currently based on the land-country polygon dataset from [Natural Earth](https://www.naturalearthdata.com/). While this gives very high accuracy for "solid ground" locations, it sometimes misses the correct country for offshore earthquakes. These are then shown as "offshore" although they are in a maritime location legally belonging to a country. 
+- the attribute `country` is currently based on the land-country polygon dataset from [Natural Earth](https://www.naturalearthdata.com/). While this gives very high accuracy for "solid ground" locations, it sometimes misses the correct country for offshore earthquakes. These are then shown as "offshore" although they are in a maritime location legally belonging to a country.
+- names and values of the attributes are currently provided in English, to make the code more robust. Translations are planned for version v1.8.
 
 
 ## Planned improvements
