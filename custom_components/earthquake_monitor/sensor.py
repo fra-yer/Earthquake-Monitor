@@ -41,7 +41,6 @@ INTEGRATION_DIR = Path(__file__).resolve().parent
 CITIES_CSV = INTEGRATION_DIR / "geodata" / "cities25000.csv"
 COUNTRIES_GEOJSON = INTEGRATION_DIR / "geodata" / "ne_10m_admin_0_countries.geojson"
 
-
 @lru_cache(maxsize=1)
 def get_city_geocoder():
     """Load city geocoder once."""
@@ -49,7 +48,6 @@ def get_city_geocoder():
         mode=2,
         stream=io.StringIO(CITIES_CSV.read_text(encoding="utf-8-sig")),
     )
-
 
 @lru_cache(maxsize=1)
 def get_countries():
@@ -65,12 +63,10 @@ def get_countries():
 
     return countries
 
-
 def preload_geodata() -> None:
     """Warm up cached geodata resources."""
     get_countries()
     get_city_geocoder()
-
 
 def distance_km_between(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """Distance between any two lat/lon points."""
@@ -88,7 +84,6 @@ def distance_km_between(lat1: float, lon1: float, lat2: float, lon2: float) -> f
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return r_earth_km * c
 
-
 def nearest_city(lat: float, lon: float) -> str:
     """Nearest city name, or 'none' if farther than 500 km."""
     result = get_city_geocoder().query([(lat, lon)])[0]
@@ -101,7 +96,6 @@ def nearest_city(lat: float, lon: float) -> str:
 
     return result.get("name", "Unknown")
 
-
 def country_of_epicenter(lat: float, lon: float) -> str:
     """Country containing epicenter, or 'offshore' if offshore."""
     point = Point(lon, lat)  # lon, lat order
@@ -112,13 +106,11 @@ def country_of_epicenter(lat: float, lon: float) -> str:
 
     return "offshore"
 
-
 def lookup_geodata(lat: float, lon: float) -> tuple[str, str]:
     """Return country and nearest city for an epicenter."""
     country = country_of_epicenter(lat, lon)
     city = nearest_city(lat, lon)
     return country, city
-
 
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
     """Set up the Earthquake Monitor sensor from a config entry."""
@@ -148,7 +140,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     )
 
     async_add_entities([sensor], True)
-
 
 class EarthquakeMonitorSensor(RestoreSensor):
     """Representation of an Earthquake Monitor sensor."""
@@ -322,9 +313,12 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 )
 
         # Backfill missing status for entities restored from older versions
-        if self._current_unid is not None and "status" not in self._attributes:
-            self._attributes["status"] = "active"
-
+        if "status" not in self._attributes:
+            if self._current_unid is not None:
+                self._attributes["status"] = "active"
+            else:
+                self._attributes["status"] = "clear"        
+        
         if self._ws_task is None or self._ws_task.done():
             self._ws_task = asyncio.create_task(self.connect_to_websocket())
 
