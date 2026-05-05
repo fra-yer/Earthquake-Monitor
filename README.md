@@ -184,6 +184,9 @@ The sensor reports the raw geographical coordinates (attributes `latitude` and `
 - `nearest_city`: gives the city (with population >25000) closest to the epicenter; returns "none" for very remote places or offshore points when the nearest city is more than 500 km away.
 - `within_radius`: indicates whether the epicenter is within the user-defined local radius
 
+All distances provided by the integration are given in kilometers. If you prefer miles for dashboard display, you can convert the `distance_km` attribute in a Home Assistant template by multiplying it by 0.621371, e.g. using a template such as 
+```{{ (state_attr('sensor.latest_earthquake', 'distance_km') * 0.621371) | round(1) }} mi``` for conversion.
+
 Note that the `region` attribute gives the Flinn-Engdahl region, a standardized geographic seismic zone name assigned from the latitude and longitude of an earthquake’s epicenter. This will, for example, show GREECE or NEAR N COAST OF PAPUA, INDONESIA. This attribute is *not a political boundary or a damage zone*. For example, two nearby quakes on opposite sides of a regional boundary may appear under different region names even if they are geographically close. Do not use this `region` attribute to assign the earthquake to a country. Instead, use the `country` attribute.
 
 Regarding the `bearing` attributes, the integration provides four values. The first two, `bearing_deg` and `bearing_text`, give the direction in an intuitive flat-map sense. The second two, `bearing_deg_geo` and `bearing_text_geo`, provide the geodetically correct initial great-circle bearing.
