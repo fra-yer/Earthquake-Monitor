@@ -2,9 +2,10 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.6.2 by FOF, May 2026
+# Version 1.7.0 by FOF, May 2026
 # change-log:
-#   no changes in this file from v1.6.1
+#   changed how bearings are treated, introduced intuitive and geodetically correct bearings
+#   changed status value from cleared to clear for consistency (in initial setup and after auto-clear)
 
 import asyncio
 import io
@@ -435,7 +436,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
         earthquake_latitude: float,
         earthquake_longitude: float,
     ) -> float:
-        """Calculate initial bearing from home position to earthquake location."""
+        """Calculate initial great-circle bearing from reference point to earthquake location."""
         lat1 = radians(self.center_latitude)
         lon1 = radians(self.center_longitude)
         lat2 = radians(earthquake_latitude)
@@ -460,6 +461,27 @@ class EarthquakeMonitorSensor(RestoreSensor):
         ]
         index = int((bearing_deg + 11.25) // 22.5) % 16
         return directions[index]
+
+    def calculate_map_bearing_deg(
+        self,
+        earthquake_latitude: float,
+        earthquake_longitude: float,
+    ) -> float:
+        """Calculate an intuitive map-style bearing from reference point to earthquake location."""
+        dlat = earthquake_latitude - self.center_latitude
+        dlon = earthquake_longitude - self.center_longitude
+
+        if dlon > 180:
+            dlon -= 360
+        elif dlon < -180:
+            dlon += 360
+
+        mean_lat = radians((self.center_latitude + earthquake_latitude) / 2)
+        x = dlon * cos(mean_lat)
+        y = dlat
+
+        bearing = atan2(x, y)
+        return (degrees(bearing) + 360) % 360
 
     def parse_emsc_datetime(self, value: Any) -> datetime | None:
         """Parse EMSC datetime strings into timezone-aware UTC datetimes."""
@@ -605,10 +627,21 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 return
 
             distance_km = round(self.calculate_distance_km(lat, lon), 1)
-            bearing_deg = round(self.calculate_bearing_deg(lat, lon), 1)
-            bearing_text = self.bearing_deg_to_text(bearing_deg)
-            relative_location = f"{distance_km} km {bearing_text} of reference point"
 
+            # Intuitive flat-map bearing
+            bearing_deg = round(self.calculate_map_bearing_deg(lat, lon), 1)
+            bearing_text = self.bearing_deg_to_text(bearing_deg)
+            
+            # Geodetically correct initial great-circle bearing
+            bearing_deg_geo = round(self.calculate_bearing_deg(lat, lon), 1)
+            bearing_text_geo = self.bearing_deg_to_text(bearing_deg_geo)
+
+            # Human-readable relative location
+            if distance_km <= 4000:
+                relative_location = f"{distance_km} km {bearing_text_geo} of reference point"
+            else:
+                relative_location = f"{distance_km} km away, roughly {bearing_text} of reference point"            
+          
             try:
                 country, city = await self.hass.async_add_executor_job(
                     lookup_geodata,
@@ -644,6 +677,8 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 "distance_km": distance_km,
                 "bearing_deg": bearing_deg,
                 "bearing_text": bearing_text,
+                "bearing_deg_geo": bearing_deg_geo,
+                "bearing_text_geo": bearing_text_geo,
                 "relative_location": relative_location,
                 "within_radius": within_radius,
             }
