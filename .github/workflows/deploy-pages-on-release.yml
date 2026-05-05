@@ -32,6 +32,7 @@ jobs:
         run: |
           mkdir site
           cp README.md site/index.md
+          cp -r doc site/doc
           cat > site/_config.yml <<'EOF'
           title: Earthquake Monitor
           theme: jekyll-theme-cayman
