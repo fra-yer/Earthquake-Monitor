@@ -20,6 +20,7 @@ Earthquake Monitor connects to the [**real-time WebSocket feed**](https://seismi
 
 The integration provides a Home Assistant sensor that includes:
 
+- a unique identifier for every earthquake
 - magnitude
 - local and UTC timestamps
 - depth
@@ -237,7 +238,7 @@ Except for the first four, I do not speak these languages and the translations w
 ## Planned improvements
 
 This project may be extended in the future with:
-- improve determining the ´country´ attribute by using a different dataset (plannend for version 1.7.5).
+- improve determining the ´country´ attribute by using a different dataset (plannend for version v1.7.5).
 - additional (or improved) translations based on user requests and suggestions
 
 
