@@ -35,7 +35,7 @@ jobs:
           cp -r doc site/doc
           cat > site/_config.yml <<'EOF'
           title: Earthquake Monitor
-          theme: jekyll-theme-cayman
+          theme: jekyll-theme-slate
           EOF
 
       - name: Build with Jekyll
