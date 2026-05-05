@@ -5,7 +5,7 @@
 # Version 1.7.0 by FOF, May 2026
 # change-log:
 #   changed how bearings are treated, introduced intuitive and geodetically correct bearings
-#   changed status value from cleared to clear for consistency (in initial setup and after auto-clear)
+#   changed wording of status attribute from cleared to clear for consistency (in initial setup and after auto-clear)
 
 import asyncio
 import io
@@ -169,7 +169,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
         self._entry_id = entry_id
         self._name = name
         self._state = None
-        self._attributes: dict[str, Any] = {"status": "cleared"}
+        self._attributes: dict[str, Any] = {"status": "clear"}
         self._ssl_context = None
         self._ws_task = None
         self.reset_after_hours = float(reset_after_hours)
@@ -225,7 +225,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
     def clear_earthquake_state(self) -> None:
         """Clear the current earthquake data."""
         self._state = None
-        self._attributes = {"status": "cleared"}
+        self._attributes = {"status": "clear"}
         self._current_unid = None
         self._current_event_time = None
         self._current_lastupdate = None
