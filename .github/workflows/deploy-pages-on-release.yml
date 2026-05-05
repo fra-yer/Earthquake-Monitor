@@ -25,17 +25,28 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configure GitHub Pages
+        id: pages
         uses: actions/configure-pages@v5
 
-      - name: Prepare Pages content
+      - name: Prepare Jekyll source
         run: |
           mkdir site
           cp README.md site/index.md
+          cat > site/_config.yml <<'EOF'
+          title: Earthquake Monitor
+          theme: jekyll-theme-cayman
+          EOF
+
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./site
+          destination: ./_site
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
-          path: ./site
+          path: ./_site
 
   deploy:
     name: Deploy to GitHub Pages
