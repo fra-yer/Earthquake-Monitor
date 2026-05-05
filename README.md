@@ -127,7 +127,7 @@ A second threshold that allows stronger earthquakes *outside the local radius* t
 
 ### Lifetime of latest event
 
-This setting allows to keep the latest event for a defined amount of time, and then automatically "clear" the sensor. The default is 48 hours, which means that the sensor will clear two days after its last update. When this happens, the sensor will change its `status` attribute from "active" to "cleared". 
+This setting allows to keep the latest event for a defined amount of time, and then automatically "clear" the sensor. The default is 48 hours, which means that the sensor will clear two days after its last update. When this happens, the sensor will change its `status` attribute from "active" to "clear". 
 When the lifetime is set to 0, data of the last earthquake will never be cleared; this was the default behavior of older versions of the integration (before 1.5.0). 
 
 ### Timestamp settings
