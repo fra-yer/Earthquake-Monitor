@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version 1.7.0
+Version v1.7.0
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -193,7 +193,7 @@ Regarding the `bearing` attributes, the integration provides four values. The fi
 
 This distinction is useful because the geodetically correct great-circle bearings become increasingly unintuitive the farther away an event occurs. For example, the great-circle bearing from Greece to Tonga in the South Pacific genuinely starts toward the north-east. The great-circle route first curves up over Northern Europe and crosses the Arctic, before turning south through the Pacific. This is the shortest path *on the sphere*, but deeply counterintuitive when you think in flat-map terms, where Tonga lies to the south-east of Greece. The same effect is seen with transatlantic flights from Europe to the US East Coast that appear to arc northward on a flat map, but actually follow the shortest route on the globe.
 
-For earthquakes up to a few thousand kilometers away, the intuitive and geodetically correct bearings are very similar. Therefore, the `relative_location` attribute uses the geodetically correct bearing for events up to 4000 km from the reference point, and the more intuitive flat-map bearing for more distant events. This represents 1/10 of the Earth's circumference and - as a geometric consequence of the Earth's spherical geometry - is approximately the distance at which the two bearings begin to diverge by more than one compass point (e.g. showing NE instead of NNE).
+For earthquakes up to a few thousand kilometers away, the intuitive and geodetically correct bearings are very similar. Therefore, the `relative_location` attribute uses the geodetically correct bearing for events up to 4000 km from the reference point, and the more intuitive flat-map bearing for more distant events. The 4000 km threshold represent 1/10 of the Earth's circumference and - as a geometric consequence of the Earth's spherical geometry - is approximately the distance at which the two bearings begin to diverge by more than one compass point (e.g. showing NE instead of NNE).
 
 
 ## Persistence across restarts
