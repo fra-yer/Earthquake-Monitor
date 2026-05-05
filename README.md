@@ -172,7 +172,7 @@ Important note: When you display these timestamps in the Details view of the ent
 
 ## Location of an earthquake
 
-The sensor reports the raw geographical coordinates (attributes `latitude` and `longitude`), depth (attribute `depth`) and geographic location (attribute `region`) it received from the EMSC feed. In addition, the integration calculates the following attributes that can be used for display or automations:
+The sensor reports the raw geographical coordinates (attributes `latitude` and `longitude`), depth (attribute `depth`) and rough geographic location (attribute `region`) it received from the EMSC feed. In addition, the integration calculates the following attributes that can be used for display or automations:
 
 - `distance_km`: gives the distance from the configured reference point in kilometers
 - `bearing_deg`: gives the compass bearing from the reference point (where 0 is North, 90 is East, etc.)
@@ -184,8 +184,8 @@ The sensor reports the raw geographical coordinates (attributes `latitude` and `
 - `nearest_city`: gives the city (with population >25000) closest to the epicenter; returns "none" for very remote places or offshore points when the nearest city is more than 500 km away.
 - `within_radius`: indicates whether the epicenter is within the user-defined local radius
 
-All distances provided by the integration are given in kilometers. If you prefer miles for dashboard display, you can convert the `distance_km` attribute in a Home Assistant template by multiplying it by 0.621371, e.g. using a template such as 
-```{{ (state_attr('sensor.latest_earthquake', 'distance_km') * 0.621371) | round(1) }} mi``` for conversion.
+All distances provided by the integration are given in kilometers. If you prefer miles for dashboard display, you can convert the `distance_km` attribute using a Home Assistant template such as:
+`{{ (state_attr('sensor.latest_earthquake', 'distance_km') * 0.621371) | round(1) }} mi`, using your entity name. 
 
 Note that the `region` attribute gives the Flinn-Engdahl region, a standardized geographic seismic zone name assigned from the latitude and longitude of an earthquake’s epicenter. This will, for example, show GREECE or NEAR N COAST OF PAPUA, INDONESIA. This attribute is *not a political boundary or a damage zone*. For example, two nearby quakes on opposite sides of a regional boundary may appear under different region names even if they are geographically close. Do not use this `region` attribute to assign the earthquake to a country. Instead, use the `country` attribute.
 
