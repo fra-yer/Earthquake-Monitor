@@ -2,7 +2,7 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.7.0 by FOF, May 2026
+# Version 1.7.1 by FOF, May 2026
 # change-log:
 #   changed how bearings are treated, introduced intuitive and geodetically correct bearings
 #   changed wording of status attribute from cleared to clear for consistency (in initial setup and after auto-clear)
