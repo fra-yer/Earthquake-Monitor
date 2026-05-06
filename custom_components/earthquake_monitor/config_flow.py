@@ -1,5 +1,5 @@
-# Version 1.7.0 by FOF, May 2026
-# change-log of 1.7.0
+# Version 1.7.1 by FOF, May 2026
+# change-log of 1.7.1
 #    no changes from 1.6.2 in this file
 
 from homeassistant import config_entries
