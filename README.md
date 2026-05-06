@@ -224,7 +224,7 @@ If you chose a different name for the entity during the initial configuration, u
 
 ## Translations
 
-The Earthquake Monitor is currently localized in 15 languages that were selected to provide a broad coverage of potential users - both in terms of earthquake relevance and Home Assistant user base. The available languages are **English, German, Greek, Spanish, French, Italian, Dutch, Japanese, Polish, Ukrainian, Portuguese, Brazilian Portuguese, Turkish, Traditional Chinese, and Indonesian**.
+The configuration pages of Earthquake Monitor are currently localized in 15 languages that were selected to provide a broad coverage of potential users - both in terms of earthquake relevance and Home Assistant user base. The available languages are **English, German, Greek, Spanish, French, Italian, Dutch, Japanese, Polish, Ukrainian, Portuguese, Brazilian Portuguese, Turkish, Traditional Chinese, and Indonesian**.
 Except for the first four, I do not speak these languages and the translations were created with the help of AI (ChatGPT GPT 5.4 Thinking and Claude Sonnet 4.6). If you are a native speaker of any of these languages and find a mistake, please notify me so I can correct it. If you are a native speaker of any other language that you want to see implemented, please contact me, too.
 
 ## Known limitations
