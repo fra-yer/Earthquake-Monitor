@@ -118,7 +118,7 @@ The radius around the reference point within which earthquakes are considered lo
 
 ### Minimum local magnitude
 
-The minimum magnitude required for a *local* earthquake to be reported. Values from 0 to 10 are accepted. Values lower than 3 represent earthquakes that are too weak to be felt by humans; thus, setting the minimum local magnitude to much less than 3 will report many insignificant earthquakes, and should be avoided unless reporting of very weak quakes is desired. Check the [information about earthquake magnitudes](https://github.com/fra-yer/Earthquake-Monitor/blob/main/README.md#earthquake-magnitude-and-intensity) below. The default value is magnitude 2.5. 
+The minimum magnitude required for a *local* earthquake to be reported. Values from 0 to 10 are accepted. Values lower than 3 represent earthquakes that are too weak to be felt by humans; thus, setting the minimum local magnitude to much less than 3 will report many insignificant earthquakes, and should be avoided unless reporting of very weak quakes is desired. Check the [information about earthquake magnitudes](#earthquake-magnitude-and-intensity) below. The default value is magnitude 2.5. 
 
 ### Minimum magnitude for global earthquakes
 
@@ -137,7 +137,7 @@ This setting allows to choose the formatting of the "user-friendly timestamp" at
 ### Useful advice
 - you can create separate entities to monitor local earthquakes at different reference points
 - you can cleanly separate major global earthquakes from smaller local earthquakes by setting up two separate entities. For example, set up a 'local' entity around your home zone, with a minimum local magnitude of 2.5 and minimum global magnitude of 10 (so, no global earthquakes will be reported in this entity), then set up an independent second 'global' entity with local *and* global minimum of magnitude 7.5
-
+- although an entity only holds details of the latest earthquake, older events are not lost immediately because Home Assistant keeps them in the built-in recorder. See [Older earthquake events](#older-earthquake-events).
 
 ## Local radius vs global threshold
 
@@ -197,8 +197,7 @@ For earthquakes up to a few thousand kilometers away, the intuitive and geodetic
 
 
 ## Older Earthquake events
-The integration itself only exposes the latest accepted earthquake as the current sensor state (a new event overwrites an older event). However, older accepted events are still retained by Home Assistant’s recorder for the configured history retention period (the default is 10 days) and can therefore be inspected later or queried from the database.
-
+The integration itself only exposes the latest accepted earthquake as the current sensor state, so a new event overwrites an older one. However, older events remain saved in Home Assistant’s recorder for the configured history retention period, which is 10 days by default. Their full attributes are not shown in the standard History view of the entity, but can be accessed directly from the recorder database, for example with the SQL integration.
 
 ## Persistence across restarts
 
