@@ -2,10 +2,12 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.7.1 by FOF, May 2026
+# Version 1.7.5 by FOF, May 2026
 # change-log:
-#   changed how bearings are treated, introduced intuitive and geodetically correct bearings
-#   changed wording of status attribute from cleared to clear for consistency (in initial setup and after auto-clear)
+#   changed the dataset used to determine the country of the epicenter
+#     now uses a stripped and optimized version of Marine Regions EEZ/land-union data
+#     from https://www.marineregions.org/
+#     to include national waters and EEZ-associated areas, instead of only land territory
 
 import asyncio
 import io
@@ -39,7 +41,7 @@ ssl_executor = ThreadPoolExecutor(max_workers=1)
 # Paths relative to this file (sensor.py)
 INTEGRATION_DIR = Path(__file__).resolve().parent
 CITIES_CSV = INTEGRATION_DIR / "geodata" / "cities25000.csv"
-COUNTRIES_GEOJSON = INTEGRATION_DIR / "geodata" / "ne_10m_admin_0_countries.geojson"
+COUNTRIES_GEOJSON = INTEGRATION_DIR / "geodata" / "EEZ_land_union_v4_202410_minimal_0p001.geojson"
 
 @lru_cache(maxsize=1)
 def get_city_geocoder():
@@ -49,19 +51,22 @@ def get_city_geocoder():
         stream=io.StringIO(CITIES_CSV.read_text(encoding="utf-8-sig")),
     )
 
+
 @lru_cache(maxsize=1)
 def get_countries():
-    """Load country polygons once."""
+    """Load country/EEZ polygons once."""
     with COUNTRIES_GEOJSON.open("r", encoding="utf-8") as f:
         data = json.load(f)
 
     countries = []
     for feature in data["features"]:
-        name = feature["properties"].get("NAME", "Unknown")
+        properties = feature.get("properties", {})
+        name = (properties.get("SOVEREIGN1") or "").strip() or "Unknown"
         geom = shape(feature["geometry"])
         countries.append((name, geom))
 
     return countries
+
 
 def preload_geodata() -> None:
     """Warm up cached geodata resources."""
@@ -97,7 +102,7 @@ def nearest_city(lat: float, lon: float) -> str:
     return result.get("name", "Unknown")
 
 def country_of_epicenter(lat: float, lon: float) -> str:
-    """Country containing epicenter, or 'offshore' if offshore."""
+    """Sovereign state associated with the land/EEZ polygon containing the epicenter, or 'offshore' if in international waters."""
     point = Point(lon, lat)  # lon, lat order
 
     for name, poly in get_countries():
