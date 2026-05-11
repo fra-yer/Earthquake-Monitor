@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version v1.7.2
+Version v1.7.5
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -235,14 +235,12 @@ Except for the first four, I do not speak these languages and the translations w
 - The integration uses the EMSC feed as its only data source, and depends on a WebSocket connection to the EMSC service. If the upstream feed becomes unavailable, no new earthquake data can be received. This has occurred in the past for a variety of reasons, for example during mandatory electrical safety shutdown tests.
 - According to the website, the feed aims at "(near) Realtime Notification", but delays of a few minutes are normal, especially for weak earthquakes. In a few cases, earthquakes are reported with a longer delay (I observed up to 30 minutes delay). This is a limitation of the feed, not a bug in the integration. The sensor can only report earthquakes when they show up in the feed.
 - The sensor represents one current event per entity, not a list or history of earthquakes. Older events are shown in Activity of the entity, but only with their magnitude and timestamp. The other attributes can be retrieved from the HA recorder database, using the SQL integration. If I get enough feedback from users, I can develop a small independent integration that writes an earthquake log as a csv file. 
-- the attribute `country` is currently based on the land-country polygon dataset from [Natural Earth](https://www.naturalearthdata.com/). While this gives very high accuracy for "solid ground" locations, it sometimes misses the correct country for offshore earthquakes. These are then shown as "offshore" although they are in a maritime location legally belonging to a country.
 - names and values of the attributes are currently provided only in English, to make the code more robust. 
 
 
 ## Planned improvements
 
 This project may be extended in the future as follows:
-- improve determining the ´country´ attribute by using a different dataset (plannend for version v1.7.5).
 - add translations of attribute names and values are planned for version v1.8.0 (but may be delayed)
 - add more (or improved) translations based on user requests and suggestions
 
