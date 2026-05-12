@@ -2,12 +2,11 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.7.5 by FOF, May 2026
+# Version 1.7.6 by FOF, May 2026
 # change-log:
-#   changed the dataset used to determine the country of the epicenter
-#     now uses a stripped and optimized version of Marine Regions EEZ/land-union data
-#     from https://www.marineregions.org/
-#     to include national waters and EEZ-associated areas, instead of only land territory
+#   added offshore attribute based on Natural Earth land polygons
+#   added tsunami_potential attribute as a simplified screening label
+#     based on magnitude, depth, and offshore status
 
 import asyncio
 import io
@@ -42,6 +41,8 @@ ssl_executor = ThreadPoolExecutor(max_workers=1)
 INTEGRATION_DIR = Path(__file__).resolve().parent
 CITIES_CSV = INTEGRATION_DIR / "geodata" / "cities25000.csv"
 COUNTRIES_GEOJSON = INTEGRATION_DIR / "geodata" / "EEZ_land_union_v4_202410_minimal_0p001.geojson"
+LAND_COUNTRIES_GEOJSON = INTEGRATION_DIR / "geodata" / "ne_10m_admin_0_countries.geojson"
+
 
 @lru_cache(maxsize=1)
 def get_city_geocoder():
@@ -68,10 +69,26 @@ def get_countries():
     return countries
 
 
+@lru_cache(maxsize=1)
+def get_land_countries():
+    """Load land-country polygons once."""
+    with LAND_COUNTRIES_GEOJSON.open("r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    polygons = []
+    for feature in data["features"]:
+        geom = shape(feature["geometry"])
+        polygons.append(geom)
+
+    return polygons
+
+
 def preload_geodata() -> None:
     """Warm up cached geodata resources."""
     get_countries()
+    get_land_countries()
     get_city_geocoder()
+
 
 def distance_km_between(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """Distance between any two lat/lon points."""
@@ -89,6 +106,7 @@ def distance_km_between(lat1: float, lon1: float, lat2: float, lon2: float) -> f
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return r_earth_km * c
 
+
 def nearest_city(lat: float, lon: float) -> str:
     """Nearest city name, or 'none' if farther than 500 km."""
     result = get_city_geocoder().query([(lat, lon)])[0]
@@ -101,6 +119,7 @@ def nearest_city(lat: float, lon: float) -> str:
 
     return result.get("name", "Unknown")
 
+
 def country_of_epicenter(lat: float, lon: float) -> str:
     """Sovereign state associated with the land/EEZ polygon containing the epicenter, or 'offshore' if in international waters."""
     point = Point(lon, lat)  # lon, lat order
@@ -111,17 +130,61 @@ def country_of_epicenter(lat: float, lon: float) -> str:
 
     return "offshore"
 
-def lookup_geodata(lat: float, lon: float) -> tuple[str, str]:
-    """Return country and nearest city for an epicenter."""
+
+def is_land_epicenter(lat: float, lon: float) -> bool:
+    """Return True if the epicenter is inside a land-country polygon."""
+    point = Point(lon, lat)  # lon, lat order
+
+    for poly in get_land_countries():
+        if poly.covers(point):
+            return True
+
+    return False
+
+
+def lookup_geodata(lat: float, lon: float) -> tuple[str, str, bool]:
+    """Return country, nearest city, and offshore status for an epicenter."""
     country = country_of_epicenter(lat, lon)
     city = nearest_city(lat, lon)
-    return country, city
+    offshore = not is_land_epicenter(lat, lon)
+
+    return country, city, offshore
+
+
+def get_tsunami_potential(
+    offshore: bool | None,
+    magnitude: float,
+    depth_km: float | None,
+) -> str:
+    """Return a simplified tsunami-potential screening label."""
+    if offshore is None or depth_km is None:
+        return "unknown"
+
+    if not offshore:
+        return "unlikely"
+
+    if depth_km > 100:
+        return "unlikely"
+
+    if magnitude >= 8.0 and depth_km <= 70:
+        return "significant"
+
+    if magnitude >= 7.5 and depth_km <= 70:
+        return "elevated"
+
+    if magnitude >= 6.5 and depth_km <= 70:
+        return "possible"
+
+    return "unlikely"
+
 
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
     """Set up the Earthquake Monitor sensor from a config entry."""
     config = hass.data[DOMAIN][config_entry.entry_id]["config"]
-
-    await hass.async_add_executor_job(preload_geodata)
+    try:
+        await hass.async_add_executor_job(preload_geodata)
+    except Exception as e:
+        _LOGGER.error("Failed to preload geodata: %s", e)
 
     name = config.get("name") or config_entry.title or DEFAULT_NAME
     center_latitude = config.get("center_latitude")
@@ -145,6 +208,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     )
 
     async_add_entities([sensor], True)
+
 
 class EarthquakeMonitorSensor(RestoreSensor):
     """Representation of an Earthquake Monitor sensor."""
@@ -322,8 +386,8 @@ class EarthquakeMonitorSensor(RestoreSensor):
             if self._current_unid is not None:
                 self._attributes["status"] = "active"
             else:
-                self._attributes["status"] = "clear"        
-        
+                self._attributes["status"] = "clear"
+
         if self._ws_task is None or self._ws_task.done():
             self._ws_task = asyncio.create_task(self.connect_to_websocket())
 
@@ -630,7 +694,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
             # Intuitive flat-map bearing
             bearing_deg = round(self.calculate_map_bearing_deg(lat, lon), 1)
             bearing_text = self.bearing_deg_to_text(bearing_deg)
-            
+
             # Geodetically correct initial great-circle bearing
             bearing_deg_geo = round(self.calculate_bearing_deg(lat, lon), 1)
             bearing_text_geo = self.bearing_deg_to_text(bearing_deg_geo)
@@ -639,10 +703,10 @@ class EarthquakeMonitorSensor(RestoreSensor):
             if distance_km <= 4000:
                 relative_location = f"{distance_km} km {bearing_text_geo} of reference point"
             else:
-                relative_location = f"{distance_km} km away, roughly {bearing_text} of reference point"            
-          
+                relative_location = f"{distance_km} km away, roughly {bearing_text} of reference point"
+
             try:
-                country, city = await self.hass.async_add_executor_job(
+                country, city, offshore = await self.hass.async_add_executor_job(
                     lookup_geodata,
                     lat,
                     lon,
@@ -651,6 +715,19 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 _LOGGER.debug("Geodata lookup failed: %s", e)
                 country = "lookup failed"
                 city = "lookup failed"
+                offshore = None
+
+            depth_raw = info.get("depth")
+            try:
+                depth_km = float(depth_raw) if depth_raw is not None else None
+            except (TypeError, ValueError):
+                depth_km = None
+
+            tsunami_potential = get_tsunami_potential(
+                offshore,
+                mag,
+                depth_km,
+            )
 
             self._state = mag
             self._attributes = {
@@ -668,6 +745,8 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 "magnitude": mag,
                 "region": info.get("flynn_region"),
                 "country": country,
+                "offshore": offshore,
+                "tsunami_potential": tsunami_potential,
                 "nearest_city": city,
                 "depth": info.get("depth"),
                 "latitude": lat,
@@ -688,7 +767,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
 
             _LOGGER.info(
                 "[%s | %s] Accepted earthquake event: unid=%s action=%s mag=%s time=%s lastupdate=%s "
-                "region=%s distance_km=%s bearing=%s depth=%s",
+                "region=%s country=%s offshore=%s tsunami_potential=%s distance_km=%s bearing=%s depth=%s",
                 self._name,
                 self._entry_id,
                 unid,
@@ -697,6 +776,9 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 event_time_str,
                 lastupdate_str,
                 info.get("flynn_region"),
+                country,
+                offshore,
+                tsunami_potential,
                 distance_km,
                 bearing_text,
                 info.get("depth"),
