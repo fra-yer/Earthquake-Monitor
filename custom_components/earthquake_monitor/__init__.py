@@ -1,4 +1,4 @@
-# v1.7.5
+# v1.7.6
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
