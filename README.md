@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version v1.7.5
+Version v1.7.6
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -30,7 +30,9 @@ The integration provides a Home Assistant sensor that includes:
 - bearing from the reference point (map-intuitive and geodetically correct shortest path on great circle)
 - relative location such as `42.3 km SW of reference point`
 - country of epicenter
-- nearest city (population >25000) to epicenter ("none" for very remote places or offshore points)
+- whether the epicenter is on land or offshore
+- tsunami potential (for offshore epicenters)
+- nearest city (population >25000) to epicenter (can be "none" for very remote places or offshore points)
 
 
 The integration is intended for users who want a meaningful and stable “latest earthquake” entity in Home Assistant rather than observing a raw stream of feed updates in a web browser. It filters the feed and reports local earthquakes if they are within the configured radius around a reference point (typically, the user's home zone) and above the configured magnitude threshold. Stronger earthquakes outside the local radius are reported if they exceed a separate global threshold. Note that these will overwrite weaker local earthquakes when only one entity is configured. If reporting global earthquakes is not desired, set the global threshold to 10. 
@@ -181,6 +183,8 @@ The sensor reports the raw geographical coordinates (attributes `latitude` and `
 - `bearing text_geo`: gives the initial bearing of the shortest path from the reference point as text (geodetically correct)
 - `relative_location`: gives the location relative to the reference point (e.g. "24.4km NW of reference point")
 - `country`: gives the country of the epicenter, for offshore earthquakes that cannot be assigned a country, it returns "offshore"
+- `offshore`: is true for epicenters not on land(
+- `tsunami_potential`: a screening label for offshore earthquakes to estimate the potential for a tsunami (unlikely, possible, elevated, significant)
 - `nearest_city`: gives the city (with population >25000) closest to the epicenter; returns "none" for very remote places or offshore points when the nearest city is more than 500 km away.
 - `within_radius`: indicates whether the epicenter is within the user-defined local radius
 
@@ -195,6 +199,11 @@ This distinction is useful because the geodetically correct great-circle bearing
 
 For earthquakes up to a few thousand kilometers away, the intuitive and geodetically correct bearings are very similar. Therefore, the `relative_location` attribute uses the geodetically correct bearing for events up to 4000 km from the reference point, and the more intuitive flat-map bearing for more distant events. The 4000 km threshold represent 1/10 of the Earth's circumference and - as a geometric consequence of the Earth's spherical geometry - is approximately the distance at which the two bearings begin to diverge by more than one compass point (e.g. showing NE instead of NNE).
 
+Earthquakes at sea (`offshore` = true) carry a certain potential for generating a tsunami event. This potential is estimated by Earthquake Monitor and provided in the `tsunami_potential` attribute). NOTE that the tsunami_potential attribute is *not a tsunami warning*. Rather, it is a simplified label based on magnitude, depth, and offshore location. It does not account for focal mechanism, rupture geometry, seafloor displacement, or submarine landslides, all of which can contribute to the generation of an actual tsunami. It also does not evaluate sea-level observations.
+
+The integration assumes that a tsunami is unlikely for earthquakes with magnitudes below M6.5. However, some regional tsunami warning centers may evaluate smaller offshore or near-coastal earthquakes, depending on the local tectonic setting. For example, the Hellenic National Tsunami Warning Centre states that it analyses earthquakes of minimum magnitude 5.5 generated under the sea or close to coastal zones. Earthquake Monitor does not attempt to provide region-specific tsunami-warning logic.
+
+For safety-relevant information, always check announcements from official tsunami warning centers covering your region.
 
 ## Older Earthquake events
 The integration itself only exposes the latest accepted earthquake as the current sensor state, so a new event overwrites an older one. However, older events remain saved in Home Assistant’s recorder for the configured history retention period, which is 10 days by default. Their full attributes are not shown in the standard History view of the entity, but can be accessed directly from the recorder database, for example with the SQL integration.
