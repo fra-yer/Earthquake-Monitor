@@ -183,7 +183,7 @@ The sensor reports the raw geographical coordinates (attributes `latitude` and `
 - `bearing text_geo`: gives the initial bearing of the shortest path from the reference point as text (geodetically correct)
 - `relative_location`: gives the location relative to the reference point (e.g. "24.4km NW of reference point")
 - `country`: gives the country of the epicenter, for offshore earthquakes that cannot be assigned a country, it returns "offshore"
-- `offshore`: is true for epicenters not on land(
+- `offshore`: is true for epicenters not on land
 - `tsunami_potential`: a screening label for offshore earthquakes to estimate the potential for a tsunami (unlikely, possible, elevated, significant)
 - `nearest_city`: gives the city (with population >25000) closest to the epicenter; returns "none" for very remote places or offshore points when the nearest city is more than 500 km away.
 - `within_radius`: indicates whether the epicenter is within the user-defined local radius
