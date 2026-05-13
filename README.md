@@ -297,7 +297,7 @@ This integration was originally inspired by the [**EMSC Earthquake** custom inte
 
 Earthquake Monitor uses data from [Natural Earth](https://www.naturalearthdata.com/), which is in the [public domain](https://creativecommons.org/publicdomain/).
 
-and from [Marine Regions](https://www.marineregions.org/), which is under [CC-BY license](https://creativecommons.org/licenses/by/4.0/).
+Earthquake Monitor uses data from [Marine Regions](https://www.marineregions.org/) of the Flanders Marine Institute, which is under [CC-BY license](https://creativecommons.org/licenses/by/4.0/).
 
 ## License
 This project is licensed under the MIT License – see the [LICENSE file](https://github.com/fra-yer/Earthquake-Monitor/blob/main/LICENSE) for details.
