@@ -2,11 +2,9 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.7.6 by FOF, May 2026
+# Version 1.7.7 by FOF, May 2026
 # change-log:
-#   added offshore attribute based on Natural Earth land polygons
-#   added tsunami_potential attribute as a simplified screening label
-#     based on magnitude, depth, and offshore status
+#   no change in this file from v1.7.6
 
 import asyncio
 import io
