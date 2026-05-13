@@ -250,7 +250,7 @@ Except for the first four, I do not speak these languages and the translations w
 ## Planned improvements
 
 This project may be extended in the future as follows:
-- add translations of attribute names and values are planned for version v1.8.0 (but may be delayed)
+- add translations of attribute names and values are planned for version v2.0 (but may be delayed)
 - add more (or improved) translations based on user requests and suggestions
 
 
