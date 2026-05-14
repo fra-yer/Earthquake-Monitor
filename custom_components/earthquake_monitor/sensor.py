@@ -2,9 +2,9 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.7.7 by FOF, May 2026
+# Version 1.8.0 by FOF, May 2026
 # change-log:
-#   no change in this file from v1.7.6
+#   added tectonics information with two new attributes nearest_tectonic_boundary and tectonic_boundary_distance_km
 
 import asyncio
 import io
@@ -40,6 +40,8 @@ INTEGRATION_DIR = Path(__file__).resolve().parent
 CITIES_CSV = INTEGRATION_DIR / "geodata" / "cities25000.csv"
 COUNTRIES_GEOJSON = INTEGRATION_DIR / "geodata" / "EEZ_land_union_v4_202410_minimal_0p001.geojson"
 LAND_COUNTRIES_GEOJSON = INTEGRATION_DIR / "geodata" / "ne_10m_admin_0_countries.geojson"
+TECTONIC_BOUNDARIES_GEOJSON = INTEGRATION_DIR / "geodata" / "PB2002_boundaries_optimized.json"
+TECTONIC_BOUNDARY_MAX_DISTANCE_KM = 250.0
 
 
 @lru_cache(maxsize=1)
@@ -81,10 +83,36 @@ def get_land_countries():
     return polygons
 
 
+@lru_cache(maxsize=1)
+def get_tectonic_boundaries():
+    """Load tectonic boundary line features once."""
+    with TECTONIC_BOUNDARIES_GEOJSON.open("r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    boundaries = []
+    for feature in data["features"]:
+        properties = feature.get("properties", {})
+        geometry = feature.get("geometry", {})
+
+        if geometry.get("type") != "LineString":
+            continue
+
+        name = (properties.get("Name") or "").strip() or "Unknown"
+        coordinates = geometry.get("coordinates", [])
+
+        if len(coordinates) < 2:
+            continue
+
+        boundaries.append((name, coordinates))
+
+    return boundaries
+
+
 def preload_geodata() -> None:
     """Warm up cached geodata resources."""
     get_countries()
     get_land_countries()
+    get_tectonic_boundaries()
     get_city_geocoder()
 
 
