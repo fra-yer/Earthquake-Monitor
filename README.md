@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version v1.7.7
+Version v1.8.0
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -26,6 +26,7 @@ The integration provides a Home Assistant sensor that includes:
 - depth
 - region
 - epicenter coordinates
+- nearest tectonic boundary and distance to it
 - distance from a configured reference point
 - bearing from the reference point (map-intuitive and geodetically correct shortest path on great circle)
 - relative location such as `42.3 km SW of reference point`
@@ -186,6 +187,8 @@ The sensor reports the raw geographical coordinates (attributes `latitude` and `
 - `offshore`: is true for epicenters not on land
 - `tsunami_potential`: a screening label for offshore earthquakes to estimate the potential for a tsunami (unlikely, possible, elevated, significant)
 - `nearest_city`: gives the city (with population >25000) closest to the epicenter; returns "none" for very remote places or offshore points when the nearest city is more than 500 km away.
+- `nearest_tectonic_boundary`: gives the nearest tectonic boundary as the pair of tectonic plates
+- `tectonic_boundary_distance_km`: gives the distance to the nearest tectonic boundary in kilometers
 - `within_radius`: indicates whether the epicenter is within the user-defined local radius
 
 All distances provided by the integration are given in kilometers. If you prefer miles for dashboard display, you can convert the `distance_km` attribute using a Home Assistant template such as:
