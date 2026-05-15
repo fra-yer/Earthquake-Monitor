@@ -146,6 +146,82 @@ def nearest_city(lat: float, lon: float) -> str:
     return result.get("name", "Unknown")
 
 
+def normalize_delta_lon(delta_lon: float) -> float:
+    """Normalize longitude difference to the -180..180 range."""
+    if delta_lon > 180:
+        delta_lon -= 360
+    elif delta_lon < -180:
+        delta_lon += 360
+
+    return delta_lon
+
+
+def distance_point_to_segment_km(
+    lat: float,
+    lon: float,
+    lat1: float,
+    lon1: float,
+    lat2: float,
+    lon2: float,
+) -> float:
+    """Approximate shortest distance from a lat/lon point to a boundary segment in km."""
+    r_earth_km = 6371.0
+    lat0_rad = radians(lat)
+
+    x1 = radians(normalize_delta_lon(lon1 - lon)) * cos(lat0_rad) * r_earth_km
+    y1 = radians(lat1 - lat) * r_earth_km
+    x2 = radians(normalize_delta_lon(lon2 - lon)) * cos(lat0_rad) * r_earth_km
+    y2 = radians(lat2 - lat) * r_earth_km
+
+    dx = x2 - x1
+    dy = y2 - y1
+
+    if dx == 0 and dy == 0:
+        return sqrt(x1 * x1 + y1 * y1)
+
+    t = -(x1 * dx + y1 * dy) / (dx * dx + dy * dy)
+    t = max(0.0, min(1.0, t))
+
+    closest_x = x1 + t * dx
+    closest_y = y1 + t * dy
+
+    return sqrt(closest_x * closest_x + closest_y * closest_y)
+
+
+def nearest_tectonic_boundary(lat: float, lon: float) -> tuple[str, float | None]:
+    """Return nearest mapped tectonic boundary and distance in km."""
+    nearest_name = None
+    nearest_distance = None
+
+    for name, coordinates in get_tectonic_boundaries():
+        for idx in range(len(coordinates) - 1):
+            lon1, lat1 = coordinates[idx]
+            lon2, lat2 = coordinates[idx + 1]
+
+            distance = distance_point_to_segment_km(
+                lat,
+                lon,
+                lat1,
+                lon1,
+                lat2,
+                lon2,
+            )
+
+            if nearest_distance is None or distance < nearest_distance:
+                nearest_distance = distance
+                nearest_name = name
+
+    if nearest_name is None or nearest_distance is None:
+        return "lookup failed", None
+
+    distance_km = round(nearest_distance, 1)
+
+    if nearest_distance > TECTONIC_BOUNDARY_MAX_DISTANCE_KM:
+        return "none", distance_km
+
+    return nearest_name, distance_km
+
+
 def country_of_epicenter(lat: float, lon: float) -> str:
     """Sovereign state associated with the land/EEZ polygon containing the epicenter, or 'offshore' if in international waters."""
     point = Point(lon, lat)  # lon, lat order
@@ -168,13 +244,23 @@ def is_land_epicenter(lat: float, lon: float) -> bool:
     return False
 
 
-def lookup_geodata(lat: float, lon: float) -> tuple[str, str, bool]:
-    """Return country, nearest city, and offshore status for an epicenter."""
+def lookup_geodata(lat: float, lon: float) -> tuple[str, str, bool, str, float | None]:
+    """Return country, nearest city, offshore status, and nearest tectonic boundary for an epicenter."""
     country = country_of_epicenter(lat, lon)
     city = nearest_city(lat, lon)
     offshore = not is_land_epicenter(lat, lon)
+    tectonic_boundary, tectonic_boundary_distance_km = nearest_tectonic_boundary(
+        lat,
+        lon,
+    )
 
-    return country, city, offshore
+    return (
+        country,
+        city,
+        offshore,
+        tectonic_boundary,
+        tectonic_boundary_distance_km,
+    )
 
 
 def get_tsunami_potential(
@@ -732,7 +818,13 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 relative_location = f"{distance_km} km away, roughly {bearing_text} of reference point"
 
             try:
-                country, city, offshore = await self.hass.async_add_executor_job(
+                (
+                    country,
+                    city,
+                    offshore,
+                    tectonic_boundary,
+                    tectonic_boundary_distance_km,
+                ) = await self.hass.async_add_executor_job(
                     lookup_geodata,
                     lat,
                     lon,
@@ -742,6 +834,8 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 country = "lookup failed"
                 city = "lookup failed"
                 offshore = None
+                tectonic_boundary = "lookup failed"
+                tectonic_boundary_distance_km = None
 
             depth_raw = info.get("depth")
             try:
@@ -760,30 +854,32 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 "status": "active",
                 "action": action,
                 "unid": unid,
-                "time": self.format_friendly_datetime(event_time, use_utc=False),
-                "time_utc": self.format_utc_text(event_time),
-                "lastupdate": self.format_friendly_datetime(lastupdate, use_utc=False),
-                "lastupdate_utc": self.format_utc_text(lastupdate),
-                "time_raw": event_time_str,
-                "time_utc_raw": event_time.isoformat() if event_time else None,
-                "lastupdate_raw": lastupdate_str,
-                "lastupdate_utc_raw": lastupdate.isoformat() if lastupdate else None,
                 "magnitude": mag,
+                "latitude": lat,
+                "longitude": lon,
+                "depth": info.get("depth"),
+                "magtype": info.get("magtype"),
+                "distance_km": distance_km,
+                "time": self.format_friendly_datetime(event_time, use_utc=False),
+                "time_raw": event_time_str,
+                "time_utc": self.format_utc_text(event_time),
+                "time_utc_raw": event_time.isoformat() if event_time else None,
+                "lastupdate": self.format_friendly_datetime(lastupdate, use_utc=False),
+                "lastupdate_raw": lastupdate_str,
+                "lastupdate_utc": self.format_utc_text(lastupdate),
+                "lastupdate_utc_raw": lastupdate.isoformat() if lastupdate else None,
                 "region": info.get("flynn_region"),
                 "country": country,
                 "offshore": offshore,
                 "tsunami_potential": tsunami_potential,
                 "nearest_city": city,
-                "depth": info.get("depth"),
-                "latitude": lat,
-                "longitude": lon,
-                "magtype": info.get("magtype"),
-                "distance_km": distance_km,
-                "bearing_deg": bearing_deg,
-                "bearing_text": bearing_text,
-                "bearing_deg_geo": bearing_deg_geo,
-                "bearing_text_geo": bearing_text_geo,
+                "nearest_tectonic_boundary": tectonic_boundary,
+                "tectonic_boundary_distance_km": tectonic_boundary_distance_km,
                 "relative_location": relative_location,
+                "bearing_text": bearing_text,
+                "bearing_deg": bearing_deg,
+                "bearing_text_geo": bearing_text_geo,
+                "bearing_deg_geo": bearing_deg_geo,
                 "within_radius": within_radius,
             }
 
