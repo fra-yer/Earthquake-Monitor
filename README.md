@@ -191,7 +191,7 @@ The sensor reports the raw geographical coordinates (attributes `latitude` and `
 - `tectonic_boundary_distance_km`: gives the distance to the nearest tectonic boundary in kilometers
 - `within_radius`: indicates whether the epicenter is within the user-defined local radius
 
-All distances provided by the integration are given in kilometers. If you prefer miles for dashboard display, you can convert the `distance_km` attribute using a Home Assistant template such as:
+All distances provided by the integration are given in kilometers. If you prefer miles for dashboard display, you can convert the `distance_km` or `tectonic_boundary_distance_km` attribute using a Home Assistant template such as:
 `{{ (state_attr('sensor.latest_earthquake', 'distance_km') * 0.621371) | round(1) }} mi`, using your entity name. 
 
 Note that the `region` attribute gives the Flinn-Engdahl region, a standardized geographic seismic zone name assigned from the latitude and longitude of an earthquake’s epicenter. This will, for example, show GREECE or NEAR N COAST OF PAPUA, INDONESIA. This attribute is *not a political boundary or a damage zone*. For example, two nearby quakes on opposite sides of a regional boundary may appear under different region names even if they are geographically close. Do not use this `region` attribute to assign the earthquake to a country. Instead, use the `country` attribute.
@@ -208,6 +208,25 @@ The integration assumes that a tsunami is unlikely for earthquakes with magnitud
 
 For safety-relevant information, always check announcements from official tsunami warning centers covering your region.
 
+### Tectonic boundary notation
+
+The `nearest_tectonic_boundary` attribute shows the nearest mapped tectonic boundary as a pair of the tectonic plates involved. The separator between the plate names carries the following meaning:
+
+- `/` indicates a subduction boundary where the plate on the right subducts ("dives") under the plate on the left
+- `\` indicates a subduction boundary where the plate on the left subducts under the plate on the right
+- `-` indicates a mapped plate boundary without subduction, for example where two plates slide horizontally past each other
+
+Examples:
+
+- `Eurasia / Africa`: the African Plate subducts under the Eurasian Plate
+- `Nazca \ South America`: the Nazca Plate subducts under the South American Plate
+- `Pacific - North America`: the Pacific Plate moves relative to the North American Plate without subduction
+
+The integration cannot identify the exact fault or rupture surface that caused the earthquake. 
+
+Note that sometimes an earthquake's epicenter sits within the interior of a single tectonic plate, far from any active plate boundary, often hundreds or thousands of kilometers away. These *intraplate* earthquakes are much less common than earthquakes at plate boundaries, but can be particularly strong and devastating. In fact, intraplate earthquakes have historically accounted for a significant number of fatalities from seismic events over the past century. This is partly because stress within the plate can build up over a long time and may be released along ancient, buried, or pre-existing fault lines, but also because they can affect regions that are rarely prepared for seismic activity.
+
+Earthquake Monitor does not explicitly classify earthquakes as intraplate. However, `nearest_tectonic_boundary` is reported as `none` when the distance from the nearest boundary exceeds 250 km, and these events can be considered intraplate for practical reasons.
 ## Older Earthquake events
 The integration itself only exposes the latest accepted earthquake as the current sensor state, so a new event overwrites an older one. However, older events remain saved in Home Assistant’s recorder for the configured history retention period, which is 10 days by default. Their full attributes are not shown in the standard History view of the entity, but can be accessed directly from the recorder database, for example with the SQL integration.
 
@@ -301,6 +320,8 @@ This integration was originally inspired by the [**EMSC Earthquake** custom inte
 Earthquake Monitor uses data from [Natural Earth](https://www.naturalearthdata.com/), which is in the [public domain](https://creativecommons.org/publicdomain/).
 
 Earthquake Monitor uses data from [Marine Regions](https://www.marineregions.org/) of the Flanders Marine Institute, which is under [CC-BY license](https://creativecommons.org/licenses/by/4.0/).
+
+Information about tectonic boundaries are drawn from the [dataset by Hugo Ahlenius](https://github.com/fraxen/tectonicplates), which was published under the [Open Data Commons Attribution License](https://opendatacommons.org/licenses/by/1-0/). That dataset itself is a conversion of the dataset originally published in the paper [An updated digital model of plate boundaries](https://doi.org/10.1029/2001GC000252) by Peter Bird.
 
 ## License
 This project is licensed under the MIT License – see the [LICENSE file](https://github.com/fra-yer/Earthquake-Monitor/blob/main/LICENSE) for details.
