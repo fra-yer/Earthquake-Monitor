@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version v1.8.0
+Version v1.8.5
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -30,7 +30,7 @@ The integration provides a Home Assistant sensor that includes:
 - distance from a configured reference point
 - bearing from the reference point (map-intuitive and geodetically correct shortest path on great circle)
 - relative location such as `42.3 km SW of reference point`
-- country of epicenter
+- country and territory of epicenter
 - whether the epicenter is on land or offshore
 - tsunami potential (for offshore epicenters)
 - nearest city (population >25000) to epicenter (can be "none" for very remote places or offshore points)
@@ -184,6 +184,7 @@ The sensor reports the raw geographical coordinates (attributes `latitude` and `
 - `bearing text_geo`: gives the initial bearing of the shortest path from the reference point as text (geodetically correct)
 - `relative_location`: gives the location relative to the reference point (e.g. "24.4km NW of reference point")
 - `country`: gives the country of the epicenter, for offshore earthquakes that cannot be assigned a country, it returns "offshore"
+- `territory`: gives the territory of the epicenter, which is especially useful for overseas territories where `country` alone is misleading
 - `offshore`: is true for epicenters not on land
 - `tsunami_potential`: a screening label for offshore earthquakes to estimate the potential for a tsunami (unlikely, possible, elevated, significant)
 - `nearest_city`: gives the city (with population >25000) closest to the epicenter; returns "none" for very remote places or offshore points when the nearest city is more than 500 km away.
@@ -194,7 +195,7 @@ The sensor reports the raw geographical coordinates (attributes `latitude` and `
 All distances provided by the integration are given in kilometers. If you prefer miles for dashboard display, you can convert the `distance_km` or `tectonic_boundary_distance_km` attribute using a Home Assistant template such as:
 `{{ (state_attr('sensor.latest_earthquake', 'distance_km') * 0.621371) | round(1) }} mi`, using your entity name. 
 
-Note that the `region` attribute gives the Flinn-Engdahl region, a standardized geographic seismic zone name assigned from the latitude and longitude of an earthquake’s epicenter. This will, for example, show GREECE or NEAR N COAST OF PAPUA, INDONESIA. This attribute is *not a political boundary or a damage zone*. For example, two nearby quakes on opposite sides of a regional boundary may appear under different region names even if they are geographically close. Do not use this `region` attribute to assign the earthquake to a country. Instead, use the `country` attribute.
+Note that the `region` attribute gives the Flinn-Engdahl region, a standardized geographic seismic zone name assigned from the latitude and longitude of an earthquake’s epicenter. This will, for example, show GREECE or NEAR N COAST OF PAPUA, INDONESIA. This attribute is *not a political boundary or a damage zone*. For example, two nearby quakes on opposite sides of a regional boundary may appear under different region names even if they are geographically close. Do not use this `region` attribute to assign the earthquake to a country. Instead, use the `country` and `territory `attributes.
 
 Regarding the `bearing` attributes, the integration provides four values. The first two, `bearing_deg` and `bearing_text`, give the direction in an intuitive flat-map sense. The second two, `bearing_deg_geo` and `bearing_text_geo`, provide the geodetically correct initial great-circle bearing.
 
