@@ -2,9 +2,9 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.8.0 by FOF, May 2026
+# Version 1.8.5 by FOF, May 2026
 # change-log:
-#   added tectonics information with two new attributes nearest_tectonic_boundary and tectonic_boundary_distance_km
+#   added a new attribute territory for better description of oversea dependent territories
 
 import asyncio
 import io
@@ -62,9 +62,10 @@ def get_countries():
     countries = []
     for feature in data["features"]:
         properties = feature.get("properties", {})
-        name = (properties.get("SOVEREIGN1") or "").strip() or "Unknown"
+        country = (properties.get("SOVEREIGN1") or "").strip() or "Unknown"
+        territory = (properties.get("TERRITORY1") or "").strip() or country
         geom = shape(feature["geometry"])
-        countries.append((name, geom))
+        countries.append((country, territory, geom))
 
     return countries
 
@@ -222,15 +223,15 @@ def nearest_tectonic_boundary(lat: float, lon: float) -> tuple[str, float | None
     return nearest_name, distance_km
 
 
-def country_of_epicenter(lat: float, lon: float) -> str:
-    """Sovereign state associated with the land/EEZ polygon containing the epicenter, or 'offshore' if in international waters."""
+def country_and_territory_of_epicenter(lat: float, lon: float) -> tuple[str, str]:
+    """Return sovereign state and territory associated with the epicenter."""
     point = Point(lon, lat)  # lon, lat order
 
-    for name, poly in get_countries():
+    for country, territory, poly in get_countries():
         if poly.covers(point):
-            return name
+            return country, territory
 
-    return "offshore"
+    return "offshore", "offshore"
 
 
 def is_land_epicenter(lat: float, lon: float) -> bool:
@@ -244,9 +245,12 @@ def is_land_epicenter(lat: float, lon: float) -> bool:
     return False
 
 
-def lookup_geodata(lat: float, lon: float) -> tuple[str, str, bool, str, float | None]:
-    """Return country, nearest city, offshore status, and nearest tectonic boundary for an epicenter."""
-    country = country_of_epicenter(lat, lon)
+def lookup_geodata(
+    lat: float,
+    lon: float,
+) -> tuple[str, str, str, bool, str, float | None]:
+    """Return country, territory, nearest city, offshore status, and nearest tectonic boundary for an epicenter."""
+    country, territory = country_and_territory_of_epicenter(lat, lon)
     city = nearest_city(lat, lon)
     offshore = not is_land_epicenter(lat, lon)
     tectonic_boundary, tectonic_boundary_distance_km = nearest_tectonic_boundary(
@@ -256,6 +260,7 @@ def lookup_geodata(lat: float, lon: float) -> tuple[str, str, bool, str, float |
 
     return (
         country,
+        territory,
         city,
         offshore,
         tectonic_boundary,
@@ -820,6 +825,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
             try:
                 (
                     country,
+                    territory,
                     city,
                     offshore,
                     tectonic_boundary,
@@ -832,6 +838,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
             except Exception as e:
                 _LOGGER.debug("Geodata lookup failed: %s", e)
                 country = "lookup failed"
+                territory = "lookup failed"
                 city = "lookup failed"
                 offshore = None
                 tectonic_boundary = "lookup failed"
@@ -870,6 +877,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 "lastupdate_utc_raw": lastupdate.isoformat() if lastupdate else None,
                 "region": info.get("flynn_region"),
                 "country": country,
+                "territory": territory,
                 "offshore": offshore,
                 "tsunami_potential": tsunami_potential,
                 "nearest_city": city,
