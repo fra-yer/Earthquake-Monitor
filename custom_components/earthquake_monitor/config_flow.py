@@ -1,5 +1,5 @@
-# Version 1.8.0 by FOF, May 2026
-# change-log of 1.8.0
+# Version 1.8.5 by FOF, May 2026
+# change-log of 1.8.5
 #    no changes from 1.6.2 in this file
 
 from homeassistant import config_entries
