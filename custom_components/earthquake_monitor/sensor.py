@@ -2,9 +2,10 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.8.5 by FOF, May 2026
+# Version 1.8.6 by FOF, May 2026
 # change-log:
-#   added a new attribute territory for better description of oversea dependent territories
+#   changed the new attribute territory to "none" if no distinct territory applies, 
+#     or if the event is in international waters
 
 import asyncio
 import io
@@ -63,7 +64,13 @@ def get_countries():
     for feature in data["features"]:
         properties = feature.get("properties", {})
         country = (properties.get("SOVEREIGN1") or "").strip() or "Unknown"
-        territory = (properties.get("TERRITORY1") or "").strip() or country
+        territory_raw = (properties.get("TERRITORY1") or "").strip()
+
+        if territory_raw and territory_raw != country:
+            territory = territory_raw
+        else:
+            territory = "none"
+
         geom = shape(feature["geometry"])
         countries.append((country, territory, geom))
 
@@ -231,7 +238,7 @@ def country_and_territory_of_epicenter(lat: float, lon: float) -> tuple[str, str
         if poly.covers(point):
             return country, territory
 
-    return "offshore", "offshore"
+    return "offshore", "none"
 
 
 def is_land_epicenter(lat: float, lon: float) -> bool:
