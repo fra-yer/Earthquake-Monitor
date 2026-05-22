@@ -1,0 +1,29 @@
+Terminal commands to reduce the files size and strip attributes from the original EEZ_land_union_v4_202410.geojson file
+
+for this to work, we need to install ogr2ogr, which is a part of GDAL:
+brew install gdal
+
+1. step: convert the shapefile to GeoJSON
+
+ogr2ogr \
+  -f GeoJSON \
+  EEZ_land_union_v4_202410.geojson \
+  EEZ_land_union_v4_202410.shp
+
+  
+2. step: simplify the polygon geometry,  keeping it as accurate as possible while getting the file size down (resolution 0.001° ≈ 110 m latitude)
+
+ogr2ogr \
+  -f GeoJSON \
+  EEZ_land_union_v4_202410_simplified_0p001.geojson \
+  EEZ_land_union_v4_202410.geojson \
+  -simplify 0.001
+
+  
+3. step: retain only the SOVEREIGN1 and TERRITORY1 fields 
+  
+ogr2ogr \
+  -f GeoJSON \
+  EEZ_land_union_v4_202410_minimal_0p001_sov_terr.geojson \
+  EEZ_land_union_v4_202410_simplified_0p001.geojson \
+  -select SOVEREIGN1,TERRITORY1
