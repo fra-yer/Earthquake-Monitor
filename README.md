@@ -22,18 +22,19 @@ The integration provides a Home Assistant sensor that includes:
 
 - a unique identifier for every earthquake
 - magnitude
-- local and UTC timestamps
-- depth
-- region and region number
 - epicenter coordinates
+- depth
+- local and UTC timestamps
+- Flinn-Engdahl region and region number
 - nearest tectonic boundary and distance to it
 - distance from a configured reference point
 - bearing from the reference point (map-intuitive and geodetically correct shortest path on great circle)
 - relative location such as `42.3 km SW of reference point`
 - country and territory of epicenter
+- nearest city (population >25000) to epicenter (can be "none" for very remote places or offshore points)
 - whether the epicenter is on land or offshore
 - tsunami potential (for offshore epicenters)
-- nearest city (population >25000) to epicenter (can be "none" for very remote places or offshore points)
+
 
 
 The integration is intended for users who want a meaningful and stable “latest earthquake” entity in Home Assistant rather than observing a raw stream of feed updates in a web browser. It filters the feed and reports local earthquakes if they are within the configured radius around a reference point (typically, the user's home zone) and above the configured magnitude threshold. Stronger earthquakes outside the local radius are reported if they exceed a separate global threshold. Note that these will overwrite weaker local earthquakes when only one entity is configured. If reporting global earthquakes is not desired, set the global threshold to 10. 
@@ -178,20 +179,20 @@ Important note: When you display these timestamps in the Details view of the ent
 The sensor reports the raw geographical coordinates (attributes `latitude` and `longitude`), depth (attribute `depth`) and region (attribute `region_emsc`)  received from the EMSC feed. In addition, the integration calculates the following attributes that can be used for display or automations:
 
 - `distance_km`: gives the distance from the configured reference point in kilometers
-- `bearing_deg`: gives the compass bearing from the reference point (where 0 is North, 90 is East, etc.)
-- `bearing text`: gives the bearing from the reference point as text (e.g. "NW" for north-west)
-- `bearing_deg_geo`: gives the initial compass bearing of the shortest path from the reference point (geodetically correct great-circle measurement)
-- `bearing text_geo`: gives the initial bearing of the shortest path from the reference point as text (geodetically correct)
-- `relative_location`: gives the location relative to the reference point (e.g. "24.4km NW of reference point")
 - `region_number`: gives the standardized Flinn-Engdahl region number
 - `region`: gives the Flinn-Engdahl region as text
 - `country`: gives the sovereign country of the epicenter, for offshore earthquakes that cannot be assigned a country, it returns "offshore"
 - `territory`: gives the territory of the epicenter, which is especially useful for overseas territories where `country` alone is misleading
+- `nearest_city`: gives the city (with population >25000) closest to the epicenter; returns "none" for very remote places or offshore points when the nearest city is more than 500 km away.
 - `offshore`: is true for epicenters not on land
 - `tsunami_potential`: a screening label for offshore earthquakes to estimate the potential for a tsunami (unlikely, possible, elevated, significant)
-- `nearest_city`: gives the city (with population >25000) closest to the epicenter; returns "none" for very remote places or offshore points when the nearest city is more than 500 km away.
 - `nearest_tectonic_boundary`: gives the nearest tectonic boundary as the pair of tectonic plates
 - `tectonic_boundary_distance_km`: gives the distance to the nearest tectonic boundary in kilometers
+- `relative_location`: gives the location relative to the reference point (e.g. "24.4km NW of reference point")
+- `bearing_deg`: gives the compass bearing from the reference point (where 0 is North, 90 is East, etc.)
+- `bearing text`: gives the bearing from the reference point as text (e.g. "NW" for north-west)
+- `bearing_deg_geo`: gives the initial compass bearing of the shortest path from the reference point (geodetically correct great-circle measurement)
+- `bearing text_geo`: gives the initial bearing of the shortest path from the reference point as text (geodetically correct)
 - `within_radius`: indicates whether the epicenter is within the user-defined local radius
 
 Distances provided by the integration are given in kilometers. If you prefer miles for dashboard display, you can convert the `distance_km` or `tectonic_boundary_distance_km` attribute using a Home Assistant template such as:
@@ -200,17 +201,14 @@ Distances provided by the integration are given in kilometers. If you prefer mil
 The region-related attributes (`region_number`, `region` and `region_emsc`) give the Flinn-Engdahl region, a standardized geographic seismic zone assigned from the latitude and longitude of an earthquake’s epicenter. Earthquake monitor provides the webfeed-reported region in `region_emsc`, and self-computed `region_number` and `region` attributes; when in doubt, prefer `region_number` and `region` over `region_emsc` for your automations or dashboards.
 These region attributes *do not indicate a political entity or the damage zone*. For example, two nearby quakes on opposite sides of a regional boundary may appear under different region names even if they are geographically close. Do not use these region-related attributes to assign the earthquake to a country. Instead, use the `country` and `territory `attributes, to gain information about the sovereign country and, when applicable, the overseas territory where the event took place. 
 
-Regarding the `bearing` attributes, the integration provides four values. The first two, `bearing_deg` and `bearing_text`, give the direction in an intuitive flat-map sense. The second two, `bearing_deg_geo` and `bearing_text_geo`, provide the geodetically correct initial great-circle bearing.
+Earthquakes at sea (`offshore` = true) carry a certain potential for generating a **tsunami** event. This potential is estimated by Earthquake Monitor and provided in the `tsunami_potential` attribute). NOTE that the tsunami_potential attribute is *not a tsunami warning*. Rather, it is a simplified label based on magnitude, depth, and offshore location. It does not account for focal mechanism, rupture geometry, seafloor displacement, or submarine landslides, all of which can contribute to the generation of an actual tsunami. It also does not evaluate sea-level observations. Note that a tsunami can also be caused by events that are not earthquakes, such as volcanic eruptions, submarine landslides, or the extremely rare but potentially catastrophic impact of an asteroid or comet.
 
-This distinction is useful because the geodetically correct great-circle bearings become increasingly unintuitive the farther away an event occurs. For example, the great-circle bearing from Germany to Tonga in the South Pacific genuinely starts toward the north-east. The great-circle route first curves up over Northern Europe and crosses the Arctic, before turning south through the Pacific. This is the shortest path *on the sphere*, but deeply counterintuitive when you think in flat-map terms, where Tonga lies to the south-east of Germany (check [this image](https://github.com/fra-yer/Earthquake-Monitor/blob/main/docs/great-circle%20image.jpg) to see the difference). Importantly, the bearing of the (longer) straight-line path is constant (shown in red in the image), but permanently changing (shown as a gradual change of color of the path) for the great-circle path. The same effect is seen with transatlantic flights from Europe to the US East Coast that appear to arc northward on a flat map, but actually follow the shortest route on the globe (and the pilots must regularly adjust the direction of the plane to stay on this route).
+The integration assumes that a tsunami is unlikely for earthquakes with magnitudes below M6.5. However, some regional tsunami warning centers may evaluate smaller offshore or near-coastal earthquakes, depending on the local tectonic setting. For example, the Hellenic National Tsunami Warning Centre states that it analyses earthquakes of minimum magnitude 5.5 generated under the sea or close to coastal zones. Earthquake Monitor does not attempt to provide region-specific tsunami-warning logic. **For safety-relevant information, always check announcements from official tsunami warning centers covering your region.**
+
+Regarding the `bearing` attributes, the integration provides four values. The first two, `bearing_deg` and `bearing_text`, give the direction in an intuitive flat-map sense. The second two, `bearing_deg_geo` and `bearing_text_geo`, provide the geodetically correct initial great-circle bearing. This distinction is useful because the geodetically correct great-circle bearings become increasingly unintuitive the farther away an event occurs. For example, the great-circle bearing from Germany to Tonga in the South Pacific genuinely starts toward the north-east. The great-circle route first curves up over Northern Europe and crosses the Arctic, before turning south through the Pacific. This is the shortest path *on the sphere*, but deeply counterintuitive when you think in flat-map terms, where Tonga lies to the south-east of Germany (check [this image](https://github.com/fra-yer/Earthquake-Monitor/blob/main/docs/great-circle%20image.jpg) to see the difference). Importantly, the bearing of the (longer) straight-line path is constant (shown in red in the image), but permanently changing (shown as a gradual change of color of the path) for the great-circle path. The same effect is seen with transatlantic flights from Europe to the US East Coast that appear to arc northward on a flat map, but actually follow the shortest route on the globe (and the pilots must regularly adjust the direction of the plane to stay on this route).
 
 For earthquakes up to a few thousand kilometers away, the intuitive and geodetically correct bearings are very similar. Therefore, the `relative_location` attribute uses the geodetically correct bearing for events up to 4000 km from the reference point, and the more intuitive flat-map bearing for more distant events. The 4000 km threshold represent 1/10 of the Earth's circumference and - as a geometric consequence of the Earth's spherical geometry - is approximately the distance at which the two bearings begin to diverge by more than one compass point (e.g. showing NE instead of NNE).
 
-Earthquakes at sea (`offshore` = true) carry a certain potential for generating a **tsunami** event. This potential is estimated by Earthquake Monitor and provided in the `tsunami_potential` attribute). NOTE that the tsunami_potential attribute is *not a tsunami warning*. Rather, it is a simplified label based on magnitude, depth, and offshore location. It does not account for focal mechanism, rupture geometry, seafloor displacement, or submarine landslides, all of which can contribute to the generation of an actual tsunami. It also does not evaluate sea-level observations. Note that a tsunami can also be caused by events that are not earthquakes, such as volcanic eruptions, submarine landslides, or the extremely rare but potentially catastrophic impact of an asteroid or comet.
-
-The integration assumes that a tsunami is unlikely for earthquakes with magnitudes below M6.5. However, some regional tsunami warning centers may evaluate smaller offshore or near-coastal earthquakes, depending on the local tectonic setting. For example, the Hellenic National Tsunami Warning Centre states that it analyses earthquakes of minimum magnitude 5.5 generated under the sea or close to coastal zones. Earthquake Monitor does not attempt to provide region-specific tsunami-warning logic.
-
-For safety-relevant information, always check announcements from official tsunami warning centers covering your region.
 
 ### Tectonic boundary notation
 
