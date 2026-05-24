@@ -2,10 +2,10 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.8.6 by FOF, May 2026
+# Version 1.8.7 by FOF, May 2026
 # change-log:
-#   changed the new attribute territory to "none" if no distinct territory applies, 
-#     or if the event is in international waters
+#   changed the region attribute to self-computed values, while keeping the EMSC-reported value in a separate new attribute region_emsc
+#   added a region_number attribute to provide the standardized Flinn-Engdahl region number
 
 import asyncio
 import io
@@ -41,6 +41,7 @@ INTEGRATION_DIR = Path(__file__).resolve().parent
 CITIES_CSV = INTEGRATION_DIR / "geodata" / "cities25000.csv"
 COUNTRIES_GEOJSON = INTEGRATION_DIR / "geodata" / "EEZ_land_union_v4_202410_minimal_0p001.geojson"
 LAND_COUNTRIES_GEOJSON = INTEGRATION_DIR / "geodata" / "ne_10m_admin_0_countries.geojson"
+FLINN_ENGDAHL_JSON = INTEGRATION_DIR / "geodata" / "flinn_engdahl_regions.json"
 TECTONIC_BOUNDARIES_GEOJSON = INTEGRATION_DIR / "geodata" / "PB2002_boundaries_optimized.json"
 TECTONIC_BOUNDARY_MAX_DISTANCE_KM = 250.0
 
@@ -116,11 +117,25 @@ def get_tectonic_boundaries():
     return boundaries
 
 
+@lru_cache(maxsize=1)
+def get_flinn_engdahl_regions():
+    """Load Flinn-Engdahl lookup data once."""
+    with FLINN_ENGDAHL_JSON.open("r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    names = data["names"]
+    llindx = data["llindx"]
+    lat_tiers = data["lat_tiers"]
+
+    return names, llindx, lat_tiers
+
+
 def preload_geodata() -> None:
     """Warm up cached geodata resources."""
     get_countries()
     get_land_countries()
     get_tectonic_boundaries()
+    get_flinn_engdahl_regions()
     get_city_geocoder()
 
 
@@ -154,14 +169,66 @@ def nearest_city(lat: float, lon: float) -> str:
     return result.get("name", "Unknown")
 
 
-def normalize_delta_lon(delta_lon: float) -> float:
-    """Normalize longitude difference to the -180..180 range."""
-    if delta_lon > 180:
-        delta_lon -= 360
-    elif delta_lon < -180:
-        delta_lon += 360
+def normalize_lon(lon: float) -> float:
+    """Normalize longitude value to the -180..180 range."""
+    if lon > 180:
+        lon -= 360
+    elif lon < -180:
+        lon += 360
 
-    return delta_lon
+    return lon
+
+
+def flinn_engdahl_region_number(lat: float, lon: float) -> int:
+    """Return Flinn-Engdahl region number for a latitude/longitude point."""
+    if abs(lat) > 90.0:
+        raise ValueError(f"Bad latitude: {lat}")
+
+    if abs(lon) > 360.0:
+        raise ValueError(f"Bad longitude: {lon}")
+
+    _names, llindx, lat_tiers = get_flinn_engdahl_regions()
+
+    lon = normalize_lon(lon)
+
+    quadid = [274, 183, 92, 1]
+
+    if lat >= 0.0 and lon >= 0.0:
+        quadon = quadid[3]
+    elif lat >= 0.0 and lon < 0.0:
+        quadon = quadid[2]
+    elif lat < 0.0 and lon >= 0.0:
+        quadon = quadid[1]
+    else:
+        quadon = quadid[0]
+
+    lt = int(abs(lat))
+    ln = int(abs(lon))
+
+    recnbr = quadon + lt - 1
+    tieron, nbrbdy = llindx[recnbr]
+
+    start = tieron - 1
+    end = start + nbrbdy
+
+    pair = lat_tiers[start]
+
+    for idx in range(start, end):
+        pair = lat_tiers[idx]
+        if lat_tiers[idx][0] > ln:
+            pair = lat_tiers[idx - 1]
+            break
+
+    return pair[1]
+
+
+def flinn_engdahl_region(lat: float, lon: float) -> tuple[int, str]:
+    """Return Flinn-Engdahl region number and curated region name."""
+    names, _llindx, _lat_tiers = get_flinn_engdahl_regions()
+    region_number = flinn_engdahl_region_number(lat, lon)
+    region_name = names.get(str(region_number), "Unknown")
+
+    return region_number, region_name
 
 
 def distance_point_to_segment_km(
@@ -176,9 +243,9 @@ def distance_point_to_segment_km(
     r_earth_km = 6371.0
     lat0_rad = radians(lat)
 
-    x1 = radians(normalize_delta_lon(lon1 - lon)) * cos(lat0_rad) * r_earth_km
+    x1 = radians(normalize_lon(lon1 - lon)) * cos(lat0_rad) * r_earth_km
     y1 = radians(lat1 - lat) * r_earth_km
-    x2 = radians(normalize_delta_lon(lon2 - lon)) * cos(lat0_rad) * r_earth_km
+    x2 = radians(normalize_lon(lon2 - lon)) * cos(lat0_rad) * r_earth_km
     y2 = radians(lat2 - lat) * r_earth_km
 
     dx = x2 - x1
@@ -255,8 +322,8 @@ def is_land_epicenter(lat: float, lon: float) -> bool:
 def lookup_geodata(
     lat: float,
     lon: float,
-) -> tuple[str, str, str, bool, str, float | None]:
-    """Return country, territory, nearest city, offshore status, and nearest tectonic boundary for an epicenter."""
+) -> tuple[str, str, str, bool, str, float | None, int | None, str]:
+    """Return country, territory, city, offshore status, tectonic boundary, and F-E region for an epicenter."""
     country, territory = country_and_territory_of_epicenter(lat, lon)
     city = nearest_city(lat, lon)
     offshore = not is_land_epicenter(lat, lon)
@@ -264,6 +331,7 @@ def lookup_geodata(
         lat,
         lon,
     )
+    region_number, region = flinn_engdahl_region(lat, lon)
 
     return (
         country,
@@ -272,6 +340,8 @@ def lookup_geodata(
         offshore,
         tectonic_boundary,
         tectonic_boundary_distance_km,
+        region_number,
+        region,
     )
 
 
@@ -837,6 +907,8 @@ class EarthquakeMonitorSensor(RestoreSensor):
                     offshore,
                     tectonic_boundary,
                     tectonic_boundary_distance_km,
+                    region_number,
+                    region,
                 ) = await self.hass.async_add_executor_job(
                     lookup_geodata,
                     lat,
@@ -850,6 +922,8 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 offshore = None
                 tectonic_boundary = "lookup failed"
                 tectonic_boundary_distance_km = None
+                region_number = None
+                region = "lookup failed"
 
             depth_raw = info.get("depth")
             try:
@@ -882,7 +956,9 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 "lastupdate_raw": lastupdate_str,
                 "lastupdate_utc": self.format_utc_text(lastupdate),
                 "lastupdate_utc_raw": lastupdate.isoformat() if lastupdate else None,
-                "region": info.get("flynn_region"),
+                "region_number": region_number,
+                "region": region,
+                "region_emsc": info.get("flynn_region"),
                 "country": country,
                 "territory": territory,
                 "offshore": offshore,
@@ -912,7 +988,7 @@ class EarthquakeMonitorSensor(RestoreSensor):
                 mag,
                 event_time_str,
                 lastupdate_str,
-                info.get("flynn_region"),
+                region,
                 country,
                 offshore,
                 tsunami_potential,
