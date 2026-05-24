@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version v1.8.6
+Version v1.8.7
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -323,6 +323,8 @@ Earthquake Monitor uses data from [Natural Earth](https://www.naturalearthdata.c
 Earthquake Monitor uses data from [Marine Regions](https://www.marineregions.org/) of the Flanders Marine Institute, which is under [CC-BY license](https://creativecommons.org/licenses/by/4.0/).
 
 Information about tectonic boundaries are drawn from the [dataset by Hugo Ahlenius](https://github.com/fraxen/tectonicplates), which was published under the [Open Data Commons Attribution License](https://opendatacommons.org/licenses/by/1-0/). That dataset itself is a conversion of the dataset originally published in the paper [An updated digital model of plate boundaries](https://doi.org/10.1029/2001GC000252) by Peter Bird.
+
+The Flinn-Engdahl region data is manually curated version of the Rust implementation and lookup tables in [savage13/flinn_engdahl](https://github.com/savage13/flinn_engdahl), which are distributed under the [BSD 2-Clause License](https://opensource.org/license/bsd-2-clause). 
 
 ## License
 This project is licensed under the MIT License – see the [LICENSE file](https://github.com/fra-yer/Earthquake-Monitor/blob/main/LICENSE) for details.
