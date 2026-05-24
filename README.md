@@ -24,7 +24,7 @@ The integration provides a Home Assistant sensor that includes:
 - magnitude
 - local and UTC timestamps
 - depth
-- region
+- region and region number
 - epicenter coordinates
 - nearest tectonic boundary and distance to it
 - distance from a configured reference point
@@ -175,7 +175,7 @@ Important note: When you display these timestamps in the Details view of the ent
 
 ## Location of an earthquake
 
-The sensor reports the raw geographical coordinates (attributes `latitude` and `longitude`), depth (attribute `depth`) and rough geographic location (attribute `region`) it received from the EMSC feed. In addition, the integration calculates the following attributes that can be used for display or automations:
+The sensor reports the raw geographical coordinates (attributes `latitude` and `longitude`), depth (attribute `depth`) and region (attribute `region_emsc`)  received from the EMSC feed. In addition, the integration calculates the following attributes that can be used for display or automations:
 
 - `distance_km`: gives the distance from the configured reference point in kilometers
 - `bearing_deg`: gives the compass bearing from the reference point (where 0 is North, 90 is East, etc.)
@@ -183,6 +183,8 @@ The sensor reports the raw geographical coordinates (attributes `latitude` and `
 - `bearing_deg_geo`: gives the initial compass bearing of the shortest path from the reference point (geodetically correct great-circle measurement)
 - `bearing text_geo`: gives the initial bearing of the shortest path from the reference point as text (geodetically correct)
 - `relative_location`: gives the location relative to the reference point (e.g. "24.4km NW of reference point")
+- `region_number`: gives the standardized Flinn-Engdahl region number
+- `region`: gives the Flinn-Engdahl region as text
 - `country`: gives the sovereign country of the epicenter, for offshore earthquakes that cannot be assigned a country, it returns "offshore"
 - `territory`: gives the territory of the epicenter, which is especially useful for overseas territories where `country` alone is misleading
 - `offshore`: is true for epicenters not on land
@@ -192,10 +194,11 @@ The sensor reports the raw geographical coordinates (attributes `latitude` and `
 - `tectonic_boundary_distance_km`: gives the distance to the nearest tectonic boundary in kilometers
 - `within_radius`: indicates whether the epicenter is within the user-defined local radius
 
-All distances provided by the integration are given in kilometers. If you prefer miles for dashboard display, you can convert the `distance_km` or `tectonic_boundary_distance_km` attribute using a Home Assistant template such as:
+Distances provided by the integration are given in kilometers. If you prefer miles for dashboard display, you can convert the `distance_km` or `tectonic_boundary_distance_km` attribute using a Home Assistant template such as:
 `{{ (state_attr('sensor.latest_earthquake', 'distance_km') * 0.621371) | round(1) }} mi`, using your entity name. 
 
-Note that the `region` attribute gives the Flinn-Engdahl region, a standardized geographic seismic zone name assigned from the latitude and longitude of an earthquake’s epicenter. This will, for example, show GREECE or NEAR N COAST OF PAPUA, INDONESIA. This attribute is *not a political boundary or a damage zone*. For example, two nearby quakes on opposite sides of a regional boundary may appear under different region names even if they are geographically close. Do not use this `region` attribute to assign the earthquake to a country. Instead, use the `country` and `territory `attributes, to gain information about the sovereign country and, when applicable, the overseas territory where the event took place.
+The region-related attributes (`region_number`, `region` and `region_emsc`) give the Flinn-Engdahl region, a standardized geographic seismic zone assigned from the latitude and longitude of an earthquake’s epicenter. Earthquake monitor provides the webfeed-reported region in `region_emsc`, and self-computed `region_number` and `region` attributes; when in doubt, prefer `region_number` and `region` over `region_emsc` for your automations or dashboards.
+These region attributes *do not indicate a political entity or the damage zone*. For example, two nearby quakes on opposite sides of a regional boundary may appear under different region names even if they are geographically close. Do not use these region-related attributes to assign the earthquake to a country. Instead, use the `country` and `territory `attributes, to gain information about the sovereign country and, when applicable, the overseas territory where the event took place. 
 
 Regarding the `bearing` attributes, the integration provides four values. The first two, `bearing_deg` and `bearing_text`, give the direction in an intuitive flat-map sense. The second two, `bearing_deg_geo` and `bearing_text_geo`, provide the geodetically correct initial great-circle bearing.
 
