@@ -2,10 +2,9 @@
 # Inspired by original work of febalci in EMSC Earthquake https://github.com/febalci/ha_emsc_earthquake
 # Extended with improved event-selection and location-description logic
 # See accompanying README.md for details
-# Version 1.8.7 by FOF, May 2026
+# Version 1.8.8 by FOF, May 2026
 # change-log:
-#   changed the region attribute to a self-computed value, while keeping the EMSC-reported value in a separate new attribute region_emsc
-#   added a region_number attribute to provide the standardized Flinn-Engdahl region number
+#   changed attributes order to report nearest_city directly behind territory
 
 import asyncio
 import io
