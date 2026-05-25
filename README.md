@@ -7,7 +7,7 @@
 
 (c) 2026 Frank O. Fackelmayer, Ioannina, Greece – Contact: frank@fackelmayer.eu
  
-Version v1.8.7
+Version v1.8.8
 
 
 This integration reports the latest earthquake that matches a user-defined reference location and minimum magnitude threshold. It uses the EMSC real-time feed and exposes it as a sensor with rich attributes such as magnitude, time, depth, distance, bearing, and relative location. These attributes can then be used within Home Assistant, e.g. to display the information on a tile card, on the Home Assistant Map, or to trigger routines. 
@@ -25,13 +25,14 @@ The integration provides a Home Assistant sensor that includes:
 - epicenter coordinates
 - depth
 - local and UTC timestamps
-- Flinn-Engdahl region and region number
-- nearest tectonic boundary and distance to it
 - distance from a configured reference point
-- bearing from the reference point (map-intuitive and geodetically correct shortest path on great circle)
-- relative location such as `42.3 km SW of reference point`
 - country and territory of epicenter
 - nearest city (population >25000) to epicenter (can be "none" for very remote places or offshore points)
+- Flinn-Engdahl region and region number
+- nearest tectonic boundary and distance to it
+- distance from the epicenter to the nearest tectonic boundary
+- bearing from the reference point (map-intuitive and geodetically correct shortest path on great circle)
+- relative location such as `42.3 km SW of reference point`
 - whether the epicenter is on land or offshore
 - tsunami potential (for offshore epicenters)
 
@@ -325,7 +326,7 @@ Earthquake Monitor uses data from [Marine Regions](https://www.marineregions.org
 
 Information about tectonic boundaries are drawn from the [dataset by Hugo Ahlenius](https://github.com/fraxen/tectonicplates), which was published under the [Open Data Commons Attribution License](https://opendatacommons.org/licenses/by/1-0/). That dataset itself is a conversion of the dataset originally published in the paper [An updated digital model of plate boundaries](https://doi.org/10.1029/2001GC000252) by Peter Bird.
 
-The Flinn-Engdahl region data is manually curated version of the Rust implementation and lookup tables in [savage13/flinn_engdahl](https://github.com/savage13/flinn_engdahl), which are distributed under the [BSD 2-Clause License](https://opensource.org/license/bsd-2-clause). 
+The Flinn-Engdahl region data is a manually curated version of the Rust implementation and lookup tables in [savage13/flinn_engdahl](https://github.com/savage13/flinn_engdahl), which are distributed under the [BSD 2-Clause License](https://opensource.org/license/bsd-2-clause). 
 
 ## License
 This project is licensed under the MIT License – see the [LICENSE file](https://github.com/fra-yer/Earthquake-Monitor/blob/main/LICENSE) for details.
